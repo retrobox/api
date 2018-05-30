@@ -42,6 +42,16 @@ class PaysafeCardController extends Controller
 		]);
 	}
 
+	public function getCapturePayment(ServerRequestInterface $request, ResponseInterface $response, Logger $logger)
+	{
+		$logger->info('new getCapturePayment : ```' . json_encode($request->getQueryParams()) . "```");
+
+		return $response->withJson([
+			'success' => true,
+			'message' => 'success'
+		]);
+	}
+
 	public function postCapturePayment(ServerRequestInterface $request, ResponseInterface $response, Client $client, Logger $logger)
 	{
 		$validator = new Validator($request->getParsedBody());

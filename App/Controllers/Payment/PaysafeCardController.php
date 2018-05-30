@@ -110,13 +110,25 @@ class PaysafeCardController extends Controller
 
 	private function paymentBadStatus(Logger $logger, ResponseInterface $response, Payment $payment)
 	{
-		$logger->error('Payment bad status : status : ```' . $payment->getStatus() . "```");
+		if ($payment->getStatus() == "REDIRECTED"){
 
-		return $response->withJson([
-			'success' => false,
-			'errors' => [
-				$payment->getStatus()
-			]
-		])->withStatus(400);
+			return $response->withJson([
+				'success' => true,
+				'message' => [
+					'Redirect'
+				]
+			]);
+		}else{
+			$logger->error('Payment bad status : status : ```' . $payment->getStatus() . "```");
+
+			return $response->withJson([
+				'success' => false,
+				'errors' => [
+					$payment->getStatus()
+				]
+			])->withStatus(400);
+
+		}
+
 	}
 }

@@ -28,14 +28,14 @@ class PaysafeCardController extends Controller
 	public function capturePayment(ServerRequestInterface $request, ResponseInterface $response, Client $client, Logger $logger)
 	{
 		$validator = new Validator($request->getParsedBody());
-		$validator->required('payment_id');
+		$validator->required('mtid');
 		if ($validator->isValid()){
 
-			$logger->info('New payment notification : ' . $validator->getValue("payment_id"));
+			$logger->info('New payment notification : ' . $validator->getValue("mtid"));
 
 			try {
 				// Find the payment the user was redirected from
-				$payment = Payment::find($validator->getValue("payment_id"), $client);
+				$payment = Payment::find($validator->getValue("mtid"), $client);
 			}catch (\Exception $e){
 
 				return $response->withJson([

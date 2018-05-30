@@ -45,7 +45,7 @@ return [
 		$client = new \SebastianWalker\Paysafecard\Client($container->get('paysafecard')['api_key']);
 
 		$client->setTestingMode($container->get('paysafecard')['testing_mode']);
-		$client->setUrls(new \SebastianWalker\Paysafecard\Urls($container->get('paysafecard')['url']));
+		$client->setUrls(new \SebastianWalker\Paysafecard\Urls($container->get('paysafecard')['urls'][0]), new \SebastianWalker\Paysafecard\Urls($container->get('paysafecard')['urls'][1]), new \SebastianWalker\Paysafecard\Urls($container->get('paysafecard')['urls'][2]));
 
 		return $client;
 	}

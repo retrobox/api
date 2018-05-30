@@ -30,10 +30,10 @@ class PaysafeCardController extends Controller
 		$validator = new Validator($request->getParsedBody());
 		$validator->required('payment_id');
 		if ($validator->isValid()){
+
 			$logger->info('New payment notification : ' . $validator->getValue("payment_id"));
 
 			try {
-
 				// Find the payment the user was redirected from
 				$payment = Payment::find($validator->getValue("payment_id"), $client);
 			}catch (\Exception $e){
@@ -83,6 +83,9 @@ class PaysafeCardController extends Controller
 				])->withStatus(400);
 			}
 		}else{
+			$logger->info("body: " . json_encode($request->getParsedBody()));
+			$logger->info("query params: " . json_encode($request->getQueryParams()));
+
 			$logger->error("Failed: validator don't succeed");
 
 			return $response->withJson([

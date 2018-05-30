@@ -16,7 +16,7 @@ class PaysafeCardController extends Controller
 {
 	public function getUrl(ServerRequestInterface $request, ResponseInterface $response, Client $client)
 	{
-		$amount = new Amount(20.00, "EUR");
+		$amount = new Amount(5.00, "EUR");
 		$payment = new Payment($amount, "customer123");
 		$payment->create($client);
 

@@ -26,10 +26,19 @@ class PaysafeCardController extends Controller
 		]);
 	}
 
-	public function getCapturePayment(ServerRequestInterface $request, ResponseInterface $response)
+	public function getSuccess(ServerRequestInterface $request, ResponseInterface $response)
 	{
 		return $response->withJson([
-			'success' => true
+			'success' => true,
+			'message' => 'Redirect success of payment'
+		]);
+	}
+
+	public function getFailure(ServerRequestInterface $request, ResponseInterface $response)
+	{
+		return $response->withJson([
+			'success' => false,
+			'message' => 'Redirect failure of payment'
 		]);
 	}
 

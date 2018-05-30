@@ -30,6 +30,8 @@ class PaysafeCardController extends Controller
 	{
 		$validator = new Validator($request->getParsedBody());
 		$validator->required('mtid');
+
+		$logger->info("NEW       --    body: " . json_encode($request->getParsedBody()));
 		if ($validator->isValid()) {
 
 			$logger->info('New payment notification : ' . $validator->getValue("mtid"));
@@ -68,8 +70,6 @@ class PaysafeCardController extends Controller
 				return $this->paymentBadStatus($logger, $response, $payment);
 			}
 		} else {
-			$logger->info("body: " . json_encode($request->getParsedBody()));
-			$logger->info("query params: " . json_encode($request->getQueryParams()));
 
 			$logger->error("Failed: validator don't succeed");
 

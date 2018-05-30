@@ -3,6 +3,7 @@
 namespace App\Controllers\Payment;
 
 use App\Controllers\Controller;
+use DI\Container;
 use Monolog\Logger;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -29,15 +30,16 @@ class PaysafeCardController extends Controller
 	{
 		$validator = new Validator($request->getParsedBody());
 		$validator->required('mtid');
-		if ($validator->isValid()){
+		if ($validator->isValid()) {
 
 			$logger->info('New payment notification : ' . $validator->getValue("mtid"));
 
 			try {
 				// Find the payment the user was redirected from
 				$payment = Payment::find($validator->getValue("mtid"), $client);
-			}catch (\Exception $e){
+			} catch (\Exception $e) {
 
+				$logger->error('Payment not found : error : ```' . $e->getMessage() . "```");
 				return $response->withJson([
 					'success' => false,
 					'errors' => [
@@ -53,36 +55,19 @@ class PaysafeCardController extends Controller
 				$payment->capture($client);
 
 				if ($payment->isSuccessful()) {
+					$logger->info("SUCCESS: success isSuccessful == true");
 					return $response->withJson([
 						'success' => true
 					]);
 				} else {
-					return $response->withJson([
-						'success' => false,
-						'errors' => [
-							$payment->getStatus()
-						]
-					])->withStatus(400);
+					return $this->paymentBadStatus($logger, $response, $payment);
 				}
-
 			} elseif ($payment->isFailed()) {
-				echo "Payment Failed (" . $payment->getStatus() . ")";
-
-				return $response->withJson([
-					'success' => false,
-					'errors' => [
-						$payment->getStatus()
-					]
-				])->withStatus(400);
+				return $this->paymentBadStatus($logger, $response, $payment);
 			} else {
-				return $response->withJson([
-					'success' => false,
-					'errors' => [
-						$payment->getStatus()
-					]
-				])->withStatus(400);
+				return $this->paymentBadStatus($logger, $response, $payment);
 			}
-		}else{
+		} else {
 			$logger->info("body: " . json_encode($request->getParsedBody()));
 			$logger->info("query params: " . json_encode($request->getQueryParams()));
 
@@ -93,5 +78,16 @@ class PaysafeCardController extends Controller
 				'errors' => $validator->getErrors()
 			])->withStatus(400);
 		}
+	}
+
+	private function paymentBadStatus(Logger $logger, ResponseInterface $response, Payment $payment)
+	{
+		$logger->error('Payment bad status : status : ```' . $payment->getStatus() . "```");
+		return $response->withJson([
+			'success' => false,
+			'errors' => [
+				$payment->getStatus()
+			]
+		])->withStatus(400);
 	}
 }

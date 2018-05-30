@@ -26,7 +26,14 @@ class PaysafeCardController extends Controller
 		]);
 	}
 
-	public function capturePayment(ServerRequestInterface $request, ResponseInterface $response, Client $client, Logger $logger)
+	public function getCapturePayment(ServerRequestInterface $request, ResponseInterface $response)
+	{
+		return $response->withJson([
+			'success' => true
+		]);
+	}
+
+	public function postCapturePayment(ServerRequestInterface $request, ResponseInterface $response, Client $client, Logger $logger)
 	{
 		$validator = new Validator($request->getParsedBody());
 		$validator->required('mtid');
@@ -42,6 +49,7 @@ class PaysafeCardController extends Controller
 			} catch (\Exception $e) {
 
 				$logger->error('Payment not found : error : ```' . $e->getMessage() . "```");
+
 				return $response->withJson([
 					'success' => false,
 					'errors' => [
@@ -58,6 +66,7 @@ class PaysafeCardController extends Controller
 
 				if ($payment->isSuccessful()) {
 					$logger->info("SUCCESS: success isSuccessful == true");
+
 					return $response->withJson([
 						'success' => true
 					]);
@@ -83,6 +92,7 @@ class PaysafeCardController extends Controller
 	private function paymentBadStatus(Logger $logger, ResponseInterface $response, Payment $payment)
 	{
 		$logger->error('Payment bad status : status : ```' . $payment->getStatus() . "```");
+
 		return $response->withJson([
 			'success' => false,
 			'errors' => [

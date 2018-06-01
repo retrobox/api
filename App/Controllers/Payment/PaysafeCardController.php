@@ -29,7 +29,7 @@ class PaysafeCardController extends Controller
 	public function getSuccess(ServerRequestInterface $request, ResponseInterface $response, Logger $logger, Client $client)
 	{
 		$logger->info("NEW -- success");
-		$paymentRow = json_encode(file_get_contents('paysafecard.json'), 1);
+		$paymentRow = json_encode(file_get_contents('../paysafecard.json'), 1);
 		$payment = Payment::find($paymentRow['id'], $client);
 		$logger->info('retrieve payment details');
 
@@ -98,7 +98,7 @@ class PaysafeCardController extends Controller
 
 				if ($payment->isSuccessful()) {
 					//register it
-					file_put_contents('paysafecard.json', json_encode(['id' => $payment->getId()]));
+					file_put_contents('../paysafecard.json', json_encode(['id' => $payment->getId()]));
 					$logger->info("SUCCESS: success isSuccessful == true");
 
 					return $response->withJson([
@@ -121,6 +121,10 @@ class PaysafeCardController extends Controller
 				'errors' => $validator->getErrors()
 			])->withStatus(400);
 		}
+	}
+
+	private function fileUrl(ServerRequestInterface $request, ResponseInterface $response){
+		file_put_contents('../paysafecard.json', json_encode(['id' => "qsds"]));
 	}
 
 	private function paymentBadStatus(Logger $logger, ResponseInterface $response, Payment $payment)

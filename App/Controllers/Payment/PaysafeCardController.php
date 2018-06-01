@@ -35,29 +35,20 @@ class PaysafeCardController extends Controller
 		if ($validator->isValid()) {
 			$payment = Payment::find($validator->getValue("mtid"), $client);
 			$logger->info('retrieve payment details');
-			if ($payment->isSuccessful()){
-				return $response->withJson([
-					'success' => true,
-					'payment' => [
-						'id' => $payment->getId(),
-						'amount' => [
-							'currency' => $payment->getAmount()->getCurrency(),
-							'amount' => $payment->getAmount()->getAmount()
-						],
-						'status' => $payment->getStatus(),
-						'customer_id' => $payment->getCustomerId()
-					]
-				]);
-			}else{
-				return $response->withJson([
-					'success' => false,
-					'payment' => [
-						'id' => $payment->getId(),
-						'status' => $payment->getStatus()
-					]
-				])->withStatus(400);
-			}
-		}else{
+
+			return $response->withJson([
+				'success' => true,
+				'payment' => [
+					'id' => $payment->getId(),
+					'amount' => [
+						'currency' => $payment->getAmount()->getCurrency(),
+						'amount' => $payment->getAmount()->getAmount()
+					],
+					'status' => $payment->getStatus(),
+					'customer_id' => $payment->getCustomerId()
+				]
+			]);
+		} else {
 			return $response->withJson([
 				'success' => false,
 				'errors' => $validator->getErrors()

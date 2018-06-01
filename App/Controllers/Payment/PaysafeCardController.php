@@ -29,7 +29,7 @@ class PaysafeCardController extends Controller
 	public function getSuccess(ServerRequestInterface $request, ResponseInterface $response, Logger $logger, Client $client)
 	{
 		$logger->info("NEW -- success");
-		$paymentRow = json_encode(file_get_contents('../paysafecard.json'), 1);
+		$paymentRow = json_decode(file_get_contents('../paysafecard.json'), 1);
 		$payment = Payment::find($paymentRow['id'], $client);
 		$logger->info('retrieve payment details');
 

@@ -28,32 +28,23 @@ class PaysafeCardController extends Controller
 
 	public function getSuccess(ServerRequestInterface $request, ResponseInterface $response, Logger $logger, Client $client)
 	{
-		$validator = new Validator($request->getQueryParams());
-		$validator->required('mtid');
+		$logger->info("NEW -- success");
+		$paymentRow = json_encode(file_get_contents('paysafecard.json'), 1);
+		$payment = Payment::find($paymentRow['id'], $client);
+		$logger->info('retrieve payment details');
 
-		$logger->info("NEW   --    success");
-		if ($validator->isValid()) {
-			$payment = Payment::find($validator->getValue("mtid"), $client);
-			$logger->info('retrieve payment details');
-
-			return $response->withJson([
-				'success' => true,
-				'payment' => [
-					'id' => $payment->getId(),
-					'amount' => [
-						'currency' => $payment->getAmount()->getCurrency(),
-						'amount' => $payment->getAmount()->getAmount()
-					],
-					'status' => $payment->getStatus(),
-					'customer_id' => $payment->getCustomerId()
-				]
-			]);
-		} else {
-			return $response->withJson([
-				'success' => false,
-				'errors' => $validator->getErrors()
-			])->withStatus(400);
-		}
+		return $response->withJson([
+			'success' => true,
+			'payment' => [
+				'id' => $payment->getId(),
+				'amount' => [
+					'currency' => $payment->getAmount()->getCurrency(),
+					'amount' => $payment->getAmount()->getAmount()
+				],
+				'status' => $payment->getStatus(),
+				'customer_id' => $payment->getCustomerId()
+			]
+		]);
 	}
 
 	public function getFailure(ServerRequestInterface $request, ResponseInterface $response)
@@ -106,6 +97,8 @@ class PaysafeCardController extends Controller
 				$payment->capture($client);
 
 				if ($payment->isSuccessful()) {
+					//register it
+					file_put_contents('paysafecard.json', json_encode(['id' => $payment->getId()]));
 					$logger->info("SUCCESS: success isSuccessful == true");
 
 					return $response->withJson([

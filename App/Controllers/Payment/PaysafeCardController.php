@@ -26,12 +26,30 @@ class PaysafeCardController extends Controller
 		]);
 	}
 
-	public function getSuccess(ServerRequestInterface $request, ResponseInterface $response)
+	public function getSuccess(ServerRequestInterface $request, ResponseInterface $response, Logger $logger, Client $client)
 	{
-		return $response->withJson([
-			'success' => true,
-			'message' => 'Redirect success of payment'
-		]);
+		$validator = new Validator($request->getQueryParams());
+		$validator->required('mtid');
+
+		$logger->info("NEW   --    success");
+		if ($validator->isValid()) {
+			$payment = Payment::find($validator->getValue("mtid"), $client);
+			$logger->info('retrieve payment details');
+			if ($payment->isSuccessful()){
+				return $response->withJson([
+					'success' => true,
+					'payment' => [
+						'id' => $payment->getId(),
+						'amount' => [
+							'currency' => $payment->getAmount()->getCurrency(),
+							'amount' => $payment->getAmount()->getAmount()
+						],
+						'status' => $payment->getStatus(),
+						'customer_id' => $payment->getCustomerId()
+					]
+				]);
+			}
+		}
 	}
 
 	public function getFailure(ServerRequestInterface $request, ResponseInterface $response)
@@ -110,15 +128,14 @@ class PaysafeCardController extends Controller
 
 	private function paymentBadStatus(Logger $logger, ResponseInterface $response, Payment $payment)
 	{
-		if ($payment->getStatus() == "REDIRECTED"){
-
+		if ($payment->getStatus() == "REDIRECTED") {
 			return $response->withJson([
 				'success' => true,
 				'message' => [
-					'Redirect'
+					'Redirect '
 				]
 			]);
-		}else{
+		} else {
 			$logger->error('Payment bad status : status : ```' . $payment->getStatus() . "```");
 
 			return $response->withJson([

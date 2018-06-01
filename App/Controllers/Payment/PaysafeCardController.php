@@ -48,7 +48,20 @@ class PaysafeCardController extends Controller
 						'customer_id' => $payment->getCustomerId()
 					]
 				]);
+			}else{
+				return $response->withJson([
+					'success' => false,
+					'payment' => [
+						'id' => $payment->getId(),
+						'status' => $payment->getStatus()
+					]
+				])->withStatus(400);
 			}
+		}else{
+			return $response->withJson([
+				'success' => false,
+				'errors' => $validator->getErrors()
+			])->withStatus(400);
 		}
 	}
 

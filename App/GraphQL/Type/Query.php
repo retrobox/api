@@ -12,9 +12,14 @@ class Query extends ObjectType {
 		$config = [
 			'name' => 'Query',
 			'fields' => [
+				//games
 				'getManyGames' => \App\GraphQL\Query\Game::getMany(),
 				'getOneGame' => \App\GraphQL\Query\Game::getOne(),
 //				'storeGame' => \App\GraphQL\Query\Game::store(),
+
+				//posts
+				'getManyPosts' => \App\GraphQL\Query\Post::getMany(),
+				'getOnePost' => \App\GraphQL\Query\Post::getOne(),
 			]
 		];
 

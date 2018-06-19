@@ -12,7 +12,8 @@ class PagesController extends Controller
 	{
 		return $response->withJson([
 			'This is the main page of the API!',
-			'Welcome in your application!'
+			'Welcome in your application!',
+			'This api support REST and GraphQL'
 		]);
 	}
 }

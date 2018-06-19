@@ -1,5 +1,6 @@
 <?php
 namespace App\GraphQL;
+use App\GraphQL\Type\Post;
 use App\GraphQL\Type\Scalar\DateTime;
 use App\GraphQL\Type\Editor;
 use App\GraphQL\Type\Game;
@@ -25,6 +26,21 @@ class Types
 	private static $genre;
 	private static $dateTime;
 	private static $nonEmpty;
+	private static $post;
+
+
+	/**
+	 * @return DateTime
+	 */
+	public static function dateTime()
+	{
+		return self::$dateTime ?: (self::$dateTime = new DateTime());
+	}
+
+	public static function nonEmpty()
+	{
+		return self::$nonEmpty ?: (self::$nonEmpty = new NonEmpty());
+	}
 
 	/**
 	 * @return Game
@@ -47,7 +63,7 @@ class Types
 	 */
 	public static function editor()
 	{
-		return self::$nonEmpty ?: (self::$editor = new Editor());
+		return self::$editor ?: (self::$editor = new Editor());
 	}
 
 
@@ -60,15 +76,11 @@ class Types
 	}
 
 	/**
-	 * @return DateTime
+	 * @return Post
 	 */
-	public static function dateTime()
+	public static function post()
 	{
-		return self::$dateTime ?: (self::$dateTime = new DateTime());
+		return self::$post ?: (self::$post = new Post());
 	}
 
-	public static function nonEmpty()
-	{
-		return self::$nonEmpty ?: (self::$nonEmpty = new NonEmpty());
-	}
 }

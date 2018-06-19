@@ -1,30 +1,25 @@
-# Slim3 template API
+# Retrobox's api
 
-This is simple template of slimframework 3 and integrations of others php librarys.
+## Requirement
 
-## Quick install
+- Php 7.1 or higher
+- Mysql server
 
-Just run a:
+## Install
 
-`composer create-project lefuturiste/slim3-template-api`
+- clone this repo
+- composer install
+- add all env vars you needss in `.env` file
 
-## The console
+## Ressources
 
-This template include console powered by symfony console:
+- game
+- editor
+- genre
+- media
+- platform
+- post
 
-The console allowed this commands:
+soon:
 
-### Local dev server
-
-- php console serve -> for run a local dev server with php cli
-
-## Maintenance mode
-
-(not finish)
-
-Maintenance mode allow a independent maintenance mode from your web application.
-
-Maintenance mode is made for rename index.php file in web root directory (public) by _index.php and rename maintenance.php file by index.php file and vice versa.
-
-- php console maintenance open -> for enable maintenance mode
-- php console maintenance close -> for disable maintenance mode
+- team member

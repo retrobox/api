@@ -13,6 +13,9 @@ class Mutations extends ObjectType {
 			'name' => 'Mutations',
 			'fields' => [
 				'storeGame' => \App\GraphQL\Query\Game::store(),
+
+				//post
+				'storePost' => \App\GraphQL\Query\Post::store()
 			]
 		];
 

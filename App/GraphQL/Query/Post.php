@@ -3,18 +3,18 @@
 namespace App\GraphQL\Query;
 
 use App\GraphQL\Types;
-use GraphQL\Error\Error;
+use Error;
 use GraphQL\Type\Definition\InputObjectType;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
 
-class Game
+class Post
 {
 	public static function getMany()
 	{
 		return [
-			'type' => Type::listOf(Types::game()),
-			'description' => 'Get many games',
+			'type' => Type::listOf(Types::post()),
+			'description' => 'Get many posts',
 			'args' => [
 				[
 					'name' => 'limit',
@@ -36,8 +36,7 @@ class Game
 				]
 			],
 			'resolve' => function ($rootValue, $args) {
-				return \App\Models\Game::query()
-					->with('platform', 'editor', 'genres')
+				return \App\Models\Post::query()
 					->limit($args['limit'])
 					->orderBy($args['orderBy'], strtolower($args['orderDir']))
 					->get();
@@ -48,22 +47,22 @@ class Game
 	public static function getOne()
 	{
 		return [
-			'type' => Types::game(),
-			'description' => 'Get a game by id',
+			'type' => Types::post(),
+			'description' => 'Get a post by id',
 			'args' => [
 				[
 					'name' => 'id',
-					'description' => 'The Id of the game',
+					'description' => 'The Id of the post',
 					'type' => Type::string()
 				]
 			],
 			'resolve' => function ($rootValue, $args) {
-				$game = \App\Models\Game::find($args['id']);
-				if ($game == NULL){
-					throw new Error("The game was not found");
+				$post = \App\Models\Post::find($args['id']);
+				if ($post == NULL){
+					//404
+					throw new Error("The post was not found");
 				}else{
-					return $game
-						->with('platform', 'editor', 'genres')
+					return $post
 						->first();
 				}
 			}
@@ -73,13 +72,13 @@ class Game
 	public static function store()
 	{
 		return [
-			'type' => Types::game(),
+			'type' => Types::post(),
 			'args' => [
 				[
-					'name' => 'game',
-					'description' => 'Game to store',
+					'name' => 'post',
+					'description' => 'Post to store',
 					'type' => new InputObjectType([
-						'name' => 'GameInput',
+						'name' => 'PostInput',
 						'fields' => [
 							'name' => ['type' => Type::nonNull(Types::nonEmpty(Type::string()))],
 							'description' => ['type' => Types::nonEmpty(Type::string())],

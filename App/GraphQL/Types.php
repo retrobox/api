@@ -7,6 +7,9 @@ use App\GraphQL\Type\Game;
 use App\GraphQL\Type\Genre;
 use App\GraphQL\Type\Platform;
 use App\GraphQL\Type\Scalar\NonEmpty;
+use App\GraphQL\Type\ShopCategory;
+use App\GraphQL\Type\ShopItem;
+use App\GraphQL\Type\ShopLink;
 
 /**
  * Class Types
@@ -27,6 +30,11 @@ class Types
 	private static $dateTime;
 	private static $nonEmpty;
 	private static $post;
+	private static $shopItem;
+	private static $shopLink;
+	private static $shopCategory;
+	private static $shopCategoryWithDepth;
+	private static $shopItemWithDepth;
 
 
 	/**
@@ -81,6 +89,46 @@ class Types
 	public static function post()
 	{
 		return self::$post ?: (self::$post = new Post());
+	}
+
+	/**
+	 * @return ShopItem
+	 */
+	public static function shopItem()
+	{
+		return self::$shopItem ?: (self::$shopItem = new ShopItem());
+	}
+
+	/**
+	 * @return ShopItem
+	 */
+	public static function shopItemWithDepth()
+	{
+		return self::$shopItemWithDepth ?: (self::$shopItemWithDepth = new ShopItem(true));
+	}
+
+	/**
+	 * @return ShopCategory
+	 */
+	public static function shopCategory()
+	{
+		return self::$shopCategory ?: (self::$shopCategory = new ShopCategory());
+	}
+	
+	/**
+	 * @return ShopCategory
+	 */
+	public static function shopCategoryWithDepth()
+	{
+		return self::$shopCategoryWithDepth ?: (self::$shopCategoryWithDepth = new ShopCategory(true));
+	}
+
+	/**
+	 * @return ShopLink
+	 */
+	public static function shopLink()
+	{
+		return self::$shopLink ?: (self::$shopLink = new ShopLink());
 	}
 
 }

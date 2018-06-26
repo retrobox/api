@@ -6,21 +6,27 @@ use App\GraphQL\Types;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
 
-class Genre extends ObjectType
+class ShopCategory extends ObjectType
 {
-	public function __construct()
+	public function __construct($depth = false)
 	{
+		if ($depth){
+			$depthArray = [
+			 	'items' => [
+			 		'type' => Types::shopItem()
+				]
+			];
+		}else{
+			$depthArray = [];
+		}
 		$config = [
-			'name' => 'Genre',
-			'description' => 'The genre of the game (tag)',
-			'fields' => [
+			'name' => 'ShopCategory',
+			'description' => 'A category of item in the shop',
+			'fields' => array_merge([
 				'id' => [
 					'type' => Type::id()
 				],
-				'name' => [
-					'type' => Type::string()
-				],
-				'fa_icon' => [
+				'title' => [
 					'type' => Type::string()
 				],
 				'created_at' => [
@@ -29,7 +35,7 @@ class Genre extends ObjectType
 				'updated_at' => [
 					'type' => Types::dateTime()
 				]
-			]
+			], $depthArray)
 		];
 
 		parent::__construct($config);

@@ -7,6 +7,7 @@ use GraphQL\GraphQL;
 use Illuminate\Database\Capsule\Manager;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use GraphQL\Validator\DocumentValidator;
 
 class GraphQlController extends Controller
 {
@@ -18,6 +19,8 @@ class GraphQlController extends Controller
 		$query = $input['query'];
 		$variableValues = isset($input['variables']) ? $input['variables'] : NULL;
 
+//		$rule = new QueryDepth($maxDepth = 1);
+//		DocumentValidator::addRule($rule);
 		try {
 			$result = GraphQL::executeQuery(
 				$schema,

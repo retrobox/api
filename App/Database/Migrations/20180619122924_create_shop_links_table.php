@@ -3,7 +3,7 @@
 
 use Phinx\Migration\AbstractMigration;
 
-class CreatePostsTable extends AbstractMigration
+class CreateShopLinksTable extends AbstractMigration
 {
     /**
      * Change Method.
@@ -28,16 +28,13 @@ class CreatePostsTable extends AbstractMigration
      */
     public function change()
     {
-		$this->table('posts')
-			->addColumn('title', 'string')
-			->addColumn('slug', 'string')
-			->addColumn('description', 'text')
-			->addColumn('content', 'text')
+		$this->table('shop_links')
+			->addColumn('title', 'string', ['null' => true])
 			->addColumn("created_at", 'datetime', ['null' => true])
 			->addColumn("updated_at", 'datetime', ['null' => true])
 			->create();
 
-		$this->table('posts')
+		$this->table('shop_links')
 			->changeColumn('id', 'string')
 			->update();
     }

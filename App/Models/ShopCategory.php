@@ -4,13 +4,17 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Genre extends Model
+class ShopCategory extends Model
 {
 
-	protected $table = 'genres';
+	protected $table = 'shop_categories';
 
 	protected $keyType = 'string';
 
 	public $incrementing = false;
 
+	public function items()
+	{
+		return $this->hasMany(ShopItem::class);
+	}
 }

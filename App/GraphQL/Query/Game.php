@@ -60,7 +60,8 @@ class Game
 			'resolve' => function ($rootValue, $args) {
 				$game = \App\Models\Game::find($args['id']);
 				if ($game == NULL){
-					throw new Error("The game was not found");
+					//no found
+					return $game;
 				}else{
 					return $game
 						->with('platform', 'editor', 'genres')

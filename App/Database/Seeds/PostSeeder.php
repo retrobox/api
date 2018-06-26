@@ -51,7 +51,9 @@ class PostSeeder extends AbstractSeed
 			$posts[] = [
 				'id' => uniqid(),
 				'title' => $faker->sentence(),
+				'slug' => $faker->slug(5),
 				'description' => $faker->text(190),
+				'image' => "https://lorempixel.com/800/800/",
 				//markdown faker ?
 				'content' => $markdown,
 				'created_at' => $faker->dateTime->format('Y-m-d H:i:s'),

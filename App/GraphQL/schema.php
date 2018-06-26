@@ -5,5 +5,9 @@ return new \GraphQL\Type\Schema([
 
 	//types
 	'game' => (new \App\GraphQL\Type\Game()),
-	'post' => (new \App\GraphQL\Type\Post())
+	'post' => (new \App\GraphQL\Type\Post()),
+	//shop
+	'shop_item' => (new \App\GraphQL\Type\ShopItem()),
+	'shop_category' => (new \App\GraphQL\Type\ShopCategory()),
+	'shop_link' => (new \App\GraphQL\Type\ShopLink())
 ]);

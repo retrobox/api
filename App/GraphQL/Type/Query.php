@@ -20,6 +20,9 @@ class Query extends ObjectType {
 				//posts
 				'getManyPosts' => \App\GraphQL\Query\Post::getMany(),
 				'getOnePost' => \App\GraphQL\Query\Post::getOne(),
+				//shop item
+				'getManyShopItems' => \App\GraphQL\Query\ShopItem::getMany(),
+				'getOneShopItem' => \App\GraphQL\Query\ShopItem::getOne(),
 			]
 		];
 

@@ -10,8 +10,5 @@ return [
 			getenv('LOG_DISCORD_WH')
 		],
 		'path' => getenv('LOG_PATH')
-	],
-	'twig' => [
-		'cache' => getenv('TWIG_CACHE') == 'false' || !getenv('TWIG_CACHE') ? false : getenv('TWIG_CACHE')
 	]
 ];

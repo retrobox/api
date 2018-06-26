@@ -14,7 +14,7 @@ return [
 			'host' => $app->getContainer()->get('mysql')['host'],
 			'name' => $app->getContainer()->get('mysql')['database'],
 			'user' => $app->getContainer()->get('mysql')['username'],
-			'pass' => $app->getContainer()->get('mysql')['password'],
+			'pass' => $app->getContainer()->get('mysql')['password']
 		]
 	]
 ];

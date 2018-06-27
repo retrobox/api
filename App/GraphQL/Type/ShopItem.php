@@ -50,9 +50,12 @@ class ShopItem extends ObjectType
 				'version' => [
 					'type' => Type::string()
 				],
-				'link' => [
-					'type' => Types::shopLink()
-				],
+                'show_version' => [
+                    'type' => Type::boolean()
+                ],
+//				'link' => [
+//					'type' => Types::shopLink()
+//				],
 				'created_at' => [
 					'type' => Types::dateTime()
 				],

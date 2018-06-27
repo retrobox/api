@@ -3,6 +3,7 @@
 namespace App\GraphQL\Query;
 
 use App\GraphQL\Types;
+use App\Models\ShopCategory;
 use Error;
 use GraphQL\Type\Definition\InputObjectType;
 use GraphQL\Type\Definition\ObjectType;
@@ -63,17 +64,14 @@ class ShopItem
 			],
 			'resolve' => function ($rootValue, $args) {
 				if (isset($args['id'])) {
-					$item = \App\Models\ShopItem::find($args['id']);
+					$item = \App\Models\ShopItem::with('category')->find($args['id']);
 				} elseif (isset($args['slug'])) {
-					$item = \App\Models\ShopItem::query()->where('slug', '=', $args['slug'])->with('category', 'link')->get();
+					$item = \App\Models\ShopItem::query()->where('slug', '=', $args['slug'])->with('category')->first();
 				}else{
 					$item = \App\Models\ShopItem::find($args['id']);
 				}
-				if ($item == NULL) {
-					return $item;
-				} else {
-					return $item->first();
-				}
+
+				return $item;
 			}
 		];
 	}
@@ -81,26 +79,42 @@ class ShopItem
 	public static function store()
 	{
 		return [
-			'type' => Types::post(),
+			'type' => Types::shopItem(),
 			'args' => [
 				[
-					'name' => 'post',
-					'description' => 'Post to store',
+					'name' => 'item',
+					'description' => 'Item to store',
 					'type' => new InputObjectType([
-						'name' => 'PostInput',
+						'name' => 'ShopItemInput',
 						'fields' => [
-							'name' => ['type' => Type::nonNull(Type::string())],
-							'description' => ['type' => Type::nonNull(Type::string())],
-							'content' => ['type' => Type::nonNull(Type::string())],
-							'image' => ['type' => Type::nonNull(Type::string())]
+							'title' => ['type' => Type::nonNull(Type::string())],
+							'description_short' => ['type' => Type::nonNull(Type::string())],
+                            'description_long' => ['type' => Type::nonNull(Type::string())],
+							'price' => ['type' => Type::nonNull(Type::float())],
+							'image' => ['type' => Type::nonNull(Type::string())],
+							'version' => ['type' => Type::string()],
+							'category_id' => ['type' => Type::nonNull(Type::string())]
 						]
 					])
 				]
 			],
 			'resolve' => function ($rootValue, $args) {
-				return [
-					'id' => 'jdjs23'
-				];
+		        //verify if the category exist
+                $item = new \App\Models\ShopItem();
+                $item->id = uniqid();
+                $category = ShopCategory::find($args['item']['category_id'])->first();
+                if ($category !== NULL){
+                    $item->category()->associate($category);
+                }
+                $item->title = $args['item']['title'];
+                $item->description_short = $args['item']['description_short'];
+                $item->description_long = $args['item']['description_long'];
+                $item->version = $args['item']['version'];
+                $item->image = $args['item']['image'];
+                $item->price = $args['item']['price'];
+                $item->slug = str_slug($args['item']['title']);
+                $item->save();
+                return $item;
 			}
 		];
 	}

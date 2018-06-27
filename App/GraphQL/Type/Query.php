@@ -23,6 +23,9 @@ class Query extends ObjectType {
 				//shop item
 				'getManyShopItems' => \App\GraphQL\Query\ShopItem::getMany(),
 				'getOneShopItem' => \App\GraphQL\Query\ShopItem::getOne(),
+                //shop category
+                'getManyShopCategories' => \App\GraphQL\Query\ShopCategory::getMany(),
+                'getOneShopCategory' => \App\GraphQL\Query\ShopCategory::getOne(),
 			]
 		];
 

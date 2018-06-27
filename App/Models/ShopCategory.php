@@ -15,6 +15,6 @@ class ShopCategory extends Model
 
 	public function items()
 	{
-		return $this->hasMany(ShopItem::class);
+		return $this->hasMany(ShopItem::class, 'shop_category_id', 'id');
 	}
 }

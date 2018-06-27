@@ -13,7 +13,7 @@ class ShopCategory extends ObjectType
 		if ($depth){
 			$depthArray = [
 			 	'items' => [
-			 		'type' => Types::shopItem()
+			 		'type' => Type::listOf(Types::shopItem())
 				]
 			];
 		}else{

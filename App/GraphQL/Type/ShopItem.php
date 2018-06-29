@@ -37,6 +37,14 @@ class ShopItem extends ObjectType
 				'slug' => [
 					'type' => Type::string()
 				],
+                'weight' => [
+                    'description' => 'Weight of the item in g SI',
+                    'type' => Type::float()
+                ],
+				'images' => [
+				    'description' => 'Images belongs to this shop item',
+                    'type' => Type::listOf(Types::shopImage())
+                ],
 				'description_short' => [
 					'type' => Type::string()
 				],
@@ -53,9 +61,6 @@ class ShopItem extends ObjectType
                 'show_version' => [
                     'type' => Type::boolean()
                 ],
-//				'link' => [
-//					'type' => Types::shopLink()
-//				],
 				'created_at' => [
 					'type' => Types::dateTime()
 				],

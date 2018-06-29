@@ -64,9 +64,9 @@ class ShopItem
 			],
 			'resolve' => function ($rootValue, $args) {
 				if (isset($args['id'])) {
-					$item = \App\Models\ShopItem::with('category')->find($args['id']);
+					$item = \App\Models\ShopItem::with(['category', 'images'])->find($args['id']);
 				} elseif (isset($args['slug'])) {
-					$item = \App\Models\ShopItem::query()->where('slug', '=', $args['slug'])->with('category')->first();
+					$item = \App\Models\ShopItem::query()->where('slug', '=', $args['slug'])->with(['category', 'images'])->first();
 				}else{
 					$item = \App\Models\ShopItem::find($args['id']);
 				}
@@ -91,6 +91,7 @@ class ShopItem
 							'description_short' => ['type' => Type::nonNull(Type::string())],
                             'description_long' => ['type' => Type::nonNull(Type::string())],
 							'price' => ['type' => Type::nonNull(Type::float())],
+							'weight' => ['type' => Type::nonNull(Type::float())],
 							'image' => ['type' => Type::nonNull(Type::string())],
 							'version' => ['type' => Type::string()],
 							'category_id' => ['type' => Type::nonNull(Type::string())]

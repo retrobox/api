@@ -8,6 +8,7 @@ use App\GraphQL\Type\Genre;
 use App\GraphQL\Type\Platform;
 use App\GraphQL\Type\Scalar\NonEmpty;
 use App\GraphQL\Type\ShopCategory;
+use App\GraphQL\Type\ShopImage;
 use App\GraphQL\Type\ShopItem;
 use App\GraphQL\Type\ShopLink;
 
@@ -31,13 +32,13 @@ class Types
 	private static $nonEmpty;
 	private static $post;
 	private static $shopItem;
-	private static $shopLink;
 	private static $shopCategory;
 	private static $shopCategoryWithDepth;
 	private static $shopItemWithDepth;
+    private static $shopImage;
 
 
-	/**
+    /**
 	 * @return DateTime
 	 */
 	public static function dateTime()
@@ -124,11 +125,12 @@ class Types
 	}
 
 	/**
-	 * @return ShopLink
+	 * @return ShopImage
 	 */
-	public static function shopLink()
+	public static function shopImage()
 	{
-		return self::$shopLink ?: (self::$shopLink = new ShopLink());
+		return self::$shopImage ?: (self::$shopImage = new ShopImage());
 	}
+
 
 }

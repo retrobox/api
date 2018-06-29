@@ -36,6 +36,10 @@
         "fzaninotto/faker": "^1.7",
         "sebastianwalker/paysafecard-php-api": "^1.0",
         "lefuturiste/validator": "^1.0",
-        "respect/validation": "^1.1"
+        "respect/validation": "^1.1",
+        "stan-tab-corp/staileu-accounts": "^3.1",
+        "dflydev/fig-cookies": "^1.0",
+        "firebase/php-jwt": "^5.0",
+        "stripe/stripe-php": "^6.9"
     }
 }

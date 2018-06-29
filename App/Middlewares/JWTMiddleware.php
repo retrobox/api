@@ -4,6 +4,8 @@ namespace App\Middlewares;
 
 use App\Auth\Session;
 use DI\Container;
+use DI\DependencyException;
+use DI\NotFoundException;
 use function DusanKasan\Knapsack\toArray;
 use Firebase\JWT\JWT;
 use Noodlehaus\Exception;
@@ -25,8 +27,12 @@ class JWTMiddleware
 	public function __construct(Container $container)
 	{
 		$this->container = $container;
-		$this->session = $container->get(Session::class);
-	}
+        try {
+            $this->session = $container->get(Session::class);
+        } catch (DependencyException $e) {
+        } catch (NotFoundException $e) {
+        }
+    }
 
 	public function __invoke(ServerRequestInterface $request, ResponseInterface $response, $next)
 	{

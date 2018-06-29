@@ -8,6 +8,5 @@ return new \GraphQL\Type\Schema([
 	'post' => (new \App\GraphQL\Type\Post()),
 	//shop
 	'shop_item' => (new \App\GraphQL\Type\ShopItem()),
-	'shop_category' => (new \App\GraphQL\Type\ShopCategory()),
-	'shop_link' => (new \App\GraphQL\Type\ShopLink())
+	'shop_category' => (new \App\GraphQL\Type\ShopCategory())
 ]);

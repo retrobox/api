@@ -27,4 +27,9 @@ class ShopItem extends Model
     {
         return $this->belongsTo(ShopCategory::class, 'shop_category_id','id');
     }
+
+    public function images()
+    {
+        return $this->hasMany(ShopImage::class, 'shop_item_id', 'id');
+    }
 }

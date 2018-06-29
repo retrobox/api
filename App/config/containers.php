@@ -48,5 +48,9 @@ return [
 		$client->setUrls(new \SebastianWalker\Paysafecard\Urls($container->get('paysafecard')['urls'][0], $container->get('paysafecard')['urls'][1], $container->get('paysafecard')['urls'][2]));
 
 		return $client;
-	}
+	},
+
+    \STAILEUAccounts\STAILEUAccounts::class => function(\DI\Container $container) {
+        return new \STAILEUAccounts\STAILEUAccounts($container->get('staileu')['private'], $container->get('staileu')['public']);
+    }
 ];

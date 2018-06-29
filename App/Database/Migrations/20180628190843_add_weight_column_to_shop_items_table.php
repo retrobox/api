@@ -3,7 +3,7 @@
 
 use Phinx\Migration\AbstractMigration;
 
-class CreateShopLinksTable extends AbstractMigration
+class AddWeightColumnToShopItemsTable extends AbstractMigration
 {
     /**
      * Change Method.
@@ -28,14 +28,10 @@ class CreateShopLinksTable extends AbstractMigration
      */
     public function change()
     {
-		$this->table('shop_links')
-			->addColumn('title', 'string', ['null' => true])
-			->addColumn("created_at", 'datetime', ['null' => true])
-			->addColumn("updated_at", 'datetime', ['null' => true])
-			->create();
-
-		$this->table('shop_links')
-			->changeColumn('id', 'string')
-			->update();
+        $this->table('shop_items')
+            ->addColumn('weight', 'float', [
+                'null' => true
+            ])
+            ->update();
     }
 }

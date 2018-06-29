@@ -22,7 +22,12 @@ class Controller{
 		$this->container = $container;
 	}
 
-	public function redirect(ResponseInterface $response, $location){
+    /**
+     * @param ResponseInterface $response
+     * @param $location
+     * @return ResponseInterface
+     */
+    public function redirect(ResponseInterface $response, $location){
 		return $response->withStatus(302)->withHeader('Location', $location);
 	}
 

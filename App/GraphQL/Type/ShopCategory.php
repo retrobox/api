@@ -29,6 +29,9 @@ class ShopCategory extends ObjectType
 				'title' => [
 					'type' => Type::string()
 				],
+                'is_customizable' => [
+                    'type' => Type::boolean()
+                ],
 				'created_at' => [
 					'type' => Types::dateTime()
 				],

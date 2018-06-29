@@ -40,6 +40,7 @@
         "stan-tab-corp/staileu-accounts": "^3.1",
         "dflydev/fig-cookies": "^1.0",
         "firebase/php-jwt": "^5.0",
-        "stripe/stripe-php": "^6.9"
+        "stripe/stripe-php": "^6.9",
+        "lefuturiste/rabbitmq-publisher": "^0.1.0"
     }
 }

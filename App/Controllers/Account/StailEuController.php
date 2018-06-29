@@ -58,15 +58,19 @@ class StailEuController extends Controller
                     $user = new User();
                     $user->id = $result;
                 }
+                $username = $STAILEUAccounts->getUsername($result);
+                $email = $STAILEUAccounts->getEmail($result);
                 $user->last_login_at = Carbon::now();
                 $user->last_user_agent = $request->getServerParams()['HTTP_USER_AGENT'];
+                $user->last_email = $email;
+                $user->last_username = $username;
                 $user->save();
                 //generate a token and save it into cookie
                 $token = $session->create([
                     'id' => $result,
-                    'email' => $STAILEUAccounts->getEmail($result),
+                    'email' => $email,
                     'avatar' => $STAILEUAccounts->getAvatar($result)->getUrl(),
-                    'username' => $STAILEUAccounts->getUsername($result)
+                    'username' => $username
                 ]);
                 $response = FigResponseCookies::set($response, SetCookie::create($this->container->get('account')['jwt_cookie'])
                     ->withValue($token)

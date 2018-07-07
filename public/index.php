@@ -18,7 +18,6 @@ if (file_exists("../.env")) {
     $dotenv = new Dotenv\Dotenv(dirname(__DIR__));
     $dotenv->load();
 }
-
 /*
 |--------------------------------------------------------------------------
 | Function File

@@ -32,6 +32,9 @@ class ShopCategory extends ObjectType
                 'is_customizable' => [
                     'type' => Type::boolean()
                 ],
+                'locale' => [
+                    'type' => Type::string()
+                ],
 				'created_at' => [
 					'type' => Types::dateTime()
 				],

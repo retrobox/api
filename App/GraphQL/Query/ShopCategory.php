@@ -33,13 +33,20 @@ class ShopCategory
                     'description' => 'Direction of the order',
                     'type' => Type::string(),
                     'defaultValue' => 'desc'
-                ]
+                ],
+                [
+                    'name' => 'locale',
+                    'description' => 'Filter by locales',
+                    'type' => Type::string(),
+                    'defaultValue' => 'fr'
+                ],
             ],
             'resolve' => function ($rootValue, $args) {
                 return \App\Models\ShopCategory::query()
                     ->with('items')
                     ->limit($args['limit'])
                     ->orderBy($args['orderBy'], strtolower($args['orderDir']))
+                    ->where('locale', '=', $args['locale'])
                     ->get();
             }
         ];

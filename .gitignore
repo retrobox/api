@@ -70,3 +70,5 @@ vendor/*
 vendor/
 node_modules/
 composer.phar
+
+null

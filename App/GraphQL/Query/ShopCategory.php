@@ -70,4 +70,35 @@ class ShopCategory
             }
         ];
     }
+
+    public static function store()
+    {
+        return [
+            'type' => Types::shopCategory(),
+            'args' => [
+                [
+                    'name' => 'item',
+                    'description' => 'Category to store',
+                    'type' => new InputObjectType([
+                        'name' => 'ShopCategoryInput',
+                        'fields' => [
+                            'title' => ['type' => Type::nonNull(Type::string())],
+                            'is_customizable' => ['type' => Type::nonNull(Type::boolean())],
+                            'locale' => ['type' => Type::nonNull(Type::string())]
+                        ]
+                    ])
+                ]
+            ],
+            'resolve' => function ($rootValue, $args) {
+                //verify if the category exist
+                $item = new \App\Models\ShopCategory();
+                $item->id = uniqid();
+                $item->title = $args['item']['title'];
+                $item->is_customizable = $args['item']['is_customizable'];
+                $item->locale = $args['item']['locale'];
+                $item->save();
+                return $item;
+            }
+        ];
+    }
 }

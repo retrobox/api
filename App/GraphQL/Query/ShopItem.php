@@ -97,11 +97,13 @@ class ShopItem
                             'title' => ['type' => Type::nonNull(Type::string())],
                             'description_short' => ['type' => Type::nonNull(Type::string())],
                             'description_long' => ['type' => Type::nonNull(Type::string())],
+                            'show_version' => ['type' => Type::nonNull(Type::boolean())],
                             'price' => ['type' => Type::nonNull(Type::float())],
                             'weight' => ['type' => Type::nonNull(Type::float())],
                             'image' => ['type' => Type::nonNull(Type::string())],
                             'version' => ['type' => Type::string()],
-                            'category_id' => ['type' => Type::nonNull(Type::string())]
+                            'category_id' => ['type' => Type::nonNull(Type::string())],
+                            'locale' => ['type' => Type::nonNull(Type::string())]
                         ]
                     ])
                 ]
@@ -115,9 +117,11 @@ class ShopItem
                     $item->category()->associate($category);
                 }
                 $item->title = $args['item']['title'];
+                $item->locale = $args['item']['locale'];
                 $item->description_short = $args['item']['description_short'];
                 $item->description_long = $args['item']['description_long'];
                 $item->version = $args['item']['version'];
+                $item->show_version = $args['item']['show_version'];
                 $item->image = $args['item']['image'];
                 $item->price = $args['item']['price'];
                 $item->slug = str_slug($args['item']['title']);

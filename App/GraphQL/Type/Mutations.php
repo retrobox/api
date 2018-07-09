@@ -13,12 +13,13 @@ class Mutations extends ObjectType {
 			'name' => 'Mutations',
 			'fields' => [
 				'storeGame' => \App\GraphQL\Query\Game::store(),
-
 				//post
 				'storePost' => \App\GraphQL\Query\Post::store(),
+                //user
+                'updateUser' => \App\GraphQL\Query\User::update(),
                 //shop item
-                'storeShopItem' => \App\GraphQL\Query\ShopItem::store()
-
+                'storeShopItem' => \App\GraphQL\Query\ShopItem::store(),
+                'storeShopCategory' => \App\GraphQL\Query\ShopCategory::store()
 			]
 		];
 

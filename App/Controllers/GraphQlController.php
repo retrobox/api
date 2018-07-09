@@ -19,8 +19,6 @@ class GraphQlController extends Controller
 		$query = $input['query'];
 		$variableValues = isset($input['variables']) ? $input['variables'] : NULL;
 
-//		$rule = new QueryDepth($maxDepth = 1);
-//		DocumentValidator::addRule($rule);
 		try {
 			$result = GraphQL::executeQuery(
 				$schema,

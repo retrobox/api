@@ -70,7 +70,8 @@ class StailEuController extends Controller
                     'id' => $result,
                     'email' => $email,
                     'avatar' => $STAILEUAccounts->getAvatar($result)->getUrl(),
-                    'username' => $username
+                    'username' => $username,
+                    'is_admin' => $user->is_admin
                 ]);
                 $response = FigResponseCookies::set($response, SetCookie::create($this->container->get('account')['jwt_cookie'])
                     ->withValue($token)

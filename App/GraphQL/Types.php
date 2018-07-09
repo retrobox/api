@@ -11,6 +11,7 @@ use App\GraphQL\Type\ShopCategory;
 use App\GraphQL\Type\ShopImage;
 use App\GraphQL\Type\ShopItem;
 use App\GraphQL\Type\ShopLink;
+use App\GraphQL\Type\User;
 
 /**
  * Class Types
@@ -36,6 +37,7 @@ class Types
 	private static $shopCategoryWithDepth;
 	private static $shopItemWithDepth;
     private static $shopImage;
+    private static $user;
 
 
     /**
@@ -131,6 +133,11 @@ class Types
 	{
 		return self::$shopImage ?: (self::$shopImage = new ShopImage());
 	}
+
+    public static function user()
+    {
+        return self::$user ?: (self::$user = new User());
+    }
 
 
 }

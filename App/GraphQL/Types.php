@@ -115,7 +115,7 @@ class Types
 	 */
 	public static function shopCategory()
 	{
-		return self::$shopCategory ?: (self::$shopCategory = new ShopCategory());
+		return self::$shopCategory ?: (self::$shopCategory = new ShopCategory(false));
 	}
 	
 	/**

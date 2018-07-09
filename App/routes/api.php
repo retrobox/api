@@ -16,6 +16,7 @@ $app->group('/', function (){
     $this->get('paysafecard/failure', [\App\Controllers\Payment\PaysafeCardController::class, 'getFailure']);
     $this->map(['POST','OPTIONS'], 'stripe/execute', [\App\Controllers\Payment\StripeController::class, 'postExecute'])->add(new \App\Middlewares\JWTMiddleware($this->getContainer()));
     $this->get('account/login', [\App\Controllers\Account\StailEuController::class, 'getLogin']);
+    $this->get('account/info', [\App\Controllers\Account\StailEuController::class, 'getInfo'])->add(new \App\Middlewares\JWTMiddleware($this->getContainer()));
     $this->get('account/register', [\App\Controllers\Account\StailEuController::class, 'getRegister']);
     $this->get('account/execute', [\App\Controllers\Account\StailEuController::class, 'getExecute']);
 })->add(new \App\Middlewares\CorsMiddleware());

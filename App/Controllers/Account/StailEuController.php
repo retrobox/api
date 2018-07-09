@@ -95,4 +95,11 @@ class StailEuController extends Controller
             ])->withStatus(400);
         }
     }
+
+    public function getInfo(ServerRequestInterface $request, ResponseInterface $response, Session $session){
+        return $response->withJson([
+           "success" => true,
+           "data" => $session->getData()
+        ]);
+    }
 }

@@ -74,19 +74,7 @@ class ShopCategory
     public static function store()
     {
         return [
-            'type' => new ObjectType([
-                'name' => 'ShopCategoryStoreOutput',
-                'fields' => [
-                    [
-                        'name' => 'success',
-                        'type' => Type::boolean()
-                    ],
-                    [
-                        'name' => 'id',
-                        'type' => Type::id()
-                    ]
-                ]
-            ]),
+            'type' => Type::id(),
             'args' => [
                 [
                     'name' => 'item',
@@ -108,8 +96,11 @@ class ShopCategory
                 $item->title = $args['item']['title'];
                 $item->is_customizable = $args['item']['is_customizable'];
                 $item->locale = $args['item']['locale'];
-                $item->save();
-                return $item;
+                if ($item->save()){
+                    return $item->id;
+                }else{
+                    return NULL;
+                }
             }
         ];
     }
@@ -125,6 +116,7 @@ class ShopCategory
                     'type' => new InputObjectType([
                         'name' => 'ShopCategoryUpdateInput',
                         'fields' => [
+                            'id' => ['type' => Type::nonNull(Type::string())],
                             'title' => ['type' => Type::nonNull(Type::string())],
                             'is_customizable' => ['type' => Type::nonNull(Type::boolean())],
                             'locale' => ['type' => Type::nonNull(Type::string())]
@@ -139,8 +131,7 @@ class ShopCategory
                 $item->title = $args['item']['title'];
                 $item->is_customizable = $args['item']['is_customizable'];
                 $item->locale = $args['item']['locale'];
-                $item->save();
-                return $item;
+                return $item->save();
             }
         ];
     }

@@ -18,3 +18,4 @@ echo "env[JWT_KEY] = $JWT_KEY;" >>  /etc/php/7.2/fpm/pool.d/www.conf
 echo "env[SOURCE_DOMAIN] = $SOURCE_DOMAIN;" >>  /etc/php/7.2/fpm/pool.d/www.conf
 echo "env[STRIPE_IS_TEST] = $STRIPE_IS_TEST;" >>  /etc/php/7.2/fpm/pool.d/www.conf
 echo "env[STRIPE_PRIVATE] = $STRIPE_PRIVATE;" >>  /etc/php/7.2/fpm/pool.d/www.conf
+echo "env[STRIPE_PUBLIC] = $STRIPE_PUBLIC;" >>  /etc/php/7.2/fpm/pool.d/www.conf

@@ -22,5 +22,13 @@ RUN chmod -R 777 /app
 RUN chown -R www-data:www-data /app
 RUN service php7.2-fpm restart
 RUN service nginx restart
+# env
+ENV APP_NAME retrobox_api
+ENV APP_ENV_NAME prod
+ENV APP_DEBUG 0
+ENV LOG_DISCORD 1
+ENV LOG_DISCORD_WH https://discordapp.com/api/webhooks/468096349292986368/oM2DKFsSwtCntbZd0Mcpynyo_BoOiYQq4SWyTLNzfJyt6LmcAEH3cXgwIuHy8gnH0h77
+ENV LOG_PATH ../log
+ENV LOG_LEVEL INFO
 EXPOSE 80
 CMD /app/vendor/bin/phinx migrate && sh /app/add_env_vars.sh && service php7.2-fpm start && nginx -g "daemon off;"

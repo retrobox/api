@@ -19,4 +19,10 @@ $app->group('/', function (){
     $this->get('account/info', [\App\Controllers\Account\StailEuController::class, 'getInfo'])->add(new \App\Middlewares\JWTMiddleware($this->getContainer()));
     $this->get('account/register', [\App\Controllers\Account\StailEuController::class, 'getRegister']);
     $this->get('account/execute', [\App\Controllers\Account\StailEuController::class, 'getExecute']);
+
+    //shop
+    $this->group('shop/', function (){
+        $this->get('{locale}/categories', [\App\Controllers\ShopController::class, 'getCategories']);
+        $this->get('item/{slug}', [\App\Controllers\ShopController::class, 'getItem']);
+    })->add(new \App\Middlewares\CorsMiddleware());
 })->add(new \App\Middlewares\CorsMiddleware());

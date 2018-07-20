@@ -10,5 +10,9 @@ return [
 			getenv('LOG_DISCORD_WH')
 		],
 		'path' => getenv('LOG_PATH')
-	]
+	],
+    'locales' => [
+        'fr',
+        'en'
+    ]
 ];

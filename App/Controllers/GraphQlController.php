@@ -23,19 +23,21 @@ class GraphQlController extends Controller
 			$result = GraphQL::executeQuery(
 				$schema,
 				$query,
-				[
-					'manager' => $manager,
-					'container' => $container
-				],
+				$container,
 				NULL,
 				$variableValues
 			);
 
 			if ($result->errors) {
+			    $code = 400;
+			    //catch others error than 400 (like 403)
+			    if ($result->errors[0]->getPrevious() != NULL && $result->errors[0]->getPrevious()->getCode() != 0 && $result->errors[0]->getPrevious()->getCode() > 400){
+			        $code = $result->errors[0]->getPrevious()->getCode();
+                }
 				return $response->withJson([
 					'success' => false,
 					'errors' => $result->errors,
-				])->withStatus(400);
+				])->withStatus($code);
 			} else {
 				return $response->withJson([
 					'success' => true,

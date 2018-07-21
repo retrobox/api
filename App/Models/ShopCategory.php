@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class ShopCategory extends Model
 {
-
 	protected $table = 'shop_categories';
 
 	protected $keyType = 'string';

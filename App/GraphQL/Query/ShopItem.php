@@ -86,7 +86,13 @@ class ShopItem
     public static function store()
     {
         return [
-            'type' => Type::id(),
+            'type' => new ObjectType([
+                'name' => 'ShopItemStoreOutput',
+                'fields' => [
+                    'id' => ['type' => Type::id()],
+                    'saved' => ['type' => Type::boolean()]
+                ]
+            ]),
             'args' => [
                 [
                     'name' => 'item',
@@ -109,6 +115,7 @@ class ShopItem
                 ]
             ],
             'resolve' => function ($rootValue, $args) {
+                //admin only
                 //verify if the category exist
                 $item = new \App\Models\ShopItem();
                 $item->id = uniqid();
@@ -126,7 +133,10 @@ class ShopItem
                 $item->price = $args['item']['price'];
                 $item->slug = str_slug($args['item']['title']);
                 if ($item->save()){
-                    return $item->id;
+                    return [
+                        'saved' => true,
+                        'id' => $item->id
+                    ];
                 }else{
                     return NULL;
                 }
@@ -162,6 +172,7 @@ class ShopItem
                 ]
             ],
             'resolve' => function ($rootValue, $args) {
+                //admin only
                 $item = \App\Models\ShopItem::find($args['item']['id']);
                 if ($item !== NULL){
                     $category = ShopCategory::find($args['item']['category_id'])->first();

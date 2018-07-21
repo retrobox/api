@@ -99,4 +99,11 @@ class Session
 	{
 		return $this->data;
 	}
+    /**
+     * @return boolean
+     */
+    public function isAdmin(): bool
+    {
+        return (boolean)$this->data['user']['is_admin'];
+    }
 }

@@ -2,11 +2,13 @@
 
 namespace App\GraphQL\Query;
 
+use App\Auth\Session;
 use App\GraphQL\Types;
 use Error;
 use GraphQL\Type\Definition\InputObjectType;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
+use Psr\Container\ContainerInterface;
 
 class ShopCategory
 {
@@ -38,16 +40,21 @@ class ShopCategory
                     'name' => 'locale',
                     'description' => 'Filter by locales',
                     'type' => Type::string(),
-                    'defaultValue' => 'fr'
+                    'defaultValue' => NULL
                 ],
             ],
             'resolve' => function ($rootValue, $args) {
-                return \App\Models\ShopCategory::query()
+                $query = \App\Models\ShopCategory::query()
                     ->with('items')
                     ->limit($args['limit'])
-                    ->orderBy($args['orderBy'], strtolower($args['orderDir']))
-                    ->where('locale', '=', $args['locale'])
-                    ->get();
+                    ->orderBy($args['orderBy'], strtolower($args['orderDir']));
+
+                if ($args['locale'] != NULL){
+                    $query
+                        ->where('locale', '=', $args['locale']);
+                }
+
+                return $query->get();
             }
         ];
     }
@@ -74,10 +81,16 @@ class ShopCategory
     public static function store()
     {
         return [
-            'type' => Type::id(),
+            'type' => new ObjectType([
+                'name' => 'ShopCategoryStoreOutput',
+                'fields' => [
+                    'id' => ['type' => Type::id()],
+                    'saved' => ['type' => Type::boolean()]
+                ]
+            ]),
             'args' => [
                 [
-                    'name' => 'item',
+                    'name' => 'category',
                     'description' => 'Category to store',
                     'type' => new InputObjectType([
                         'name' => 'ShopCategoryStoreInput',
@@ -89,29 +102,36 @@ class ShopCategory
                     ])
                 ]
             ],
-            'resolve' => function ($rootValue, $args) {
-                //verify if the category exist
-                $item = new \App\Models\ShopCategory();
-                $item->id = uniqid();
-                $item->title = $args['item']['title'];
-                $item->is_customizable = $args['item']['is_customizable'];
-                $item->locale = $args['item']['locale'];
-                if ($item->save()){
-                    return $item->id;
+            'resolve' => function (ContainerInterface $rootValue, $args) {
+                //admin only
+                if ($rootValue->get(Session::class)->isAdmin()){
+                    $item = new \App\Models\ShopCategory();
+                    $item->id = uniqid();
+                    $item->title = $args['category']['title'];
+                    $item->is_customizable = $args['category']['is_customizable'];
+                    $item->locale = $args['category']['locale'];
+                    if ($item->save()){
+                        return [
+                            'saved' => true,
+                            'id' => $item->id
+                        ];
+                    }else{
+                        return NULL;
+                    }
                 }else{
-                    return NULL;
+                    return new \Exception("Forbidden", 403);
                 }
             }
         ];
     }
 
-    public static function update()
+    public static function  update()
     {
         return [
             'type' => Type::boolean(),
             'args' => [
                 [
-                    'name' => 'item',
+                    'name' => 'category',
                     'description' => 'Category to update',
                     'type' => new InputObjectType([
                         'name' => 'ShopCategoryUpdateInput',
@@ -125,13 +145,48 @@ class ShopCategory
                 ]
             ],
             'resolve' => function ($rootValue, $args) {
-                //verify if the category exist
-                $item = new \App\Models\ShopCategory();
-                $item->id = uniqid();
-                $item->title = $args['item']['title'];
-                $item->is_customizable = $args['item']['is_customizable'];
-                $item->locale = $args['item']['locale'];
-                return $item->save();
+                //admin only
+                if ($rootValue->get(Session::class)->isAdmin()){
+                    $item = \App\Models\ShopCategory::with('items')->find($args['category']['id']);
+                    if ($item == NULL){
+                        return new \Exception("ShopCategory not found", 404);
+                    }else{
+                        $item->title = $args['category']['title'];
+                        $item->is_customizable = $args['category']['is_customizable'];
+                        $item->locale = $args['category']['locale'];
+                        return $item->save();
+                    }
+                }else{
+                    return new \Exception("Forbidden", 403);
+                }
+            }
+        ];
+    }
+
+    public static function destroy()
+    {
+        return [
+            'type' => Type::boolean(),
+            'description' => 'Destroy a shop category',
+            'args' => [
+                [
+                    'name' => 'id',
+                    'description' => 'The Id of the shop category to destroy',
+                    'type' => Type::string()
+                ]
+            ],
+            'resolve' => function ($rootValue, $args) {
+                //only admin
+                if ($rootValue->get(Session::class)->isAdmin()){
+                    $item = \App\Models\ShopCategory::with('items')->find($args['id']);
+                    if ($item == NULL){
+                        return new \Exception("ShopCategory not found", 404);
+                    }else{
+                        return \App\Models\ShopCategory::destroy($args['id']);
+                    }
+                }else{
+                    return new \Exception("Forbidden", 403);
+                }
             }
         ];
     }

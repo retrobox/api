@@ -14,5 +14,8 @@ return [
     'locales' => [
         'fr',
         'en'
+    ],
+    'services' => [
+        'web_endpoint' => getenv('WEB_ENDPOINT')
     ]
 ];

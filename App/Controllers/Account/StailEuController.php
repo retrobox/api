@@ -42,9 +42,13 @@ class StailEuController extends Controller
         ]);
     }
 
-    public function getExecute(ServerRequestInterface $request, ResponseInterface $response, STAILEUAccounts $STAILEUAccounts, Manager $manager, Session $session)
+    public function execute(ServerRequestInterface $request, ResponseInterface $response, STAILEUAccounts $STAILEUAccounts, Manager $manager, Session $session)
     {
-        $validator = new Validator($request->getQueryParams());
+        if ($request->getMethod() == 'POST'){
+            $validator = new Validator($request->getParsedBody());
+        }else{
+            $validator = new Validator($request->getQueryParams());
+        }
         $validator->required('c-sa');
         $validator->notEmpty('c-sa');
         if ($validator->isValid()) {
@@ -60,31 +64,50 @@ class StailEuController extends Controller
                 }
                 $username = $STAILEUAccounts->getUsername($result);
                 $email = $STAILEUAccounts->getEmail($result);
+                $avatar = $STAILEUAccounts->getAvatar($result)->getUrl();
                 $user->last_login_at = Carbon::now();
                 $user->last_user_agent = $request->getServerParams()['HTTP_USER_AGENT'];
+                $user->last_avatar = $avatar;
                 $user->last_email = $email;
                 $user->last_username = $username;
                 $user->save();
                 //generate a token and save it into cookie
-                $token = $session->create([
+                $userInfos = [
                     'id' => $result,
                     'email' => $email,
-                    'avatar' => $STAILEUAccounts->getAvatar($result)->getUrl(),
+                    'avatar' => $avatar,
                     'username' => $username,
                     'is_admin' => $user->is_admin
-                ]);
-                $response = FigResponseCookies::set($response, SetCookie::create($this->container->get('account')['jwt_cookie'])
-                    ->withValue($token)
-                    ->withDomain($this->container->get('account')['domain'])
-                    ->withPath('/')
-                    ->rememberForever());
+                ];
+                $token = $session->create($userInfos);
+                if ($request->getMethod() == 'POST'){
+                    //return simple token
+                    return $response->withJson([
+                        'success' => true,
+                        'data' => [
+                            'token' => $token,
+                            'user' => $userInfos
+                        ]
+                    ]);
+                }else{
+                    //cookie way
+                    $response = FigResponseCookies::set($response, SetCookie::create($this->container->get('account')['jwt_cookie'])
+                        ->withValue($token)
+                        ->withDomain($this->container->get('account')['domain'])
+                        ->withPath('/')
+                        ->rememberForever());
 
-                return $this->redirect($response, FigRequestCookies::get($request, $this->container->get('account')['redirection_url_cookie'])->getValue());
+                    $redirect = FigRequestCookies::get($request, $this->container->get('account')['redirection_url_cookie'])->getValue();
+                    if ($redirect == null){
+                        return $this->redirect($response, $this->container->get('services')['web_endpoint']);
+                    }
+                    return $this->redirect($response, $redirect);
+                }
             } else {
                 return $response->withJson([
                     'success' => false,
                     'errors' => [
-                        $result->getMessage()
+                        $result->getCode() . ": " . $result->getMessage()
                     ]
                 ])->withStatus(400);
             }
@@ -95,6 +118,7 @@ class StailEuController extends Controller
             ])->withStatus(400);
         }
     }
+
 
     public function getInfo(ServerRequestInterface $request, ResponseInterface $response, Session $session){
         return $response->withJson([

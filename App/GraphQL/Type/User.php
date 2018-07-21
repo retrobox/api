@@ -24,6 +24,9 @@ class User extends ObjectType
                 'last_email' => [
                     'type' => Type::string()
                 ],
+                'last_avatar' => [
+                    'type' => Type::string()
+                ],
                 'last_user_agent' => [
                     'type' => Type::string()
                 ],

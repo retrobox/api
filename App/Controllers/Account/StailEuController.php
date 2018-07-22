@@ -73,8 +73,6 @@ class StailEuController extends Controller
                 $user->last_username = $username;
                 if ($result == $this->container->get('default_admin_user_id')){
                     $user->is_admin = true;
-                }else{
-                    $user->is_admin = false;
                 }
                 $user->save();
                 //generate a token and save it into cookie

@@ -13,6 +13,7 @@ use Dflydev\FigCookies\SetCookie;
 use Dflydev\FigCookies\SetCookies;
 use Firebase\JWT\JWT;
 use Illuminate\Database\Capsule\Manager;
+use Monolog\Logger;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use STAILEUAccounts\STAILEUAccounts;
@@ -84,6 +85,8 @@ class StailEuController extends Controller
                     'username' => $username,
                     'is_admin' => $user->is_admin
                 ];
+                $this->container->get(Logger::class)->info(
+                    "New login: {$result}, default admin id: {$this->container->get('default_admin_user_id')}");
                 $token = $session->create($userInfos);
                 if ($request->getMethod() == 'POST'){
                     //return simple token

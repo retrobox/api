@@ -70,6 +70,11 @@ class StailEuController extends Controller
                 $user->last_avatar = $avatar;
                 $user->last_email = $email;
                 $user->last_username = $username;
+                if ($result == $this->container->get('default_admin_user_id')){
+                    $user->is_admin = true;
+                }else{
+                    $user->is_admin = false;
+                }
                 $user->save();
                 //generate a token and save it into cookie
                 $userInfos = [
@@ -98,7 +103,7 @@ class StailEuController extends Controller
                         ->rememberForever());
 
                     $redirect = FigRequestCookies::get($request, $this->container->get('account')['redirection_url_cookie'])->getValue();
-                    if ($redirect == null){
+                    if ($redirect == NULL){
                         return $this->redirect($response, $this->container->get('services')['web_endpoint']);
                     }
                     return $this->redirect($response, $redirect);

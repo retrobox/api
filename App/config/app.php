@@ -17,5 +17,7 @@ return [
     ],
     'services' => [
         'web_endpoint' => getenv('WEB_ENDPOINT')
-    ]
+    ],
+    //staileu id of a default admin (super admin)
+    'default_admin_user_id' => getenv('DEFAULT_ADMIN_USER_ID')
 ];

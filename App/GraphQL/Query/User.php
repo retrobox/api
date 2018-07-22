@@ -59,11 +59,9 @@ class User
 			'resolve' => function ($rootValue, $args) {
 				$user = \App\Models\User::find($args['id']);
 				if ($user == NULL){
-					//no found
-					return $user;
+				    return new \Exception('Unknown user', 404);
 				}else{
-					return $user
-						->first();
+					return $user;
 				}
 			}
 		];
@@ -72,13 +70,13 @@ class User
 	public static function update()
 	{
 		return [
-			'type' => Types::user(),
+			'type' => Type::boolean(),
 			'args' => [
 				[
 					'name' => 'user',
 					'description' => 'User to update',
 					'type' => new InputObjectType([
-						'name' => 'UserInput',
+						'name' => 'UserUpdateInput',
 						'fields' => [
 							'id' => ['type' => Type::nonNull(Type::string())],
 							'is_admin' => ['type' => Type::nonNull(Type::boolean())]
@@ -89,13 +87,10 @@ class User
 			'resolve' => function ($rootValue, $args) {
                 $user = \App\Models\User::find($args['user']['id']);
                 if ($user == NULL){
-                    //no found
-                    return $user;
+                    return new \Exception('Unknown user', 404);
                 }else{
                     $user->is_admin = $args['user']['is_admin'];
-                    $user->save();
-
-                    return true;
+                    return $user->save();
                 }
 			}
 		];

@@ -32,6 +32,7 @@ echo "env[STRIPE_IS_TEST] = $STRIPE_IS_TEST;" >>  /etc/php/7.2/fpm/pool.d/www.co
 echo "env[STRIPE_PRIVATE] = $STRIPE_PRIVATE;" >>  /etc/php/7.2/fpm/pool.d/www.conf
 echo "env[STRIPE_PUBLIC] = $STRIPE_PUBLIC;" >>  /etc/php/7.2/fpm/pool.d/www.conf
 echo "env[WEB_ENDPOINT] = $WEB_ENDPOINT;" >>  /etc/php/7.2/fpm/pool.d/www.conf
+echo "env[DEFAULT_ADMIN_USER_ID] = $DEFAULT_ADMIN_USER_ID;" >>  /etc/php/7.2/fpm/pool.d/www.conf
 echo "Done!"
 
 echo "Migrating db..."

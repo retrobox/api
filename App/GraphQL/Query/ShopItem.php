@@ -2,6 +2,7 @@
 
 namespace App\GraphQL\Query;
 
+use App\Auth\Session;
 use App\GraphQL\Types;
 use App\Models\ShopCategory;
 use Error;
@@ -104,41 +105,58 @@ class ShopItem
                             'description_short' => ['type' => Type::nonNull(Type::string())],
                             'description_long' => ['type' => Type::nonNull(Type::string())],
                             'show_version' => ['type' => Type::nonNull(Type::boolean())],
-                            'price' => ['type' => Type::nonNull(Type::float())],
-                            'weight' => ['type' => Type::nonNull(Type::float())],
-                            'image' => ['type' => Type::nonNull(Type::string())],
+                            'price' => ['type' => Type::nonNull(Types::float())],
+                            'weight' => ['type' => Type::nonNull(Types::float())],
+                            'image' => ['type' => Type::nonNull(Types::url())],
                             'version' => ['type' => Type::string()],
                             'category_id' => ['type' => Type::nonNull(Type::string())],
-                            'locale' => ['type' => Type::nonNull(Type::string())]
+                            'images' => ['type' => Type::listOf(new InputObjectType([
+                                'name' => 'ShopImageStoreInput',
+                                'fields' => [
+                                    'url' => ['type' => Type::nonNull(Types::url())],
+                                    'is_main' => ['type' => Type::nonNull(Type::boolean())]
+                                ]
+                            ]))]
                         ]
                     ])
                 ]
             ],
             'resolve' => function ($rootValue, $args) {
                 //admin only
-                //verify if the category exist
-                $item = new \App\Models\ShopItem();
-                $item->id = uniqid();
-                $category = ShopCategory::find($args['item']['category_id'])->first();
-                if ($category !== NULL) {
-                    $item->category()->associate($category);
-                }
-                $item->title = $args['item']['title'];
-                $item->locale = $args['item']['locale'];
-                $item->description_short = $args['item']['description_short'];
-                $item->description_long = $args['item']['description_long'];
-                $item->version = $args['item']['version'];
-                $item->show_version = $args['item']['show_version'];
-                $item->image = $args['item']['image'];
-                $item->price = $args['item']['price'];
-                $item->slug = str_slug($args['item']['title']);
-                if ($item->save()){
+                if ($rootValue->get(Session::class)->isAdmin()) {
+                    //verify if the category exist
+                    $item = new \App\Models\ShopItem();
+                    $item->id = uniqid();
+                    $category = ShopCategory::find($args['item']['category_id']);
+                    if ($category !== NULL) {
+                        $item->category()->associate($category);
+                    } else {
+                        return new \Exception('Unknown category', 404);
+                    }
+                    $images = array_map(function ($image){
+                        $image['id'] = uniqid();
+                        return $image;
+                    }, $args['item']['images']);
+                    $item->images()->createMany(
+                        $images
+                    );
+                    $item->title = $args['item']['title'];
+                    $item->locale = $category->locale;
+                    $item->description_short = $args['item']['description_short'];
+                    $item->description_long = $args['item']['description_long'];
+                    $item->version = $args['item']['version'];
+                    $item->show_version = $args['item']['show_version'];
+                    $item->image = $args['item']['image'];
+                    $item->price = (float) $args['item']['price'];
+                    $item->weight = (float) $args['item']['weight'];
+                    $item->slug = str_slug($args['item']['title']);
+                    
                     return [
-                        'saved' => true,
+                        'saved' => $item->save(),
                         'id' => $item->id
                     ];
-                }else{
-                    return NULL;
+                } else {
+                    return new \Exception("Forbidden", 403);
                 }
             }
         ];
@@ -174,7 +192,7 @@ class ShopItem
             'resolve' => function ($rootValue, $args) {
                 //admin only
                 $item = \App\Models\ShopItem::find($args['item']['id']);
-                if ($item !== NULL){
+                if ($item !== NULL) {
                     $category = ShopCategory::find($args['item']['category_id'])->first();
                     if ($category !== NULL) {
                         $item->category()->associate($category);
@@ -189,8 +207,36 @@ class ShopItem
                     $item->price = $args['item']['price'];
                     $item->slug = str_slug($args['item']['title']);
                     return $item->save();
-                }else{
+                } else {
                     return NULL;
+                }
+            }
+        ];
+    }
+
+    public static function destroy()
+    {
+        return [
+            'type' => Type::boolean(),
+            'description' => 'Destroy a shop item',
+            'args' => [
+                [
+                    'name' => 'id',
+                    'description' => 'The Id of the shop item to destroy',
+                    'type' => Type::string()
+                ]
+            ],
+            'resolve' => function ($rootValue, $args) {
+                //only admin
+                if ($rootValue->get(Session::class)->isAdmin()) {
+                    $item = \App\Models\ShopItem::find($args['id']);
+                    if ($item == NULL) {
+                        return new \Exception("ShopItem not found", 404);
+                    } else {
+                        return \App\Models\ShopItem::destroy($args['id']);
+                    }
+                } else {
+                    return new \Exception("Forbidden", 403);
                 }
             }
         ];

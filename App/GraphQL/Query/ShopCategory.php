@@ -178,7 +178,7 @@ class ShopCategory
             'resolve' => function ($rootValue, $args) {
                 //only admin
                 if ($rootValue->get(Session::class)->isAdmin()){
-                    $item = \App\Models\ShopCategory::with('items')->find($args['id']);
+                    $item = \App\Models\ShopCategory::find($args['id']);
                     if ($item == NULL){
                         return new \Exception("ShopCategory not found", 404);
                     }else{

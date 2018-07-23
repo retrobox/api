@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ShopImage extends Model
 {
+    protected $fillable = ['id', 'url', 'is_main'];
 
 	protected $table = 'shop_images';
 

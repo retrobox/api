@@ -81,10 +81,10 @@ class StailEuController extends Controller
                     'email' => $email,
                     'avatar' => $avatar,
                     'username' => $username,
-                    'is_admin' => $user->is_admin
+                    'is_admin' => (bool) $user->is_admin
                 ];
                 $this->container->get(Logger::class)->info(
-                    "New login: {$result}, default admin id: {$this->container->get('default_admin_user_id')}");
+                    "New login: {$result} email: {$userInfos['email']} username: {$userInfos['username']} is_admin: {$userInfos['is_admin']} avatar: {$userInfos['avatar']}");
                 $token = $session->create($userInfos);
                 if ($request->getMethod() == 'POST'){
                     //return simple token

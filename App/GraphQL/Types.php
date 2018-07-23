@@ -6,7 +6,9 @@ use App\GraphQL\Type\Editor;
 use App\GraphQL\Type\Game;
 use App\GraphQL\Type\Genre;
 use App\GraphQL\Type\Platform;
+use App\GraphQL\Type\Scalar\FloatType;
 use App\GraphQL\Type\Scalar\NonEmpty;
+use App\GraphQL\Type\Scalar\Url;
 use App\GraphQL\Type\ShopCategory;
 use App\GraphQL\Type\ShopImage;
 use App\GraphQL\Type\ShopItem;
@@ -38,6 +40,8 @@ class Types
 	private static $shopItemWithDepth;
     private static $shopImage;
     private static $user;
+    private static $url;
+    private static $float;
 
 
     /**
@@ -137,6 +141,16 @@ class Types
     public static function user()
     {
         return self::$user ?: (self::$user = new User());
+    }
+
+    public static function url()
+    {
+        return self::$url ?: (self::$url = new Url());
+    }
+
+    public static function float()
+    {
+        return self::$float ?: (self::$float = new FloatType());
     }
 
 

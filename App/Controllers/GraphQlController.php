@@ -31,7 +31,10 @@ class GraphQlController extends Controller
 			if ($result->errors) {
 			    $code = 400;
 			    //catch others error than 400 (like 403)
-			    if ($result->errors[0]->getPrevious() != NULL && $result->errors[0]->getPrevious()->getCode() != 0 && $result->errors[0]->getPrevious()->getCode() > 400){
+			    if ($result->errors[0]->getPrevious() != NULL
+                    && $result->errors[0]->getPrevious()->getCode() != 0
+                    && $result->errors[0]->getPrevious()->getCode() > 400
+                    && $result->errors[0]->getPrevious()->getCode() < 550){
 			        $code = $result->errors[0]->getPrevious()->getCode();
                 }
 				return $response->withJson([

@@ -45,7 +45,7 @@ class ShopCategory
             ],
             'resolve' => function ($rootValue, $args) {
                 $query = \App\Models\ShopCategory::query()
-                    ->with('items')
+                    ->withCount('items')
                     ->limit($args['limit'])
                     ->orderBy($args['orderBy'], strtolower($args['orderDir']));
 
@@ -73,6 +73,7 @@ class ShopCategory
             ],
             'resolve' => function ($rootValue, $args) {
                 $item = \App\Models\ShopCategory::with('items')->find($args['id']);
+                $item['items_count'] = $item->items()->count();
                 return $item;
             }
         ];

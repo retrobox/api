@@ -179,36 +179,58 @@ class ShopItem
                             'description_short' => ['type' => Type::nonNull(Type::string())],
                             'description_long' => ['type' => Type::nonNull(Type::string())],
                             'show_version' => ['type' => Type::nonNull(Type::boolean())],
-                            'price' => ['type' => Type::nonNull(Type::float())],
-                            'weight' => ['type' => Type::nonNull(Type::float())],
+                            'price' => ['type' => Type::nonNull(Types::float())],
+                            'weight' => ['type' => Type::nonNull(Types::float())],
                             'image' => ['type' => Type::nonNull(Type::string())],
                             'version' => ['type' => Type::string()],
                             'category_id' => ['type' => Type::nonNull(Type::string())],
-                            'locale' => ['type' => Type::nonNull(Type::string())]
+                            'images' => ['type' => Type::listOf(new InputObjectType([
+                                'name' => 'ShopImageUpdateInput',
+                                'fields' => [
+                                    'url' => ['type' => Type::nonNull(Types::url())],
+                                    'is_main' => ['type' => Type::nonNull(Type::boolean())]
+                                ]
+                            ]))]
                         ]
                     ])
                 ]
             ],
             'resolve' => function ($rootValue, $args) {
                 //admin only
-                $item = \App\Models\ShopItem::find($args['item']['id']);
-                if ($item !== NULL) {
-                    $category = ShopCategory::find($args['item']['category_id'])->first();
-                    if ($category !== NULL) {
-                        $item->category()->associate($category);
+                if ($rootValue->get(Session::class)->isAdmin()) {
+                    $item = \App\Models\ShopItem::with('images', 'category')->find($args['item']['id']);
+                    if ($item == NULL) {
+                        return new \Exception("Unknown ShopItem", 404);
+                    } else {
+                        $category = ShopCategory::find($args['item']['category_id'])->first();
+                        if ($category !== NULL) {
+                            $item->category()->dissociate();
+                            $item->category()->associate($category);
+                        }
+                        //delete all images
+                        //and reinsert it
+                        $item->images()->delete();
+                        $images = array_map(function ($image){
+                            $image['id'] = uniqid();
+                            return $image;
+                        }, $args['item']['images']);
+                        $item->images()->createMany(
+                            $images
+                        );
+                        $item->title = $args['item']['title'];
+                        $item->description_short = $args['item']['description_short'];
+                        $item->description_long = $args['item']['description_long'];
+                        $item->version = $args['item']['version'];
+                        $item->show_version = $args['item']['show_version'];
+                        $item->image = $args['item']['image'];
+                        $item->price = (float) $args['item']['price'];
+                        $item->weight = (float) $args['item']['weight'];
+                        $item->slug = str_slug($args['item']['title']);
+
+                        return $item->save();
                     }
-                    $item->title = $args['item']['title'];
-                    $item->locale = $args['item']['locale'];
-                    $item->description_short = $args['item']['description_short'];
-                    $item->description_long = $args['item']['description_long'];
-                    $item->version = $args['item']['version'];
-                    $item->show_version = $args['item']['show_version'];
-                    $item->image = $args['item']['image'];
-                    $item->price = $args['item']['price'];
-                    $item->slug = str_slug($args['item']['title']);
-                    return $item->save();
                 } else {
-                    return NULL;
+                    return new \Exception("Forbidden", 403);
                 }
             }
         ];

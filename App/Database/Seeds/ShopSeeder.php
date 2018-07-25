@@ -48,9 +48,11 @@ class ShopSeeder extends AbstractSeed
         for ($i = 0; $i < 29; $i++) {
             $locale = $fakerEN->randomElement(['fr', 'en']);
 
-            $shopCategoryId = array_values(array_filter($shopCategories, function ($item) use ($locale) {
+            $shopCategoriesWithLocale = array_values(array_filter($shopCategories, function ($item) use ($locale) {
                 return $item['locale'] == $locale;
-            }))[0]['id'];
+            }));
+
+            $shopCategoryId = $shopCategoriesWithLocale[rand(0, count($shopCategoriesWithLocale) - 1)]['id'];
             array_push($shopItems, [
                 'id' => uniqid(),
                 'title' => $faker[$locale]->realText(rand(20,30)),

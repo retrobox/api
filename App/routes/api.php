@@ -30,6 +30,6 @@ $app->group('/', function (){
     //shop
     $this->group('shop/', function (){
         $this->get('{locale}/categories', [\App\Controllers\ShopController::class, 'getCategories']);
-        $this->get('item/{slug}', [\App\Controllers\ShopController::class, 'getItem']);
+        $this->get('{locale}/item/{slug}', [\App\Controllers\ShopController::class, 'getItem']);
     })->add(new \App\Middlewares\CorsMiddleware());
 })->add(new \App\Middlewares\CorsMiddleware());

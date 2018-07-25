@@ -30,14 +30,17 @@ class ShopController extends Controller
         }
     }
 
-    public function getItem($slug, ServerRequestInterface $request, ResponseInterface $response, Manager $manager)
+    public function getItem($locale, $slug, ServerRequestInterface $request, ResponseInterface $response, Manager $manager)
     {
-        $item = ShopItem::with('categoryWithItems', 'images')->where('slug', '=', $slug)->first();
+        $item = ShopItem::with('categoryWithItems', 'images')
+            ->where('slug', '=', $slug)
+            ->where('locale', '=', $locale)
+            ->first();
         if ($item == NULL){
             return $response->withJson([
                 'success' => false,
                 'errors' => [
-                    'Unknown shop item slug'
+                    'Unknown shop item'
                 ]
             ])->withStatus(404);
         }else{

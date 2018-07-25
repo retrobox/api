@@ -202,10 +202,12 @@ class ShopItem
                     if ($item == NULL) {
                         return new \Exception("Unknown ShopItem", 404);
                     } else {
-                        $category = ShopCategory::find($args['item']['category_id'])->first();
+                        $category = ShopCategory::find($args['item']['category_id']);
                         if ($category !== NULL) {
                             $item->category()->dissociate();
                             $item->category()->associate($category);
+                        } else {
+                            return new \Exception('Unknown category', 404);
                         }
                         //delete all images
                         //and reinsert it
@@ -218,6 +220,7 @@ class ShopItem
                             $images
                         );
                         $item->title = $args['item']['title'];
+                        $item->locale = $category->locale;
                         $item->description_short = $args['item']['description_short'];
                         $item->description_long = $args['item']['description_long'];
                         $item->version = $args['item']['version'];

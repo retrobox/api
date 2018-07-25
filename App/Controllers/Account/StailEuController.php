@@ -68,6 +68,7 @@ class StailEuController extends Controller
                 $avatar = $STAILEUAccounts->getAvatar($result)->getUrl();
                 $user->last_login_at = Carbon::now();
                 $user->last_user_agent = $request->getServerParams()['HTTP_USER_AGENT'];
+                $user->last_ip = $request->getAttribute('ip_address');
                 $user->last_avatar = $avatar;
                 $user->last_email = $email;
                 $user->last_username = $username;

@@ -41,6 +41,7 @@
         "dflydev/fig-cookies": "^1.0",
         "firebase/php-jwt": "^5.0",
         "stripe/stripe-php": "^6.9",
-        "lefuturiste/rabbitmq-publisher": "^0.1.0"
+        "lefuturiste/rabbitmq-publisher": "^0.1.0",
+        "akrabat/ip-address-middleware": "^1.0"
     }
 }

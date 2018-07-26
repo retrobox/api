@@ -34,7 +34,12 @@ class ShopItem extends ObjectType
                 'image' => [
                     'type' => Type::string()
                 ],
+                'identifier' => [
+                    'description' => "Identifier is used to identify the same product in two different locale",
+                    'type' => Type::string()
+                ],
                 'slug' => [
+                    'description' => "Generated on identifier",
                     'type' => Type::string()
                 ],
                 'weight' => [

@@ -102,6 +102,7 @@ class ShopItem
                         'name' => 'ShopItemStoreInput',
                         'fields' => [
                             'title' => ['type' => Type::nonNull(Type::string())],
+                            'identifier' => ['type' => Type::nonNull(Type::string())],
                             'description_short' => ['type' => Type::nonNull(Type::string())],
                             'description_long' => ['type' => Type::nonNull(Type::string())],
                             'show_version' => ['type' => Type::nonNull(Type::boolean())],
@@ -141,6 +142,7 @@ class ShopItem
                         $images
                     );
                     $item->title = $args['item']['title'];
+                    $item->identifier = $args['item']['identifier'];
                     $item->locale = $category->locale;
                     $item->description_short = $args['item']['description_short'];
                     $item->description_long = $args['item']['description_long'];
@@ -149,7 +151,7 @@ class ShopItem
                     $item->image = $args['item']['image'];
                     $item->price = (float) $args['item']['price'];
                     $item->weight = (float) $args['item']['weight'];
-                    $item->slug = str_slug($args['item']['title']);
+                    $item->slug = str_slug($args['item']['identifier']);
                     
                     return [
                         'saved' => $item->save(),
@@ -180,6 +182,7 @@ class ShopItem
                             'description_long' => ['type' => Type::nonNull(Type::string())],
                             'show_version' => ['type' => Type::nonNull(Type::boolean())],
                             'price' => ['type' => Type::nonNull(Types::float())],
+                            'identifier' => ['type' => Type::nonNull(Type::string())],
                             'weight' => ['type' => Type::nonNull(Types::float())],
                             'image' => ['type' => Type::nonNull(Type::string())],
                             'version' => ['type' => Type::string()],
@@ -220,6 +223,7 @@ class ShopItem
                             $images
                         );
                         $item->title = $args['item']['title'];
+                        $item->identifier = $args['item']['identifier'];
                         $item->locale = $category->locale;
                         $item->description_short = $args['item']['description_short'];
                         $item->description_long = $args['item']['description_long'];
@@ -228,7 +232,7 @@ class ShopItem
                         $item->image = $args['item']['image'];
                         $item->price = (float) $args['item']['price'];
                         $item->weight = (float) $args['item']['weight'];
-                        $item->slug = str_slug($args['item']['title']);
+                        $item->slug = str_slug($args['item']['identifier']);
 
                         return $item->save();
                     }

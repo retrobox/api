@@ -61,6 +61,7 @@ class ShopSeeder extends AbstractSeed
                 'description_long' => $md,
                 'image' => "https://static.retrobox.tech/img/composants/RASPBERRY.png",
                 'price' => $fakerEN->randomFloat(2, 50, 70),
+                'weight' => $fakerEN->randomFloat(2, 50, 70),
                 'version' => "version: " . $fakerEN->sentence(1),
                 'show_version' => rand(0, 1),
                 'shop_category_id' => $shopCategoryId,

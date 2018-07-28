@@ -72,9 +72,12 @@ class ShopCategory
                 ]
             ],
             'resolve' => function ($rootValue, $args) {
-                $item = \App\Models\ShopCategory::with('items')->find($args['id']);
-                $item['items_count'] = $item->items()->count();
-                return $item;
+                $item = \App\Models\ShopCategory::withCount('items')->find($args['id']);
+                if ($item == NULL){
+                    return new \Exception("ShopCategory not found", 404);
+                }else{
+                    return $item;
+                }
             }
         ];
     }
@@ -111,6 +114,8 @@ class ShopCategory
                     $item->title = $args['category']['title'];
                     $item->is_customizable = $args['category']['is_customizable'];
                     $item->locale = $args['category']['locale'];
+                    //take by default the order in the bottom
+                    $item->order = $args['category']['locale'];
                     if ($item->save()){
                         return [
                             'saved' => true,
@@ -138,9 +143,10 @@ class ShopCategory
                         'name' => 'ShopCategoryUpdateInput',
                         'fields' => [
                             'id' => ['type' => Type::nonNull(Type::string())],
-                            'title' => ['type' => Type::nonNull(Type::string())],
-                            'is_customizable' => ['type' => Type::nonNull(Type::boolean())],
-                            'locale' => ['type' => Type::nonNull(Type::string())]
+                            'title' => ['type' => Type::string()],
+                            'is_customizable' => ['type' => Type::boolean()],
+                            'locale' => ['type' => Type::string()],
+                            'order' => ['type' => Type::int()]
                         ]
                     ])
                 ]
@@ -152,9 +158,24 @@ class ShopCategory
                     if ($item == NULL){
                         return new \Exception("ShopCategory not found", 404);
                     }else{
-                        $item->title = $args['category']['title'];
-                        $item->is_customizable = $args['category']['is_customizable'];
-                        $item->locale = $args['category']['locale'];
+                        if(isset($args['category']['title'])
+                            && !empty($args['category']['title'])){
+                            $item->title = $args['category']['title'];
+                        }
+                        if(isset($args['category']['is_customizable'])
+                            && !empty($args['category']['is_customizable'])){
+                            $item->is_customizable = $args['category']['is_customizable'];
+                        }
+                        if(isset($args['category']['is_customizable'])
+                            && !empty($args['category']['is_customizable'])){
+                            $item->is_customizable = $args['category']['is_customizable'];
+                        }
+                        if(isset($args['category']['locale'])){
+                            $item->locale = $args['category']['locale'];
+                        }
+                        if(isset($args['category']['order'])){
+                            $item->order = $args['category']['order'];
+                        }
                         return $item->save();
                     }
                 }else{
@@ -185,6 +206,46 @@ class ShopCategory
                     }else{
                         return \App\Models\ShopCategory::destroy($args['id']);
                     }
+                }else{
+                    return new \Exception("Forbidden", 403);
+                }
+            }
+        ];
+    }
+
+    public static function updateOrder()
+    {
+        return [
+            'type' => Type::boolean(),
+            'description' => 'Update the shop categories order',
+            'args' => [
+                [
+                    'name' => 'categories',
+                    'description' => 'List of categories',
+                    'type' => Type::listOf(new InputObjectType([
+                        'name' => 'ShopCategoryUpdateOrderInput',
+                        'fields' => [
+                            'id' => Type::string(),
+                            'order' => Type::int()
+                        ]
+                    ]))
+                ]
+            ],
+            'resolve' => function ($rootValue, $args) {
+                //only admin
+                if ($rootValue->get(Session::class)->isAdmin()){
+                    foreach ($args['categories'] as $category){
+                        $item = \App\Models\ShopCategory::find($category['id']);
+                        if ($item == NULL){
+                            return new \Exception("ShopCategory not found", 404);
+                        }else{
+                            $item->order = $category['order'];
+                            if (!$item->save()){
+                                return false;
+                            }
+                        }
+                    }
+                    return true;
                 }else{
                     return new \Exception("Forbidden", 403);
                 }

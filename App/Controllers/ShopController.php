@@ -13,7 +13,10 @@ class ShopController extends Controller
     public function getCategories($locale, ServerRequestInterface $request, ResponseInterface $response, Manager $manager)
     {
         if (array_search($locale, $this->container->get('locales')) !== false){
-            $categories = ShopCategory::with('items')->where('locale', '=', $locale)->get();
+            $categories = ShopCategory::with('items')
+                ->where('locale', '=', $locale)
+                ->orderBy('order', 'asc')
+                ->get();
             return $response->withJson([
                 'success' => true,
                 'data' => [

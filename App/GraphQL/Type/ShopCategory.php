@@ -32,6 +32,9 @@ class ShopCategory extends ObjectType
 				'title' => [
 					'type' => Type::string()
 				],
+                'order' => [
+                    'type' => Type::int()
+                ],
                 'is_customizable' => [
                     'type' => Type::boolean()
                 ],

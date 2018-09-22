@@ -3,10 +3,8 @@
 namespace App\Auth;
 
 use Carbon\Carbon;
-use DI\Container;
-use DI\DependencyException;
-use DI\NotFoundException;
 use Firebase\JWT\JWT;
+use Psr\Container\ContainerInterface;
 
 class Session
 {
@@ -22,11 +20,11 @@ class Session
 	private $token;
 
 	/**
-	 * @var Container
+	 * @var ContainerInterface
 	 */
 	private $container;
 
-	public function __construct(Container $container)
+	public function __construct(ContainerInterface $container)
 	{
 		$this->container = $container;
 	}
@@ -39,17 +37,13 @@ class Session
      */
 	public function create($user) : string
 	{
-        try {
-            $jwt = JWT::encode([
-                'iss' => $this->container->get('app_name') . '._.' . $this->container->get('env_name'),
-                'iat' => Carbon::now()->timestamp,
-                'user' => $user
-            ], $this->container->get('jwt')['key']);
+        $jwt = JWT::encode([
+            'iss' => $this->container->get('app_name') . '._.' . $this->container->get('env_name'),
+            'iat' => Carbon::now()->timestamp,
+            'user' => $user
+        ], $this->container->get('jwt')['key']);
 
-            return $jwt;
-        } catch (DependencyException $e) {
-        } catch (NotFoundException $e) {
-        }
+        return $jwt;
 	}
 
 	/**
@@ -61,6 +55,16 @@ class Session
 	{
 		return $this->data['user'];
 	}
+
+    /**
+     * Return session user id
+     *
+     * @return string
+     */
+    public function getUserId(): string
+    {
+        return $this->data['user']['id'];
+    }
 
 	/**
 	 * Get the actual raw JWT
@@ -99,6 +103,7 @@ class Session
 	{
 		return $this->data;
 	}
+
     /**
      * @return boolean
      */

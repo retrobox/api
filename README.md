@@ -23,3 +23,15 @@
 soon:
 
 - team member
+
+## todo
+
+- game ressource
+
+## Payment status
+
+- `not-payed`
+- `payed`
+- `failed`
+- `shipped`
+- `closed`

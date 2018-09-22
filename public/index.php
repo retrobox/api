@@ -63,6 +63,6 @@ include("../App/bootstrap/middlewares.php");
 | Include all routes files
 |
 */
-include("../App/routes/api.php");
+include("../App/routes.php");
 
 $app->run();

@@ -19,6 +19,9 @@ $app->group('/', function (){
     $this->get('paysafecard/failure', [\App\Controllers\Payment\PaysafeCardController::class, 'getFailure']);
     $this->map(['POST','OPTIONS'], 'stripe/execute', [\App\Controllers\Payment\StripeController::class, 'postExecute'])
         ->add(new \App\Middlewares\JWTMiddleware($this->getContainer()));
+    $this->map(['POST','OPTIONS'], 'paypal/get-url', [\App\Controllers\Payment\PaypalController::class, 'postGetUrl'])
+        ->add(new \App\Middlewares\JWTMiddleware($this->getContainer()));
+    $this->get('paypal/execute', [\App\Controllers\Payment\PaypalController::class, 'postExecute']);
 
     $this->group('account/', function (){
         $this->get('login', [\App\Controllers\Account\StailEuController::class, 'getLogin']);
@@ -34,5 +37,6 @@ $app->group('/', function (){
     $this->group('shop/', function (){
         $this->get('{locale}/categories', [\App\Controllers\ShopController::class, 'getCategories']);
         $this->get('{locale}/item/{slug}', [\App\Controllers\ShopController::class, 'getItem']);
+        $this->get('prices', [\App\Controllers\ShopController::class, 'getPrices']);
     })->add(new \App\Middlewares\CorsMiddleware());
 })->add(new \App\Middlewares\CorsMiddleware());

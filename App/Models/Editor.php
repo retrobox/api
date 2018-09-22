@@ -15,6 +15,6 @@ class Editor extends Model
 
 	public function games()
 	{
-		return $this->hasMany(Games::class);
+		return $this->hasMany(Game::class);
 	}
 }

@@ -1,5 +1,6 @@
 <?php
 namespace App\GraphQL;
+use App\GraphQL\Type\ShopOrder;
 use App\GraphQL\Type\Post;
 use App\GraphQL\Type\Scalar\DateTime;
 use App\GraphQL\Type\Editor;
@@ -12,7 +13,6 @@ use App\GraphQL\Type\Scalar\Url;
 use App\GraphQL\Type\ShopCategory;
 use App\GraphQL\Type\ShopImage;
 use App\GraphQL\Type\ShopItem;
-use App\GraphQL\Type\ShopLink;
 use App\GraphQL\Type\User;
 
 /**
@@ -42,7 +42,8 @@ class Types
     private static $user;
     private static $url;
     private static $float;
-
+    private static $shopOrderWithDepth;
+    private static $shopOrder;
 
     /**
 	 * @return DateTime
@@ -138,6 +139,16 @@ class Types
 		return self::$shopImage ?: (self::$shopImage = new ShopImage());
 	}
 
+	public static function shopOrder()
+    {
+        return self::$shopOrder ?: (self::$shopOrder = new ShopOrder());
+    }
+
+    public static function shopOrderWithDepth()
+    {
+        return self::$shopOrderWithDepth ?: (self::$shopOrderWithDepth = new ShopOrder(1));
+    }
+
     public static function user()
     {
         return self::$user ?: (self::$user = new User());
@@ -152,6 +163,5 @@ class Types
     {
         return self::$float ?: (self::$float = new FloatType());
     }
-
 
 }

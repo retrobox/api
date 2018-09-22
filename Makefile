@@ -8,4 +8,4 @@ dev: server
 server:
 	php -S $(HOST):$(PORT) -t public
 test:
-	php ./vendor/bin/phpunit --stop-on-failure
+	php ./vendor/bin/phpunit --stop-on-failure tests

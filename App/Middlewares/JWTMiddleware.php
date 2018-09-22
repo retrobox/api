@@ -3,19 +3,15 @@
 namespace App\Middlewares;
 
 use App\Auth\Session;
-use DI\Container;
-use DI\DependencyException;
-use DI\NotFoundException;
-use function DusanKasan\Knapsack\toArray;
 use Firebase\JWT\JWT;
-use Noodlehaus\Exception;
-use Psr\Http\Message\ResponseInterface;
+use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Slim\Http\Response;
 
 class JWTMiddleware
 {
 	/**
-	 * @var Container
+	 * @var ContainerInterface
 	 */
 	private $container;
 
@@ -24,20 +20,21 @@ class JWTMiddleware
 	 */
 	private $session;
 
-	public function __construct(Container $container)
+	public function __construct(ContainerInterface $container)
 	{
 		$this->container = $container;
-        try {
-            $this->session = $container->get(Session::class);
-        } catch (DependencyException $e) {
-        } catch (NotFoundException $e) {
-        }
+        $this->session = $container->get(Session::class);
     }
 
-	public function __invoke(ServerRequestInterface $request, ResponseInterface $response, $next)
+	public function __invoke(ServerRequestInterface $request, Response $response, $next)
 	{
 		if ($request->hasHeader('Authorization')) {
 			$token = str_replace('Bearer ', '', $request->getHeader('Authorization'))[0];
+			//master api key bypass
+			if ($token === $this->container->get('master_api_key')){
+			    $this->session->setData(['user' => ['is_admin' => true]]);
+                return $next($request, $response);
+            }
 			try {
 				$decoded = JWT::decode($token, $this->container->get('jwt')['key'], ['HS256']);
 			} catch (\Exception $e) {

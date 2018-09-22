@@ -10,7 +10,7 @@ return [
 		]
 	],
     "stripe" => [
-        "is_test" => getenv("STRIPE_IS_TEST"),
+        "is_test" => (getenv("STRIPE_IS_TEST") ? true : false),
         "public" => getenv("STRIPE_PUBLIC"),
         "private" => getenv("STRIPE_PRIVATE")
     ],
@@ -18,6 +18,12 @@ return [
         "public" => getenv("STAILEU_PUBLIC"),
         "private" => getenv("STAILEU_PRIVATE"),
         "redirect" => getenv("STAILEU_REDIRECT")
+    ],
+    "paypal" => [
+        "public" => getenv('PAYPAL_PUBLIC'),
+        "private" => getenv('PAYPAL_PRIVATE'),
+        "return_redirect_url" => "http://localhost:8000/paypal/execute",
+        "cancel_redirect_url" => getenv('WEB_ENDPOINT') . "/checkout/error"
     ],
     "jwt" => [
         "key" => getenv("JWT_KEY")

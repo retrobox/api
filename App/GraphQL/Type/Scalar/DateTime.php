@@ -2,7 +2,9 @@
 
 namespace App\GraphQL\Type\Scalar;
 
+use GraphQL\Error\Error;
 use GraphQL\Type\Definition\CustomScalarType;
+use GraphQL\Utils;
 use Illuminate\Support\Carbon;
 
 class DateTime extends CustomScalarType

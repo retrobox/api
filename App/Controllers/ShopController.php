@@ -5,14 +5,14 @@ namespace App\Controllers;
 use App\Models\ShopCategory;
 use App\Models\ShopItem;
 use Illuminate\Database\Capsule\Manager;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
+use Slim\Http\Response;
 
 class ShopController extends Controller
 {
-    public function getCategories($locale, ServerRequestInterface $request, ResponseInterface $response, Manager $manager)
+    public function getCategories($locale, Response $response)
     {
-        if (array_search($locale, $this->container->get('locales')) !== false){
+        $this->container->get(Manager::class);
+        if (array_search($locale, $this->container->get('locales')) !== false) {
             $categories = ShopCategory::with('items')
                 ->where('locale', '=', $locale)
                 ->orderBy('order', 'asc')
@@ -23,7 +23,7 @@ class ShopController extends Controller
                     'categories' => $categories->toArray()
                 ]
             ]);
-        }else{
+        } else {
             return $response->withJson([
                 'success' => false,
                 'errors' => [
@@ -33,20 +33,21 @@ class ShopController extends Controller
         }
     }
 
-    public function getItem($locale, $slug, ServerRequestInterface $request, ResponseInterface $response, Manager $manager)
+    public function getItem($locale, $slug, Response $response)
     {
+        $this->container->get(Manager::class);
         $item = ShopItem::with('categoryWithItems', 'images')
             ->where('slug', '=', $slug)
             ->where('locale', '=', $locale)
             ->first();
-        if ($item == NULL){
+        if ($item == NULL) {
             return $response->withJson([
                 'success' => false,
                 'errors' => [
                     'Unknown shop item'
                 ]
             ])->withStatus(404);
-        }else{
+        } else {
             $render = $item->toArray();
             $render['category'] = $render['category_with_items'];
             unset($render['category_with_items']);
@@ -57,5 +58,16 @@ class ShopController extends Controller
                 ]
             ]);
         }
+    }
+
+    public function getPrices(Response $response)
+    {
+        return $response->withJson([
+            'success' => true,
+            'data' => [
+                'shipping_prices' => $this->container->get('shop')['shipping_prices'],
+                'storage_prices' => $this->container->get('shop')['storage_prices']
+            ]
+        ]);
     }
 }

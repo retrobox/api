@@ -18,6 +18,27 @@ class User extends ObjectType
                     'type' => Type::string(),
                     'description' => 'The user STAIL.EU uuid'
                 ],
+                'first_name' => [
+                    'type' => Type::string()
+                ],
+                'last_name' => [
+                    'type' => Type::string()
+                ],
+                'address_first_line' => [
+                    'type' => Type::string()
+                ],
+                'address_second_line' => [
+                    'type' => Type::string()
+                ],
+                'address_postal_code' => [
+                    'type' => Type::string()
+                ],
+                'address_city' => [
+                    'type' => Type::string()
+                ],
+                'address_country' => [
+                    'type' => Type::string()
+                ],
                 'last_username' => [
                     'type' => Type::string()
                 ],

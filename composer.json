@@ -15,6 +15,7 @@
     },
     "license": "MIT",
     "require": {
+        "ext-json": "*",
         "slim/slim": "^3.8",
         "hassankhan/config": "^0.10.0",
         "guzzlehttp/guzzle": "^6.3",
@@ -40,7 +41,12 @@
         "dflydev/fig-cookies": "^1.0",
         "firebase/php-jwt": "^5.0",
         "stripe/stripe-php": "^6.9",
-        "lefuturiste/rabbitmq-publisher": "^0.1.0",
-        "akrabat/ip-address-middleware": "^1.0"
+        "lefuturiste/rabbitmq-publisher": "^1.1",
+        "akrabat/ip-address-middleware": "^1.0",
+        "paypal/rest-api-sdk-php": "^1.13"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^7.3",
+        "zalas/phpunit-injector": "^1.2"
     }
 }

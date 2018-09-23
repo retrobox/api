@@ -6,17 +6,15 @@ use App\Auth\Session;
 use App\Controllers\Controller;
 use App\Models\User;
 use Carbon\Carbon;
-use Dflydev\FigCookies\Cookie;
 use Dflydev\FigCookies\FigRequestCookies;
 use Dflydev\FigCookies\FigResponseCookies;
 use Dflydev\FigCookies\SetCookie;
-use Dflydev\FigCookies\SetCookies;
-use Firebase\JWT\JWT;
 use Illuminate\Database\Capsule\Manager;
 use Monolog\Logger;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use STAILEUAccounts\STAILEUAccounts;
+use Teto\HTTP\AcceptLanguage;
 use Validator\Validator;
 
 class StailEuController extends Controller
@@ -72,6 +70,7 @@ class StailEuController extends Controller
                 $user->last_avatar = $avatar;
                 $user->last_email = $email;
                 $user->last_username = $username;
+                $user->last_locale = AcceptLanguage::get("fr,en;q=0.7,en-US;q=0.3")[0]['language'];
                 if ($result == $this->container->get('default_admin_user_id')){
                     $user->is_admin = true;
                 }

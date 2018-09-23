@@ -110,7 +110,7 @@ class PaypalController extends Controller
 
             //get the item from the database
             $order = ShopOrder::query()
-                ->with('items')
+                ->with('items', 'user')
                 ->where('on_way_id', '=', $payment->getId())
                 ->where('way', '=', 'paypal')
                 ->first();
@@ -159,6 +159,10 @@ class PaypalController extends Controller
                 //change the state in db
                 $order->status = 'payed';
                 $order->save();
+                //change user's email in the db
+                $user = $order->user();
+                $user['last_email'] = $payment->getPayer()->getPayerInfo()->getEmail();
+                $user->save();
                 //emit "order.payed" event
                 $rabbitMQPublisher->publish(['id' => $order['id']], 'order.payed');
                 //redirect to checkout success page

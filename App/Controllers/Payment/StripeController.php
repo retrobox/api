@@ -12,7 +12,6 @@ use Lefuturiste\RabbitMQPublisher\Client;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Http\Response;
 use Stripe\Charge;
-use Stripe\Error\InvalidRequest;
 use Stripe\Stripe;
 use Validator\Validator;
 
@@ -23,8 +22,9 @@ class StripeController extends Controller
         $this->container->get(Manager::class);
 
         $validator = new Validator($request->getParsedBody());
-        $validator->required('token', 'items');
-        $validator->notEmpty('token', 'items');
+        $validator->required('token', 'items', 'email');
+        $validator->notEmpty('token', 'items', 'email');
+        $validator->email('email');
         if ($validator->isValid()) {
             $paymentManager = new PaymentManager($validator->getValue('items'), $this->container);
             try {
@@ -53,14 +53,14 @@ class StripeController extends Controller
                 ])->withStatus(400);
             }
             $charge->getLastResponse();
-
             //success
             //create the payment in db
+            $user = User::query()->find($session->getUser()['id']);
             $orderId = uniqid();
             $body = json_decode($charge->getLastResponse()->body, 1);
             $order = new ShopOrder();
             $order->id = $orderId;
-            $order->user()->associate(User::query()->find($session->getUser()['id']));
+            $order->user()->associate($user);
             $order->total_price = $paymentManager->getTotalPrice();
             $order->sub_total_price = $paymentManager->getSubTotalPrice();
             $order->total_shipping_price = $paymentManager->getTotalShippingPrice();
@@ -69,6 +69,10 @@ class StripeController extends Controller
             $order->status = "payed";
             $order->items()->saveMany($paymentManager->getParsedItems());
             $order->save();
+
+            //save the user email
+            $user->last_email = $validator->getValue('email');
+            $user->save();
 
             //emit "order.payed" event
             $rabbitMQPublisher->publish(['id' => $orderId], 'order.payed');

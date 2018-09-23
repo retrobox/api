@@ -24,6 +24,9 @@ class User extends ObjectType
                 'last_name' => [
                     'type' => Type::string()
                 ],
+                'last_locale' => [
+                    'type' => Type::string()
+                ],
                 'address_first_line' => [
                     'type' => Type::string()
                 ],

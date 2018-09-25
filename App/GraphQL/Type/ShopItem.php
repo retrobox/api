@@ -14,6 +14,19 @@ class ShopItem extends ObjectType
             $depthArray = [
                 'category' => [
                     'type' => Types::shopCategoryWithDepth()
+                ],
+                'pivot' => [
+                    'type' => new ObjectType([
+                        'name' => 'PivotOutput',
+                        'fields' => [
+                            'shop_item_custom_option_storage' => [
+                                'type' => Type::string()
+                            ],
+                            'shop_item_custom_option_color' => [
+                                'type' => Type::string()
+                            ]
+                        ]
+                    ])
                 ]
             ];
             $name = "ShopItemWithDepth";

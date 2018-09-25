@@ -14,6 +14,9 @@ class ShopOrder extends ObjectType
             $depthArray = [
                 'items' => [
                     'type' => Type::listOf(Types::shopItemWithDepth())
+                ],
+                'items_count' => [
+                    'type' => Type::int()
                 ]
             ];
             $name = "ShopOrderWithDepth";

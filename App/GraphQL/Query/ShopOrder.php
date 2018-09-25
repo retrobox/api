@@ -6,6 +6,7 @@ use App\Auth\Session;
 use App\GraphQL\Types;
 use GraphQL\Type\Definition\InputObjectType;
 use GraphQL\Type\Definition\Type;
+use Lefuturiste\RabbitMQPublisher\Client;
 use Psr\Container\ContainerInterface;
 
 class ShopOrder
@@ -39,6 +40,7 @@ class ShopOrder
                 if ($container->get(Session::class)->isAdmin()) {
                     return \App\Models\ShopOrder::query()
                         ->with(['user', 'items'])
+                        ->withCount('items')
                         ->limit($args['limit'])
                         ->orderBy($args['orderBy'], strtolower($args['orderDir']))
                         ->get();
@@ -63,7 +65,9 @@ class ShopOrder
             ],
             'resolve' => function (ContainerInterface $container, $args) {
                 if ($container->get(Session::class)->isAdmin()) {
-                    $item = \App\Models\ShopOrder::with(['user', 'items'])->find($args['id']);
+                    $item = \App\Models\ShopOrder::with(['user', 'items'])
+                        ->withCount('items')
+                        ->find($args['id']);
                     if ($item === NULL) {
                         return new \Exception('Unknown shop order', 404);
                     }
@@ -100,10 +104,14 @@ class ShopOrder
                         return new \Exception("Unknown ShopOrder", 404);
                     } else {
                         if (isset($args['order']['status'])) {
-                            $order->status = $args['order']['status'];
+                            if ($order['status'] === 'payed' && $args['order']['status'] == 'shipped') {
+                                //emit order.shipped
+                                $container->get(Client::class)->publish(['id' => $order['id']], 'order.shipped');
+                            }
+                            $order['status'] = $args['order']['status'];
                         }
                         if (isset($args['order']['bill_url'])) {
-                            $order->bill_url = $args['order']['bill_url'];
+                            $order['bill_url'] = $args['order']['bill_url'];
                         }
 
                         return $order->save();

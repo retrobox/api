@@ -1,5 +1,6 @@
 <?php
 namespace App\GraphQL;
+use App\GraphQL\Type\Console;
 use App\GraphQL\Type\ShopOrder;
 use App\GraphQL\Type\Post;
 use App\GraphQL\Type\Scalar\DateTime;
@@ -44,6 +45,7 @@ class Types
     private static $float;
     private static $shopOrderWithDepth;
     private static $shopOrder;
+    private static $console;
 
     /**
 	 * @return DateTime
@@ -57,6 +59,14 @@ class Types
 	{
 		return self::$nonEmpty ?: (self::$nonEmpty = new NonEmpty());
 	}
+
+    /**
+     * @return Console
+     */
+    public static function console()
+    {
+        return self::$console ?: (self::$console = new Console());
+    }
 
 	/**
 	 * @return Game

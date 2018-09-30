@@ -1,4 +1,5 @@
 <?php
+include 'setup.php';
 
 class PublishOrderEventTest extends \PHPUnit\Framework\TestCase
 {
@@ -15,7 +16,7 @@ class PublishOrderEventTest extends \PHPUnit\Framework\TestCase
     public function testPublishOrderPayedPublishEvent()
     {
         $published = self::$container->get(\Lefuturiste\RabbitMQPublisher\Client::class)
-            ->publish(['id' => "5ba61d8f30e7a"], 'order.payed');
+            ->publish(['id' => "5ba7a8640d927"], 'order.payed');
         $this->assertEquals($published, true);
     }
 

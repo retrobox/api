@@ -29,7 +29,9 @@ class Mutations extends ObjectType {
                 //shop image
                 'destroyShopImage' => \App\GraphQL\Query\ShopImage::destroy(),
                 //shop order
-                'updateShopOrder' => \App\GraphQL\Query\ShopOrder::update()
+                'updateShopOrder' => \App\GraphQL\Query\ShopOrder::update(),
+                //console
+                'storeConsole' => \App\GraphQL\Query\Console::store()
 			]
 		];
 

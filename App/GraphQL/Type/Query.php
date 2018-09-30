@@ -36,7 +36,11 @@ class Query extends ObjectType
 
                 //users
                 'getManyUsers' => \App\GraphQL\Query\User::getMany(),
-                'getOneUser' => \App\GraphQL\Query\User::getOne()
+                'getOneUser' => \App\GraphQL\Query\User::getOne(),
+
+                //console
+                'getManyConsole' => \App\GraphQL\Query\Console::getMany(),
+                'getOneConsole' => \App\GraphQL\Query\Console::getOne()
             ]
         ];
 

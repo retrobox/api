@@ -3,10 +3,9 @@
 namespace App\GraphQL\Query;
 
 use App\GraphQL\Types;
-use Error;
 use GraphQL\Type\Definition\InputObjectType;
-use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
+use Psr\Container\ContainerInterface;
 
 class Post
 {
@@ -35,7 +34,7 @@ class Post
 					'defaultValue' => 'desc'
 				]
 			],
-			'resolve' => function ($rootValue, $args) {
+			'resolve' => function (ContainerInterface $container, $args) {
 				return \App\Models\Post::query()
 					->limit($args['limit'])
 					->orderBy($args['orderBy'], strtolower($args['orderDir']))
@@ -56,8 +55,8 @@ class Post
 					'type' => Type::string()
 				]
 			],
-			'resolve' => function ($rootValue, $args) {
-				$post = \App\Models\Post::find($args['id']);
+			'resolve' => function (ContainerInterface $container, $args) {
+				$post = \App\Models\Post::query()->find($args['id']);
 				if ($post == NULL){
 					//404
 					return $post;
@@ -88,7 +87,7 @@ class Post
 					])
 				]
 			],
-			'resolve' => function ($rootValue, $args) {
+			'resolve' => function (ContainerInterface $container, $args) {
 				return [
 					'id' => 'jdjs23'
 				];

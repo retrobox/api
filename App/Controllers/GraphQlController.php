@@ -4,9 +4,7 @@ namespace App\Controllers;
 
 use GraphQL\GraphQL;
 use Illuminate\Database\Capsule\Manager;
-use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use GraphQL\Validator\DocumentValidator;
 use Slim\Http\Response;
 
 class GraphQlController extends Controller

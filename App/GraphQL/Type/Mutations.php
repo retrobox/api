@@ -2,9 +2,7 @@
 
 namespace App\GraphQL\Type;
 
-use App\GraphQL\Types;
 use GraphQL\Type\Definition\ObjectType;
-use GraphQL\Type\Definition\Type;
 
 class Mutations extends ObjectType {
 	public function __construct()

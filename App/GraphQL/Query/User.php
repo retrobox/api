@@ -4,9 +4,7 @@ namespace App\GraphQL\Query;
 
 use App\Auth\Session;
 use App\GraphQL\Types;
-use GraphQL\Error\Error;
 use GraphQL\Type\Definition\InputObjectType;
-use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
 use Psr\Container\ContainerInterface;
 
@@ -64,7 +62,7 @@ class User
                 ]
             ],
             'resolve' => function (ContainerInterface $container, $args) {
-                $user = \App\Models\User::find($args['id']);
+                $user = \App\Models\User::query()->find($args['id']);
                 if ($user == NULL) {
                     return new \Exception('Unknown user', 404);
                 }
@@ -103,8 +101,8 @@ class User
                     ])
                 ]
             ],
-            'resolve' => function ($rootValue, $args) {
-                $user = \App\Models\User::find($args['user']['id']);
+            'resolve' => function (ContainerInterface $container, $args) {
+                $user = \App\Models\User::query()->find($args['user']['id']);
                 if ($user == NULL) {
                     return new \Exception('Unknown user', 404);
                 }

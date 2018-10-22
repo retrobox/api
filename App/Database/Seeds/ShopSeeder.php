@@ -70,7 +70,6 @@ class ShopSeeder extends AbstractSeed
                 'updated_at' => $fakerEN->dateTime->format('Y-m-d H:i:s')
             ]);
         }
-//		di($shopItems);
         $this->insert('shop_items', $shopItems);
 
         //Shop images

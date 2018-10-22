@@ -3,12 +3,8 @@
 namespace App\GraphQL\Query;
 
 use App\Auth\Session;
-use App\GraphQL\Types;
-use App\Models\ShopCategory;
-use Error;
-use GraphQL\Type\Definition\InputObjectType;
-use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
+use Psr\Container\ContainerInterface;
 
 class ShopImage
 {
@@ -25,10 +21,10 @@ class ShopImage
                     'type' => Type::string()
                 ]
             ],
-            'resolve' => function ($rootValue, $args) {
+            'resolve' => function (ContainerInterface $container, $args) {
                 //only admin
-                if ($rootValue->get(Session::class)->isAdmin()) {
-                    $item = \App\Models\ShopImage::find($args['id']);
+                if ($container->get(Session::class)->isAdmin()) {
+                    $item = \App\Models\ShopImage::query()->find($args['id']);
                     if ($item == NULL) {
                         return new \Exception("Unknown ShopImage", 404);
                     } else {

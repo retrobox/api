@@ -3,7 +3,6 @@
 namespace App\Controllers\Payment;
 
 use App\Controllers\Controller;
-use DI\Container;
 use Monolog\Logger;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;

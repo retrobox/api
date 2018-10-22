@@ -5,7 +5,6 @@ namespace App\GraphQL\Query;
 use App\Auth\Session;
 use App\GraphQL\Types;
 use App\Models\ShopCategory;
-use Error;
 use GraphQL\Type\Definition\InputObjectType;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;

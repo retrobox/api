@@ -1,6 +1,7 @@
 <?php
 namespace App\Controllers;
 
+use Illuminate\Database\Capsule\Manager;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Slim\Router;
@@ -34,4 +35,12 @@ class Controller{
 	public function pathFor($name, $params = []){
 		return $this->router->pathFor($name, $params);
 	}
+
+    /**
+     * Load the database by loading the ORM manager from the container
+     */
+	public function loadDatabase(): void
+    {
+        $this->container->get(Manager::class);
+    }
 }

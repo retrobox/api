@@ -24,13 +24,13 @@ $app->group('/', function (){
     $this->get('paypal/execute', [\App\Controllers\Payment\PaypalController::class, 'postExecute']);
 
     $this->group('account/', function (){
-        $this->get('login', [\App\Controllers\Account\StailEuController::class, 'getLogin']);
-        $this->get('register', [\App\Controllers\Account\StailEuController::class, 'getRegister']);
+        $this->get('login', [\App\Controllers\AccountController::class, 'getLogin']);
+        $this->get('register', [\App\Controllers\AccountController::class, 'getRegister']);
 
-        $this->map(['GET', 'OPTIONS'], 'info', [\App\Controllers\Account\StailEuController::class, 'getInfo'])
+        $this->map(['GET', 'OPTIONS'], 'info', [\App\Controllers\AccountController::class, 'getInfo'])
             ->add(new \App\Middlewares\JWTMiddleware($this->getContainer()));
 
-        $this->map(['GET', 'POST', 'OPTIONS'], 'execute', [\App\Controllers\Account\StailEuController::class, 'execute'])
+        $this->map(['GET', 'POST', 'OPTIONS'], 'execute', [\App\Controllers\AccountController::class, 'execute'])
             ->add(new \RKA\Middleware\IpAddress());
     })->add(new \App\Middlewares\CorsMiddleware());
     //shop

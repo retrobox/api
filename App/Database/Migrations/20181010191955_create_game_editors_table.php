@@ -3,7 +3,7 @@
 
 use Phinx\Migration\AbstractMigration;
 
-class CreateMediasTable extends AbstractMigration
+class CreateGameEditorsTable extends AbstractMigration
 {
     /**
      * Change Method.
@@ -28,23 +28,15 @@ class CreateMediasTable extends AbstractMigration
      */
     public function change()
     {
-		//example url: https://example.org/image.png type: image
-		$this->table('medias')
-			->addColumn('url', 'string')
-			//youtube-video,image,screenshots
-			->addColumn('type', 'string')
-			->addColumn('parent_id', 'string', [
-				'null' => true
-			])
-			->addColumn('parent_type', 'string', [
-				'null' => true
-			])
-			->addColumn("created_at", 'datetime', ['null' => true])
-			->addColumn("updated_at", 'datetime', ['null' => true])
-			->create();
+        $this->table('game_editors')
+            ->addColumn('name','string')
+            ->addColumn('description', 'string', ['null' => true])
+            ->addColumn('created_at', 'datetime', ['null' => true])
+            ->addColumn('updated_at', 'datetime', ['null' => true])
+            ->create();
 
-		$this->table('medias')
-			->changeColumn('id', 'string')
-			->update();
+        $this->table('game_editors')
+            ->changeColumn('id', 'string')
+            ->update();
     }
 }

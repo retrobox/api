@@ -6,8 +6,11 @@ return new \GraphQL\Type\Schema([
 	//types
     //games
 	'game' => (new \App\GraphQL\Type\Game()),
-	'editor' => (new \App\GraphQL\Type\Editor()),
-	'genre' => (new \App\GraphQL\Type\Genre()),
+	'gameEditor' => (new \App\GraphQL\Type\GameEditor()),
+	'gamePlatform' => (new \App\GraphQL\Type\GamePlatform()),
+	'gameTag' => (new \App\GraphQL\Type\GameTag()),
+	'gameMedia' => (new \App\GraphQL\Type\GameMedia()),
+
 	//blog
 	'post' => (new \App\GraphQL\Type\Post()),
 	//shop

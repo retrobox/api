@@ -2,28 +2,27 @@
 
 namespace App\Controllers;
 
-use DI\Container;
 use GraphQL\GraphQL;
 use Illuminate\Database\Capsule\Manager;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use GraphQL\Validator\DocumentValidator;
+use Slim\Http\Response;
 
 class GraphQlController extends Controller
 {
-	public function newRequest(ServerRequestInterface $request, ResponseInterface $response, Manager $manager, Container $container)
+	public function newRequest(ServerRequestInterface $request, Response $response)
 	{
-		$schema = include "../App/GraphQL/schema.php";
-
+	    $this->container->get(Manager::class);
+		$schema = require dirname(__DIR__) . '/GraphQL/schema.php';
 		$input = $request->getParsedBody();
 		$query = $input['query'];
 		$variableValues = isset($input['variables']) ? $input['variables'] : NULL;
-
 		try {
 			$result = GraphQL::executeQuery(
 				$schema,
 				$query,
-				$container,
+				$this->container,
 				NULL,
 				$variableValues
 			);

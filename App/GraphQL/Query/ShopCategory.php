@@ -131,7 +131,7 @@ class ShopCategory
         ];
     }
 
-    public static function  update()
+    public static function update()
     {
         return [
             'type' => Type::boolean(),

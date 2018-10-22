@@ -44,7 +44,7 @@ class GameSeeder extends AbstractSeed
 				'url' => $faker->imageUrl(400, 400),
 				'type' => 'logo',
 				'parent_id' => $editors[$i]['id'],
-				'parent_type' => 'App\Models\Editor',
+				'parent_type' => 'App\Models\GameEditor',
 				'created_at' => $faker->dateTime->format('Y-m-d H:i:s'),
 				'updated_at' => $faker->dateTime->format('Y-m-d H:i:s')
 			];
@@ -75,7 +75,7 @@ class GameSeeder extends AbstractSeed
 				'url' => $faker->imageUrl(),
 				'type' => 'image',
 				'parent_id' => $editors[$i]['id'],
-				'parent_type' => 'App\Models\Editor',
+				'parent_type' => 'App\Models\GameEditor',
 				'created_at' => $faker->dateTime->format('Y-m-d H:i:s'),
 				'updated_at' => $faker->dateTime->format('Y-m-d H:i:s')
 			];
@@ -84,7 +84,7 @@ class GameSeeder extends AbstractSeed
 				'url' => $faker->imageUrl(400, 400),
 				'type' => 'image',
 				'parent_id' => $editors[$i]['id'],
-				'parent_type' => 'App\Models\Editor',
+				'parent_type' => 'App\Models\GameEditor',
 				'created_at' => $faker->dateTime->format('Y-m-d H:i:s'),
 				'updated_at' => $faker->dateTime->format('Y-m-d H:i:s')
 			];
@@ -130,7 +130,7 @@ class GameSeeder extends AbstractSeed
 				'url' => $faker->imageUrl(),
 				'type' => 'image',
 				'parent_id' => $games[$i]['id'],
-				'parent_type' => 'App\Models\Editor',
+				'parent_type' => 'App\Models\GameEditor',
 				'created_at' => $faker->dateTime->format('Y-m-d H:i:s'),
 				'updated_at' => $faker->dateTime->format('Y-m-d H:i:s')
 			];

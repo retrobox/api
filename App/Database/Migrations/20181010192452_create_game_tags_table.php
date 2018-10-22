@@ -3,7 +3,7 @@
 
 use Phinx\Migration\AbstractMigration;
 
-class CreateGenresTable extends AbstractMigration
+class CreateGameTagsTable extends AbstractMigration
 {
     /**
      * Change Method.
@@ -28,24 +28,21 @@ class CreateGenresTable extends AbstractMigration
      */
     public function change()
     {
-		$this->table('genres')
-			->addColumn('name', 'string')
-			->addColumn('fa_icon', 'string', ['null' => true])
-			->addColumn("created_at", 'datetime', ['null' => true])
-			->addColumn("updated_at", 'datetime', ['null' => true])
-			->create();
+        $this->table('game_tags')
+            ->addColumn('name', 'string')
+            ->addColumn('description', 'string', ['null' => true])
+            ->addColumn('icon', 'string', ['null' => true])
+            ->addColumn('created_at', 'string', ['null' => true])
+            ->addColumn('updated_at', 'string', ['null' => true])
+            ->create();
 
-		$this->table('genres')
-			->changeColumn('id', 'string')
-			->update();
+        $this->table('game_tags')
+            ->changeColumn('id', 'string')
+            ->update();
 
-		$this->table('game_genre')
-			->addColumn('game_id', 'string')
-			->addColumn('genre_id', 'string')
-			->create();
-
-		$this->table('game_genre')
-			->removeColumn('id')
-			->update();
+        $this->table('game_tags_games')
+            ->addColumn('tag_id', 'string')
+            ->addColumn('game_id', 'string')
+            ->create();
     }
 }

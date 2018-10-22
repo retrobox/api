@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 class Game extends Model
 {
-
 	protected $table = 'games';
 
 	protected $keyType = 'string';
@@ -17,19 +19,21 @@ class Game extends Model
 
 	public function platform()
 	{
-		return $this->belongsTo(Platform::class);
+		return $this->belongsTo(GamePlatform::class);
 	}
 
 	public function editor()
 	{
-		return $this->belongsTo(Editor::class);
+		return $this->belongsTo(GameEditor::class);
 	}
 
-	/**
-	 * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-	 */
-	public function genres()
+    public function medias(): HasMany
+    {
+        return $this->hasMany(GameMedia::class, 'game_id', 'id');
+    }
+
+	public function tags(): BelongsToMany
 	{
-		return $this->belongsToMany(Genre::class);
+		return $this->belongsToMany(GameTag::class,'game_tags_games', 'tag_id', 'game_id', 'id', 'id', GameTag::class);
 	}
 }

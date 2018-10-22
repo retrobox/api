@@ -13,6 +13,29 @@ class Mutations extends ObjectType {
 			'name' => 'Mutations',
 			'fields' => [
 				'storeGame' => \App\GraphQL\Query\Game::store(),
+                'updateGame' => \App\GraphQL\Query\Game::update(),
+                'destroyGame' => \App\GraphQL\Query\Game::destroy(),
+
+                // game editor
+				'storeGameEditor' => \App\GraphQL\Query\GameEditor::store(),
+				'updateGameEditor' => \App\GraphQL\Query\GameEditor::update(),
+				'destroyGameEditor' => \App\GraphQL\Query\GameEditor::destroy(),
+
+                // game platform
+                'storeGamePlatform' => \App\GraphQL\Query\GamePlatform::store(),
+                'updateGamePlatform' => \App\GraphQL\Query\GamePlatform::update(),
+                'destroyGamePlatform' => \App\GraphQL\Query\GamePlatform::destroy(),
+
+                // game media
+                'storeGameMedia' => \App\GraphQL\Query\GameMedia::store(),
+                'updateGameMedia' => \App\GraphQL\Query\GameMedia::update(),
+                'destroyGameMedia' => \App\GraphQL\Query\GameMedia::destroy(),
+
+                // game tags
+                'storeGameTag' => \App\GraphQL\Query\GameTag::store(),
+                'updateGameTag' => \App\GraphQL\Query\GameTag::update(),
+                'destroyGameTag' => \App\GraphQL\Query\GameTag::destroy(),
+
 				//post
 				'storePost' => \App\GraphQL\Query\Post::store(),
                 //user

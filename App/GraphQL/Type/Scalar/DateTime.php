@@ -3,8 +3,9 @@
 namespace App\GraphQL\Type\Scalar;
 
 use GraphQL\Error\Error;
+use GraphQL\Language\AST\Node;
 use GraphQL\Type\Definition\CustomScalarType;
-use GraphQL\Utils;
+use GraphQL\Utils\Utils;
 use Illuminate\Support\Carbon;
 
 class DateTime extends CustomScalarType
@@ -32,8 +33,9 @@ class DateTime extends CustomScalarType
 		}
 	}
 
-	public function parseLiteral(/* GraphQL\Language\AST\ValueNode */
-		$valueNode)
+	public function parseLiteral(/* GraphQL\Language\AST\ValueNode */ $valueNode)
 	{
+	    /** @var $valueNode Node */
+	    return $this->parseValue($valueNode->toArray()['value']);
 	}
 }

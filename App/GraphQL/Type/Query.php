@@ -16,7 +16,22 @@ class Query extends ObjectType
                 //games
                 'getManyGames' => \App\GraphQL\Query\Game::getMany(),
                 'getOneGame' => \App\GraphQL\Query\Game::getOne(),
-                //'storeGame' => \App\GraphQL\Query\Game::store(),
+
+                //game editor
+                'getManyGameEditors' => \App\GraphQL\Query\GameEditor::getMany(),
+                'getOneGameEditor' => \App\GraphQL\Query\GameEditor::getOne(),
+
+                //game platform
+                'getManyGamePlatforms' => \App\GraphQL\Query\GamePlatform::getMany(),
+                'getOneGamePlatform' => \App\GraphQL\Query\GamePlatform::getOne(),
+
+                //game media
+                'getManyGameMedias' => \App\GraphQL\Query\GameMedia::getMany(),
+                'getOneGameMedia' => \App\GraphQL\Query\GameMedia::getOne(),
+
+                //game tag
+                'getManyGameTags' => \App\GraphQL\Query\GameTag::getMany(),
+                'getOneGameTag' => \App\GraphQL\Query\GameTag::getOne(),
 
                 //posts
                 'getManyPosts' => \App\GraphQL\Query\Post::getMany(),

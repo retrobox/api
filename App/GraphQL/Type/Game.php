@@ -25,14 +25,21 @@ class Game extends ObjectType
 					'description' => 'The Entertainment Software Rating Board level of the game'
 				],
 				'locale' => [
-					'type' => Type::string()
+					'type' => Type::string(),
+                    'description' => 'A comma list of locale supported by this game'
 				],
 				'players' => [
-					'type' => Type::int()
+					'type' => Type::int(),
+                    'description' => 'Numbers of maximum players that the game allow to play with'
 				],
 				'thegamesdb_rating' => [
-					'type' => Type::float()
+					'type' => Type::float(),
+                    'description' => 'Average rating of TheGamesDB'
 				],
+                'igdb_rating' => [
+                    'type' => Type::float(),
+                    'description' => 'Average rating of IGDB users'
+                ],
 				'description' => [
 					'type' => Type::string()
 				],
@@ -46,14 +53,17 @@ class Game extends ObjectType
 					'type' => Types::dateTime()
 				],
 				'platform' => [
-					'type' => Types::platform()
+					'type' => Types::gamePlatform()
 				],
 				'editor' => [
-					'type' => Types::editor()
+					'type' => Types::gameEditor()
 				],
-				'genres' => [
-					'type' => Type::listOf(Types::genre())
-				]
+				'tags' => [
+					'type' => Type::listOf(Types::gameTag())
+				],
+                'medias' => [
+                    'type' => Type::listOf(Types::gameMedia())
+                ]
 			]
 		];
 

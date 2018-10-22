@@ -1,13 +1,14 @@
 <?php
 namespace App\GraphQL;
 use App\GraphQL\Type\Console;
+use App\GraphQL\Type\GameMedia;
+use App\GraphQL\Type\GamePlatform;
+use App\GraphQL\Type\GameTag;
 use App\GraphQL\Type\ShopOrder;
 use App\GraphQL\Type\Post;
 use App\GraphQL\Type\Scalar\DateTime;
-use App\GraphQL\Type\Editor;
+use App\GraphQL\Type\GameEditor;
 use App\GraphQL\Type\Game;
-use App\GraphQL\Type\Genre;
-use App\GraphQL\Type\Platform;
 use App\GraphQL\Type\Scalar\FloatType;
 use App\GraphQL\Type\Scalar\NonEmpty;
 use App\GraphQL\Type\Scalar\Url;
@@ -28,13 +29,17 @@ use App\GraphQL\Type\User;
  */
 class Types
 {
-	private static $game;
-	private static $platform;
-	private static $editor;
-	private static $genre;
-	private static $dateTime;
-	private static $nonEmpty;
-	private static $post;
+    private static $dateTime;
+    private static $nonEmpty;
+    private static $game;
+    private static $gamePlatform;
+    private static $gamePlatformWithDepth;
+    private static $gameEditor;
+    private static $gameEditorWithDepth;
+    private static $gameTag;
+    private static $gameTagWithDepth;
+    private static $gameMedia;
+    private static $post;
 	private static $shopItem;
 	private static $shopCategory;
 	private static $shopCategoryWithDepth;
@@ -77,29 +82,61 @@ class Types
 	}
 
 	/**
-	 * @return Platform
+	 * @return GamePlatform
 	 */
-	public static function platform()
+	public static function gamePlatform()
 	{
-		return self::$platform ?: (self::$platform = new Platform());
+		return self::$gamePlatform ?: (self::$gamePlatform = new GamePlatform());
 	}
+
+    /**
+     * @return GamePlatform
+     */
+    public static function gamePlatformWithDepth()
+    {
+        return self::$gamePlatformWithDepth ?: (self::$gamePlatformWithDepth = new GamePlatform(true));
+    }
 
 	/**
-	 * @return Editor
+	 * @return GameEditor
 	 */
-	public static function editor()
+	public static function gameEditor()
 	{
-		return self::$editor ?: (self::$editor = new Editor());
+		return self::$gameEditor ?: (self::$gameEditor = new GameEditor());
 	}
 
+    /**
+     * @return GameEditor
+     */
+    public static function gameEditorWithDepth()
+    {
+        return self::$gameEditorWithDepth ?: (self::$gameEditorWithDepth = new GameEditor(true));
+    }
 
 	/**
-	 * @return Genre
+	 * @return GameTag
 	 */
-	public static function genre()
+	public static function gameTag()
 	{
-		return self::$genre ?: (self::$genre = new Genre());
+		return self::$gameTag ?: (self::$gameTag = new GameTag());
 	}
+
+
+    /**
+     * @return GameTag
+     */
+    public static function gameTagWithDepth()
+    {
+        return self::$gameTagWithDepth ?: (self::$gameTagWithDepth = new GameTag(true));
+    }
+
+    /**
+     * @return GameMedia
+     */
+    public static function gameMedia()
+    {
+        return self::$gameMedia ?: (self::$gameMedia = new GameMedia());
+    }
 
 	/**
 	 * @return Post

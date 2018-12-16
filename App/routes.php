@@ -35,8 +35,8 @@ $app->group('/', function (){
     })->add(new \App\Middlewares\CorsMiddleware());
     //shop
     $this->group('shop/', function (){
+        $this->get('prices', [\App\Controllers\ShopController::class, 'getPrices']);
         $this->get('{locale}/categories', [\App\Controllers\ShopController::class, 'getCategories']);
         $this->get('{locale}/item/{slug}', [\App\Controllers\ShopController::class, 'getItem']);
-        $this->get('prices', [\App\Controllers\ShopController::class, 'getPrices']);
     })->add(new \App\Middlewares\CorsMiddleware());
 })->add(new \App\Middlewares\CorsMiddleware());

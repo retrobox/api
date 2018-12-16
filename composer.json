@@ -43,8 +43,7 @@
         "stripe/stripe-php": "^6.9",
         "lefuturiste/rabbitmq-publisher": "^1.1",
         "akrabat/ip-address-middleware": "^1.0",
-        "paypal/rest-api-sdk-php": "^1.13",
-        "zonuexe/http-accept-language": "~0.4.1"
+        "paypal/rest-api-sdk-php": "^1.13"
     },
     "require-dev": {
         "phpunit/phpunit": "^7.3",

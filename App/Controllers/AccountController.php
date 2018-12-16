@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\AcceptLanguage;
 use App\Auth\Session;
 use App\Models\User;
 use Carbon\Carbon;
@@ -12,7 +13,6 @@ use Monolog\Logger;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Http\Response;
 use STAILEUAccounts\STAILEUAccounts;
-use Teto\HTTP\AcceptLanguage;
 use Validator\Validator;
 
 class AccountController extends Controller
@@ -69,7 +69,7 @@ class AccountController extends Controller
                 $user['last_avatar'] = $avatar;
                 $user['last_email'] = $email;
                 $user['last_username'] = $username;
-                $user['last_locale'] = AcceptLanguage::get("fr,en;q=0.7,en-US;q=0.3")[0]['language'];
+                $user['last_locale'] = AcceptLanguage::getLanguageFromRequest($request);
                 if ($result == $this->container->get('default_admin_user_id')){
                     $user['is_admin'] = true;
                 }

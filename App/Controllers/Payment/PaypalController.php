@@ -160,13 +160,13 @@ class PaypalController extends Controller
                 $order->status = 'payed';
                 $order->save();
                 //change user's email in the db
-                $user = $order->user();
+                $user = $order->user()->first();
                 $user['last_email'] = $payment->getPayer()->getPayerInfo()->getEmail();
                 $user->save();
                 //emit "order.payed" event
                 $rabbitMQPublisher->publish(['id' => $order['id']], 'order.payed');
                 //redirect to checkout success page
-                return $this->redirect($response, $this->container->get('services')['web_endpoint'] . '/shop/checkout/success');
+                return $this->redirect($response, $this->container->get('services')['web_endpoint'] . '/shop/checkout-success');
             } else {
                 return $response->withJson([
                     'success' => false,

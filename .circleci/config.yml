@@ -10,4 +10,6 @@ jobs:
         - run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
         - run: docker build -t retrobox/api .
         - run: docker push retrobox/api
-
+notify:
+    webhooks:
+    - url: https://skyhook.glitch.me/api/webhooks/547007853400031258/kfphxKmDbx2voBkmejdC1YrGzNzXFE-HNTrn0U1Z8x1Psl-YaL3bemyQr-CYg2vuhAc0/circleci

@@ -63,7 +63,10 @@ class Session
      */
     public function getUserId(): string
     {
-        return $this->data['user']['id'];
+        if (isset($this->data['user']['id'])) {
+            return $this->data['user']['id'];
+        }
+        return "";
     }
 
 	/**

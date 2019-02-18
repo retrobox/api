@@ -2,17 +2,18 @@
 
 namespace App\Controllers;
 
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
+use Slim\Http\Response;
 
 class PagesController extends Controller
 {
-	public function getHome(ServerRequestInterface $request, ResponseInterface $response)
+	public function getHome(Response $response)
 	{
 		return $response->withJson([
-			'This is the main page of the API!',
-			'Welcome in your application!',
-			'This api support REST and GraphQL'
+		    'success' => true,
+            'data' => [
+                'name' => $this->container->get('app_name'),
+                'env' => $this->container->get('env_name')
+            ]
 		]);
 	}
 }

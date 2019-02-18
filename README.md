@@ -1,5 +1,7 @@
 # Retrobox's api
 
+[![CircleCI](https://circleci.com/gh/retrobox/api.svg?style=svg)](https://circleci.com/gh/retrobox/api)
+
 ## Requirement
 
 - Php 7.1 or higher

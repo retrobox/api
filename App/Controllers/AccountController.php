@@ -12,14 +12,14 @@ use Dflydev\FigCookies\SetCookie;
 use Monolog\Logger;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Http\Response;
-use STAILEUAccounts\STAILEUAccounts;
+use STAILEUAccounts\Client;
 use Validator\Validator;
 
 class AccountController extends Controller
 {
-    public function getLogin(Response $response, STAILEUAccounts $STAILEUAccounts)
+    public function getLogin(Response $response, Client $STAILEUAccounts)
     {
-        $url = $STAILEUAccounts->loginForm($this->container->get('staileu')['redirect']);
+        $url = $STAILEUAccounts->getAuthorizeUrl($this->container->get('staileu')['redirect'], [Client::SCOPE_READ_PROFILE, Client::SCOPE_READ_EMAIL]);
         return $response->withJson([
             'success' => true,
             'data' => [
@@ -28,18 +28,7 @@ class AccountController extends Controller
         ]);
     }
 
-    public function getRegister(Response $response, STAILEUAccounts $STAILEUAccounts)
-    {
-        $url = $STAILEUAccounts->registerForm($this->container->get('staileu')['redirect']);
-        return $response->withJson([
-            'success' => true,
-            'data' => [
-                'url' => $url
-            ]
-        ]);
-    }
-
-    public function execute(ServerRequestInterface $request, Response $response, STAILEUAccounts $STAILEUAccounts, Session $session)
+    public function execute(ServerRequestInterface $request, Response $response, Client $STAILEUAccounts, Session $session)
     {
         $this->loadDatabase();
         if ($request->getMethod() == 'POST'){
@@ -47,22 +36,22 @@ class AccountController extends Controller
         }else{
             $validator = new Validator($request->getQueryParams());
         }
-        $validator->required('c-sa');
-        $validator->notEmpty('c-sa');
+        $validator->required('code');
+        $validator->notEmpty('code');
         if ($validator->isValid()) {
             //validate the token with staileu
-            $result = $STAILEUAccounts->check($validator->getValue('c-sa'));
-            if (is_string($result)) {
+            if ($STAILEUAccounts->verify($validator->getValue('code'))) {
                 //check if the user exist
-                $user = User::query()->find($result);
+                $STAILEUAccounts->fetchUser();
+                $user = User::query()->find($STAILEUAccounts->getUser()->id);
                 if ($user == NULL) {
                     //create the user
                     $user = new User();
-                    $user['id'] = $result;
+                    $user['id'] = $STAILEUAccounts->getUser()->id;
                 }
-                $username = $STAILEUAccounts->getUsername($result);
-                $email = $STAILEUAccounts->getEmail($result);
-                $avatar = $STAILEUAccounts->getAvatar($result)->getUrl();
+                $username = $STAILEUAccounts->getUser()->username;
+                $email = $STAILEUAccounts->getUser()->email;
+                $avatar = $STAILEUAccounts->getUser()->avatarUrl;
                 $user['last_login_at'] = Carbon::now();
                 $user['last_user_agent'] = $request->getServerParams()['HTTP_USER_AGENT'];
                 $user['last_ip'] = $request->getAttribute('ip_address');
@@ -70,20 +59,20 @@ class AccountController extends Controller
                 $user['last_email'] = $email;
                 $user['last_username'] = $username;
                 $user['last_locale'] = AcceptLanguage::getLanguageFromRequest($request);
-                if ($result == $this->container->get('default_admin_user_id')){
+                if ($STAILEUAccounts->getUser()->id == $this->container->get('default_admin_user_id')){
                     $user['is_admin'] = true;
                 }
                 $user->save();
                 //generate a token and save it into cookie
                 $userInfos = [
-                    'id' => $result,
+                    'id' => $STAILEUAccounts->getUser()->id,
                     'email' => $email,
                     'avatar' => $avatar,
                     'username' => $username,
                     'is_admin' => (bool) $user['is_admin']
                 ];
                 $this->container->get(Logger::class)->info(
-                    "New login: {$result} email: {$userInfos['email']} username: {$userInfos['username']} is_admin: {$userInfos['is_admin']} avatar: {$userInfos['avatar']}");
+                    "New login: {$STAILEUAccounts->getUser()->id} email: {$userInfos['email']} username: {$userInfos['username']} is_admin: {$userInfos['is_admin']} avatar: {$userInfos['avatar']}");
                 $token = $session->create($userInfos);
                 if ($request->getMethod() == 'POST'){
                     //return simple token
@@ -112,7 +101,7 @@ class AccountController extends Controller
                 return $response->withJson([
                     'success' => false,
                     'errors' => [
-                        $result->getCode() . ": " . $result->getMessage()
+                        'Invalid STAIL.EU code'
                     ]
                 ])->withStatus(400);
             }

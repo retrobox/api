@@ -52,8 +52,8 @@ return [
         return $client;
     },
 
-    \STAILEUAccounts\STAILEUAccounts::class => function (\DI\Container $container) {
-        return new \STAILEUAccounts\STAILEUAccounts($container->get('staileu')['private'], $container->get('staileu')['public']);
+    \STAILEUAccounts\Client::class => function (\DI\Container $container) {
+        return new \STAILEUAccounts\Client($container->get('staileu')['public'], $container->get('staileu')['private']);
     },
 
     \PayPal\Rest\ApiContext::class => function (ContainerInterface $container) {

@@ -25,7 +25,7 @@ $app->group('/', function (){
 
     $this->group('account/', function (){
         $this->get('login', [\App\Controllers\AccountController::class, 'getLogin']);
-        $this->get('register', [\App\Controllers\AccountController::class, 'getRegister']);
+        $this->get('register', [\App\Controllers\AccountController::class, 'getLogin']);
 
         $this->map(['GET', 'OPTIONS'], 'info', [\App\Controllers\AccountController::class, 'getInfo'])
             ->add(new \App\Middlewares\JWTMiddleware($this->getContainer()));
@@ -33,6 +33,7 @@ $app->group('/', function (){
         $this->map(['GET', 'POST', 'OPTIONS'], 'execute', [\App\Controllers\AccountController::class, 'execute'])
             ->add(new \RKA\Middleware\IpAddress());
     })->add(new \App\Middlewares\CorsMiddleware());
+
     //shop
     $this->group('shop/', function (){
         $this->get('prices', [\App\Controllers\ShopController::class, 'getPrices']);

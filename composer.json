@@ -37,13 +37,13 @@
         "sebastianwalker/paysafecard-php-api": "^1.0",
         "lefuturiste/validator": "^1.0",
         "respect/validation": "^1.1",
-        "stan-tab-corp/staileu-accounts": "^3.1",
         "dflydev/fig-cookies": "^1.0",
         "firebase/php-jwt": "^5.0",
         "stripe/stripe-php": "^6.9",
         "lefuturiste/rabbitmq-publisher": "^1.1",
         "akrabat/ip-address-middleware": "^1.0",
-        "paypal/rest-api-sdk-php": "^1.13"
+        "paypal/rest-api-sdk-php": "^1.13",
+        "staileu/php-sdk": "^0.0.3"
     },
     "require-dev": {
         "phpunit/phpunit": "^7.3",

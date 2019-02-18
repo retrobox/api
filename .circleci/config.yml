@@ -1,9 +1,11 @@
 version: 2
 jobs:
     build:
+        working_directory: /app
         docker:
-            - image: debian
+            - image: docker:17.05.0-ce-git
         steps:
+        - checkout
         - setup_remote_docker
         - run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
         - run: docker build -t retrobox/api .

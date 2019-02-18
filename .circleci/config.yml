@@ -1,6 +1,8 @@
 version: 2
 jobs:
     build:
+        docker:
+            - image: debian
         steps:
         - setup_remote_docker
         - run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD

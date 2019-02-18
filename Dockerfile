@@ -1,4 +1,4 @@
-FROM lefuturiste/docker-php-fpm
+FROM lefuturiste/php-fpm
 LABEL maintainer="contact@thingmill.fr"
 ADD . /app
 # env

@@ -15,7 +15,7 @@ class GameTag
     public static function getMany()
     {
         return [
-            'type' => Type::listOf(Types::gameTag()),
+            'type' => Type::listOf(Types::gameTagWithDepth()),
             'description' => 'Get many GameTags',
             'args' => [
                 [

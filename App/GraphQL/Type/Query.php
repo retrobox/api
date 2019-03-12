@@ -52,7 +52,8 @@ class Query extends ObjectType
                 'getOneUser' => \App\GraphQL\Query\User::getOne(),
 
                 //console
-                'getManyConsole' => \App\GraphQL\Query\Console::getMany(),
+                'getConsolesCount' => \App\GraphQL\Query\Console::getCount(),
+                'getManyConsoles' => \App\GraphQL\Query\Console::getMany(),
                 'getOneConsole' => \App\GraphQL\Query\Console::getOne()
             ]
         ];

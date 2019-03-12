@@ -81,7 +81,7 @@ class Console
                 $item = \App\Models\Console::with(['user', 'order'])
                     ->find($args['id']);
                 if ($item === NULL) {
-                    return new \Exception('Unknown shop order', 404);
+                    return new \Exception('Unknown shop console', 404);
                 }
                 if ($session->isAdmin() || $session->getUserId() == $item['user']['id']) {
                     return $item;
@@ -176,5 +176,22 @@ class Console
             $randString = $randString . $characters[rand(0, strlen($characters) - 1)];
         }
         return $randString;
+    }
+
+    public static function getCount()
+    {
+        return [
+            'type' => Type::int(),
+            'description' => 'Get the consoles count',
+            'args' => [],
+            'resolve' => function (ContainerInterface $container) {
+                $session = $container->get(Session::class);
+                if ($session->isAdmin()) {
+                    return \App\Models\Console::all()->count();
+                } else {
+                    return new \Exception('Forbidden', 403);
+                }
+            }
+        ];
     }
 }

@@ -33,6 +33,9 @@ class GamePlatform extends ObjectType
 				'name' => [
 					'type' => Type::string()
 				],
+                'short' => [
+                    'type' => Type::string()
+                ],
 				'description' => [
 					'type' => Type::string()
 				],
@@ -62,6 +65,9 @@ class GamePlatform extends ObjectType
                 ],
 				'medias' => [
 				    'type' => Type::listOf(Types::gameMedia())
+                ],
+                'released_at' => [
+                    'type' => Types::dateTime()
                 ],
 				'created_at' => [
 					'type' => Types::dateTime()

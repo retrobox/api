@@ -229,11 +229,11 @@ class GamePlatform
             ],
             'resolve' => function (ContainerInterface $container, $args) {
                 if ($container->get(Session::class)->isAdmin()) {
-                    $editor = \App\Models\GameEditor::query()->find($args['id']);
-                    if ($editor == NULL){
-                        return new \Exception('Unknown GameEditor', 404);
+                    $platform = \App\Models\GamePlatform::query()->find($args['id']);
+                    if ($platform == NULL){
+                        return new \Exception('Unknown GamePlatform', 404);
                     }
-                    return \App\Models\GameEditor::destroy($editor['id']);
+                    return \App\Models\GamePlatform::destroy($platform['id']);
                 } else {
                     return new \Exception('Forbidden', 403);
                 }

@@ -9,6 +9,8 @@
 */
 $app->group('/', function (){
     $this->get('', [\App\Controllers\PagesController::class, 'getHome']);
+    $this->post('newsletter/subscribe', [\App\Controllers\NewsletterController::class, 'postSubscribe']);
+    $this->post('newsletter/event', [\App\Controllers\NewsletterController::class, 'postEvent']);
 
     $this->map(['POST','OPTIONS'], 'graphql', [\App\Controllers\GraphQlController::class, 'newRequest'])
         ->add(new \App\Middlewares\JWTMiddleware($this->getContainer()));

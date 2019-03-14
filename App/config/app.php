@@ -27,5 +27,10 @@ return [
         'username' => getenv('RABBITMQ_USERNAME'),
         'password' => getenv('RABBITMQ_PASSWORD'),
         'virtual_host' => getenv('RABBITMQ_VIRTUAL_HOST')
+    ],
+    'mailchimp' => [
+        'api_key' => getenv('MAILCHIMP_API_KEY'),
+        'list_id' => getenv('MAILCHIMP_LIST_ID'),
+        'discord_webhook' => getenv('MAILCHIMP_DISCORD_WH')
     ]
 ];

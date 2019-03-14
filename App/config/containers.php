@@ -72,5 +72,8 @@ return [
               $container->get('rabbitmq')['virtual_host']
             )
         );
+    },
+    \App\MailChimp::class => function (ContainerInterface $container) {
+        return new \App\MailChimp($container->get('mailchimp')['api_key']);
     }
 ];

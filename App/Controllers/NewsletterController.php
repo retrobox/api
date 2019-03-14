@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\MailChimp;
 use DiscordWebhooks\Client;
 use DiscordWebhooks\Embed;
+use Monolog\Logger;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Http\Response;
 use Validator\Validator;
@@ -21,7 +22,7 @@ class NewsletterController extends Controller
             return $response->withJson([
                 'success' => false,
                 'errors' => $validator->getErrors()
-            ]);
+            ], 400);
         }
 
         $mailChimpResponse = $mailChimp->addSubscriber($this->container->get('mailchimp')['list_id'], $validator->getValue('email'));
@@ -61,8 +62,9 @@ class NewsletterController extends Controller
                     $discordWebHook->embed($embed)->send();
                 } catch (\Exception $e) {
                     return $response->withJson([
-                        'success' => false
-                    ]);
+                        'success' => false,
+                        'errors' => ['Error with the discord webhook api']
+                    ], 400);
                 }
                 break;
         }

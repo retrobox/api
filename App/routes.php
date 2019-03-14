@@ -10,6 +10,7 @@
 $app->group('/', function (){
     $this->get('', [\App\Controllers\PagesController::class, 'getHome']);
     $this->post('newsletter/subscribe', [\App\Controllers\NewsletterController::class, 'postSubscribe']);
+    $this->get('newsletter/event', [\App\Controllers\NewsletterController::class, 'getEvent']);
     $this->post('newsletter/event', [\App\Controllers\NewsletterController::class, 'postEvent']);
 
     $this->map(['POST','OPTIONS'], 'graphql', [\App\Controllers\GraphQlController::class, 'newRequest'])

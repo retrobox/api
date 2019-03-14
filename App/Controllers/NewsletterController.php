@@ -38,6 +38,10 @@ class NewsletterController extends Controller
         ]);
     }
 
+    public function getEvent(Response $response)
+    {
+        return $response->withJson(true)->withStatus(200);
+    }
 
     public function postEvent(ServerRequestInterface $request, Response $response)
     {

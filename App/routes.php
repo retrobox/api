@@ -43,4 +43,8 @@ $app->group('/', function (){
         $this->get('{locale}/categories', [\App\Controllers\ShopController::class, 'getCategories']);
         $this->get('{locale}/item/{slug}', [\App\Controllers\ShopController::class, 'getItem']);
     })->add(new \App\Middlewares\CorsMiddleware());
+
+    $this->group('docs/', function (){
+        $this->get('{locale}/{slug}', [\App\Controllers\DocsController::class, 'getPage']);
+    })->add(new \App\Middlewares\CorsMiddleware());
 })->add(new \App\Middlewares\CorsMiddleware());

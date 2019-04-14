@@ -12,7 +12,11 @@ class DocsController extends Controller
         $config = json_decode(file_get_contents($docEndpoint . '/config.json'), true);
         $localeConfig = array_filter($config['locales'], function ($item) use ($locale){
             return $item['slug'] === $locale;
-        })[0];
+        });
+        if (count($localeConfig) === 0) {
+            return $response->withJson(['success' => false, 'errors' => ['Invalid locale slug']], 400);
+        }
+        $localeConfig = array_values($localeConfig)[0];
         if ($slug === 'home' || $slug === 'undefined') {
             $title = $localeConfig['home']['name'];
             $slugToGet = $localeConfig['home']['slug'];
@@ -21,8 +25,11 @@ class DocsController extends Controller
             $indexOf = NULL;
         } else {
             $pageConfig = array_filter($localeConfig['tree'], function ($item) use ($slug) {
-               return $item['slug'] === $slug;
+                return $item['slug'] === $slug;
             });
+            if (count($pageConfig) === 0) {
+                return $response->withJson(['success' => false, 'errors' => ['Invalid locale slug']], 400);
+            }
             $pageConfig = array_values($pageConfig)[0];
             $title = $pageConfig['name'];
             $slugToGet = $slug;

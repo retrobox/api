@@ -8,8 +8,7 @@ class DocsController extends Controller
 {
     public function getPage($locale, $slug, Response $response)
     {
-//        $docEndpoint = "https://docs.retrobox.tech";
-        $docEndpoint = "http://localhost:9950";
+        $docEndpoint = $this->container->get('services')['docs_endpoint'];
         $config = json_decode(file_get_contents($docEndpoint . '/config.json'), true);
         $localeConfig = array_filter($config['locales'], function ($item) use ($locale){
             return $item['slug'] === $locale;

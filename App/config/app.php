@@ -16,7 +16,8 @@ return [
         'en'
     ],
     'services' => [
-        'web_endpoint' => getenv('WEB_ENDPOINT')
+        'web_endpoint' => getenv('WEB_ENDPOINT'),
+        'docs_endpoint' => getenv('DOCS_ENDPOINT')
     ],
     //staileu id of a default admin (super admin)
     'default_admin_user_id' => getenv('DEFAULT_ADMIN_USER_ID'),

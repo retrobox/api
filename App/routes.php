@@ -7,6 +7,7 @@
 | Register it all your api routes
 |
 */
+$app->add(new \App\Middlewares\CorsMiddleware());
 $app->group('/', function (){
     $this->get('', [\App\Controllers\PagesController::class, 'getHome']);
     $this->map(['POST', 'OPTIONS'], 'newsletter/subscribe', [\App\Controllers\NewsletterController::class, 'postSubscribe']);
@@ -35,16 +36,16 @@ $app->group('/', function (){
 
         $this->map(['GET', 'POST', 'OPTIONS'], 'execute', [\App\Controllers\AccountController::class, 'execute'])
             ->add(new \RKA\Middleware\IpAddress());
-    })->add(new \App\Middlewares\CorsMiddleware());
+    });
 
     //shop
     $this->group('shop/', function (){
         $this->get('prices', [\App\Controllers\ShopController::class, 'getPrices']);
         $this->get('{locale}/categories', [\App\Controllers\ShopController::class, 'getCategories']);
         $this->get('{locale}/item/{slug}', [\App\Controllers\ShopController::class, 'getItem']);
-    })->add(new \App\Middlewares\CorsMiddleware());
+    });
 
     $this->group('docs/', function (){
         $this->get('{locale}/{slug}', [\App\Controllers\DocsController::class, 'getPage']);
-    })->add(new \App\Middlewares\CorsMiddleware());
-})->add(new \App\Middlewares\CorsMiddleware());
+    });
+});

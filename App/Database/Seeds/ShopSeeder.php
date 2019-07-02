@@ -32,6 +32,7 @@ class ShopSeeder extends AbstractSeed
                 'title' => $faker[$locale]->realText(rand(20,30)),
                 'is_customizable' => rand(0, 1),
                 'locale' => $locale,
+                'order' => 0,
                 'created_at' => $fakerEN->dateTime->format('Y-m-d H:i:s'),
                 'updated_at' => $fakerEN->dateTime->format('Y-m-d H:i:s')
             ];
@@ -59,7 +60,7 @@ class ShopSeeder extends AbstractSeed
                 'slug' => $faker[$locale]->slug(),
                 'description_short' => $faker[$locale]->sentence(1),
                 'description_long' => $md,
-                'image' => "https://static.retrobox.tech/img/composants/RASPBERRY.png",
+                'image' => "https://static.retrobox.tech/img/about/RETROBOX1.png",
                 'price' => $fakerEN->randomFloat(2, 50, 70),
                 'weight' => $fakerEN->randomFloat(2, 50, 70),
                 'version' => "version: " . $fakerEN->sentence(1),
@@ -89,10 +90,8 @@ class ShopSeeder extends AbstractSeed
                     'url' => $fakerEN->randomElement([
                         'https://cdn.shopify.com/s/files/1/0020/9374/4179/products/storeIMAGE_1024x1024.png?v=1529309048',
                         'https://cdn.shopify.com/s/files/1/0020/9374/4179/products/weather_1024x1024.png?v=1529309048',
-                        'https://cdn.shopify.com/s/files/1/0020/9374/4179/products/Fb_2.52.51_PM_1024x1024.png?v=1529309048',
-                        'https://cdn.shopify.com/s/files/1/0020/9374/4179/products/YouTube_2.52.51_PM_1024x1024.png?v=1529309048',
-                        'https://cdn.shopify.com/s/files/1/0020/9374/4179/products/Insta_2.52.51_PM_1024x1024.png?v=1529309048',
-                        'https://cdn.shopify.com/s/files/1/0020/9374/4179/products/Twitter-copy_1024x1024.png?v=1529309048',
+                        'https://cdn.shopify.com/s/files/1/0592/1833/products/LaMetric-image-5_1024x1024.jpg?v=1560613112',
+                        'https://cdn.shopify.com/s/files/1/0592/1833/products/LaMetric-image-2_1024x1024.png?v=1560613112',
                         'https://cdn.shopify.com/s/files/1/0020/9374/4179/products/image_3_1024x1024.png?v=1529309048'
                     ]),
                     'created_at' => $fakerEN->dateTime->format('Y-m-d H:i:s'),

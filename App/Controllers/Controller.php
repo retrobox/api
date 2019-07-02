@@ -2,6 +2,7 @@
 namespace App\Controllers;
 
 use Illuminate\Database\Capsule\Manager;
+use Predis\Client;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Slim\Router;
@@ -42,5 +43,10 @@ class Controller{
 	public function loadDatabase(): void
     {
         $this->container->get(Manager::class);
+    }
+
+    public function redis(): Client
+    {
+        return $this->container->get(Client::class);
     }
 }

@@ -33,5 +33,10 @@ return [
         'api_key' => getenv('MAILCHIMP_API_KEY'),
         'list_id' => getenv('MAILCHIMP_LIST_ID'),
         'discord_webhook' => getenv('MAILCHIMP_DISCORD_WH')
+    ],
+    'redis' => [
+        'uri' => getenv('REDIS_URI'),
+        'password' => getenv('REDIS_PASSWORD'),
+        'prefix' => getenv('REDIS_PREFIX')
     ]
 ];

@@ -38,6 +38,11 @@ $app->group('/', function (){
             ->add(new \RKA\Middleware\IpAddress());
     });
 
+    $this->group('dashboard', function () {
+        $this->map(['GET', 'OPTIONS'], '[/]', [\App\Controllers\DashboardController::class, 'getDashboard']);
+        $this->map(['GET', 'OPTIONS'], '/delete', [\App\Controllers\DashboardController::class, 'getDelete']);
+    })->add(new \App\Middlewares\JWTMiddleware($this->getContainer()));
+
     //shop
     $this->group('shop/', function (){
         $this->get('prices', [\App\Controllers\ShopController::class, 'getPrices']);

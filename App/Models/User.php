@@ -10,4 +10,9 @@ class User extends Model
     protected $keyType = 'string';
     public $incrementing = false;
     protected $dates = ['last_login_at'];
+
+    public function shopOrders()
+    {
+        return $this->hasMany(ShopOrder::class);
+    }
 }

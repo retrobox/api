@@ -33,7 +33,7 @@
     "lefuturiste/monolog-discord-handler": "^0.1.2",
     "tracy/tracy": "^2.4",
     "php-di/php-di": "^5.4",
-    "lefuturiste/Slim-Bridge": "^1.0.5",
+    "lefuturiste/slim-bridge": "^1.0.5",
     "doctrine/cache": "^1.7",
     "webonyx/graphql-php": "~0.12.6",
     "illuminate/database": "~5.1",

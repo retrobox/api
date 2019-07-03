@@ -21,7 +21,7 @@ class NewsletterController extends Controller
         if (!$validator->isValid()) {
             return $response->withJson([
                 'success' => false,
-                'errors' => $validator->getErrors()
+                'errors' => $validator->getErrors(true)
             ], 400);
         }
 

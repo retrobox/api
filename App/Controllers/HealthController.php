@@ -42,7 +42,6 @@ class HealthController extends Controller
                 'message' => $exception->getMessage()
             ];
         }
-        $redisClient->set('lelelele', 'llele');
         return $response->withJson([
             'success' => true,
             'data' => [

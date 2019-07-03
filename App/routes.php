@@ -54,7 +54,5 @@ $app->group('/', function (){
         $this->get('{locale}/{slug}', [\App\Controllers\DocsController::class, 'getPage']);
     });
 
-    $this->group('health/', function (){
-        $this->get('', [\App\Controllers\HealthController::class, 'getHealth']);
-    });
+    $this->get('health', [\App\Controllers\HealthController::class, 'getHealth']);
 });

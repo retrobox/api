@@ -19,7 +19,10 @@ class AccountController extends Controller
 {
     public function getLogin(Response $response, Client $STAILEUAccounts)
     {
-        $url = $STAILEUAccounts->getAuthorizeUrl($this->container->get('staileu')['redirect'], [Client::SCOPE_READ_PROFILE, Client::SCOPE_READ_EMAIL]);
+        $url = $STAILEUAccounts->getAuthorizeUrl(
+            $this->container->get('staileu')['redirect'],
+            [Client::SCOPE_READ_PROFILE, Client::SCOPE_READ_EMAIL]
+        );
         return $response->withJson([
             'success' => true,
             'data' => [
@@ -112,7 +115,6 @@ class AccountController extends Controller
             ])->withStatus(400);
         }
     }
-
 
     public function getInfo(Response $response, Session $session){
         return $response->withJson([

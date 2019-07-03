@@ -71,6 +71,29 @@ class ShopSeeder extends AbstractSeed
                 'updated_at' => $fakerEN->dateTime->format('Y-m-d H:i:s')
             ]);
         }
+
+        // pick 2 en shop items and 2 fr shop items, and change the slug to retrobox-kit and retrobox-non-kit
+        // so we have retrobox-kit and retrobox-non-item in each locale
+        $passed = [
+            'fr' => 'fr',
+            'en' => 'en',
+        ];
+        $newItems = [];
+        foreach ($passed as $locale) {
+            $localeItems = array_values(array_filter($shopItems, function ($item) use ($locale) {
+               return $locale === $item['locale'];
+            }));
+            foreach ($localeItems as $key => $item) {
+                if (($key === 0 || $key === 1) && $passed[$locale] != 2) {
+                    unset($shopItems[array_search($item, $shopItems)]);
+                    $item['slug'] = $passed[$locale] === $locale ? 'retrobox-kit' : 'retrobox-non-kit';
+                    $passed[$locale] = $passed[$locale] === $locale ? 1 : 2;
+                }
+                $newItems[] = $item;
+            }
+        }
+        $shopItems = $newItems;
+
         $this->insert('shop_items', $shopItems);
 
         //Shop images

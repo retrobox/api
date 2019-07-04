@@ -30,6 +30,9 @@ $app->group('/', function (){
     $this->group('account/', function (){
         $this->get('login', [\App\Controllers\AccountController::class, 'getLogin']);
         $this->get('register', [\App\Controllers\AccountController::class, 'getLogin']);
+        $this->get('login-desktop', [\App\Controllers\AccountController::class, 'getLoginDesktop']);
+        $this->post('login-desktop', [\App\Controllers\AccountController::class, 'postLoginDesktop'])
+            ->add(new \App\Middlewares\JWTMiddleware($this->getContainer()));
 
         $this->map(['GET', 'OPTIONS'], 'info', [\App\Controllers\AccountController::class, 'getInfo'])
             ->add(new \App\Middlewares\JWTMiddleware($this->getContainer()));

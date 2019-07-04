@@ -85,5 +85,12 @@ return [
             ],
             'prefix' => $container->get('redis')['prefix']
         ]);
+    },
+
+    \App\WebSocketServerClient::class => function (ContainerInterface $container) {
+        return new \App\WebSocketServerClient(
+            $container->get('jwt')['key'],
+            $container->get('services')['websocket_server_endpoint']
+        );
     }
 ];

@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\WebSocketServerClient;
 use Illuminate\Database\Capsule\Manager;
 use Lefuturiste\RabbitMQPublisher\Client;
 use Slim\Http\Response;
@@ -42,6 +43,19 @@ class HealthController extends Controller
                 'message' => $exception->getMessage()
             ];
         }
+
+        $webSocketClient = null;
+        $webSocketOnline = false;
+        try {
+            $webSocketClient = $this->container->get(WebSocketServerClient::class);
+            $webSocketOnline = $webSocketClient->serverIsOnline();
+        } catch (\Exception $exception) {
+            $issues[] = [
+                'code' => $exception->getCode(),
+                'message' => $exception->getMessage()
+            ];
+        }
+
         return $response->withJson([
             'success' => true,
             'data' => [
@@ -60,7 +74,10 @@ class HealthController extends Controller
                         $redisResponse !== null &&
                         $redisResponse->getPayload() === 'PONG' &&
                         $redisClient->set("foo", "bar") &&
-                        $redisClient->get("foo") === "bar"
+                        $redisClient->get("foo") === "bar",
+                    'websocket_server' =>
+                        $webSocketClient !== null &&
+                        $webSocketOnline
                 ]
             ]
         ]);

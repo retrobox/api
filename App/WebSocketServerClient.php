@@ -39,4 +39,10 @@ class WebSocketServerClient
             ]
         ]);
     }
+
+    public function serverIsOnline(): bool
+    {
+        $response = $this->client->get($this->baseUrl . '/ping');
+        return json_decode($response->getBody()->getContents(), true)['success'] === true;
+    }
 }

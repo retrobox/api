@@ -15,4 +15,9 @@ class User extends Model
     {
         return $this->hasMany(ShopOrder::class);
     }
+
+    public function consoles()
+    {
+        return $this->hasMany(Console::class);
+    }
 }

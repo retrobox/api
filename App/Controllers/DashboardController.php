@@ -10,21 +10,25 @@ class DashboardController extends Controller
 {
     public function getDashboard(Response $response, Session $session){
         $this->loadDatabase();
-        $orders = User::query()
+
+        $user = User::query()
             ->find($session->getUserId())
-            ->first()
+            ->first();
+        $orders = $user
             ->shopOrders()
             ->orderBy('created_at', 'DESC')
             ->get();
-
-//        var_dump($orders->get());
+        $consoles = $user
+            ->consoles()
+            ->orderBy('created_at', 'DESC')
+            ->get();
 
         return $response->withJson([
             "success" => true,
             "data" => [
                 'user' => $session->getData()['user'],
                 'orders' => $orders,
-                'consoles' => []
+                'consoles' => $consoles
             ]
         ]);
     }

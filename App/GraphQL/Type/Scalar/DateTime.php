@@ -33,9 +33,4 @@ class DateTime extends CustomScalarType
 		}
 	}
 
-	public function parseLiteral(/* GraphQL\Language\AST\ValueNode */ $valueNode)
-	{
-	    /** @var $valueNode Node */
-	    return $this->parseValue($valueNode->toArray()['value']);
-	}
 }

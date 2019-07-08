@@ -3,12 +3,11 @@
 namespace App\GraphQL\Type\Scalar;
 
 use GraphQL\Error\Error;
-use GraphQL\Language\AST\StringValueNode;
-use GraphQL\Type\Definition\ScalarType;
+use GraphQL\Type\Definition\CustomScalarType;
 use GraphQL\Utils\Utils;
 use Respect\Validation\Validator;
 
-class FloatType extends ScalarType
+class FloatType extends CustomScalarType
 {
     public $name = 'float';
 
@@ -50,7 +49,7 @@ class FloatType extends ScalarType
      * @return string
      * @throws Error
      */
-    public function parseLiteral($valueNode)
+    /*public function parseLiteral($valueNode)
     {
         if (!$valueNode instanceof StringValueNode) {
             throw new Error('Query error: Can only parse strings got: ' . $valueNode->kind, [$valueNode]);
@@ -59,5 +58,5 @@ class FloatType extends ScalarType
             throw new Error("Not a valid float", [$valueNode]);
         }
         return $valueNode->value;
-    }
+    }*/
 }

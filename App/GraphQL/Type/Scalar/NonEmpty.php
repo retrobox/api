@@ -30,13 +30,13 @@ class NonEmpty extends CustomScalarType
 		}
 	}
 
-	public function parseLiteral(/* GraphQL\Language\AST\ValueNode */
-		$valueNode)
-	{
-		if (empty($valueNode->value) || $valueNode->value === '') {
-			throw new Error("Cannot represent following value as Non Empty: " . Utils::printSafeJson($valueNode->value));
-		} else {
-			return $valueNode;
-		}
-	}
+//	public function parseLiteral(/* GraphQL\Language\AST\ValueNode */
+//		$valueNode)
+//	{
+//		if (empty($valueNode->value) || $valueNode->value === '') {
+//			throw new Error("Cannot represent following value as Non Empty: " . Utils::printSafeJson($valueNode->value));
+//		} else {
+//			return $valueNode;
+//		}
+//	}
 }

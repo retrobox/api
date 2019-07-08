@@ -6,7 +6,6 @@
 .idea/**
 composer.lock
 package-lock.json
-tmp/*
 log/*
 log
 
@@ -60,8 +59,8 @@ fabric.properties
 
 # *.iml
 # modules.xml
-# .idea/misc.xml 
-# *.ipr 
+# .idea/misc.xml
+# *.ipr
 
 node_modules
 vendor
@@ -72,3 +71,6 @@ node_modules/
 composer.phar
 
 null
+
+tmp/localstorage.json
+

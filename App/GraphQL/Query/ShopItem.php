@@ -8,6 +8,7 @@ use App\Models\ShopCategory;
 use GraphQL\Type\Definition\InputObjectType;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
+use Illuminate\Support\Str;
 
 class ShopItem
 {
@@ -150,8 +151,8 @@ class ShopItem
                     $item->image = $args['item']['image'];
                     $item->price = (float) $args['item']['price'];
                     $item->weight = (float) $args['item']['weight'];
-                    $item->slug = str_slug($args['item']['identifier']);
-                    
+                    $item->slug = Str::slug($args['item']['identifier']);
+
                     return [
                         'saved' => $item->save(),
                         'id' => $item->id
@@ -231,7 +232,7 @@ class ShopItem
                         $item->image = $args['item']['image'];
                         $item->price = (float) $args['item']['price'];
                         $item->weight = (float) $args['item']['weight'];
-                        $item->slug = str_slug($args['item']['identifier']);
+                        $item->slug = Str::slug($args['item']['identifier']);
 
                         return $item->save();
                     }

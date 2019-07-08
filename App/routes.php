@@ -53,6 +53,9 @@ $app->group('/', function (){
         $this->get('{locale}/item/{slug}', [\App\Controllers\ShopController::class, 'getItem']);
     });
 
+    // downloads
+    $this->get('downloads', [\App\Controllers\DownloadController::class, 'getDownloads']);
+
     $this->group('docs/', function (){
         $this->get('{locale}/{slug}', [\App\Controllers\DocsController::class, 'getPage']);
     });

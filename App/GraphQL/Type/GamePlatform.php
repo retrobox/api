@@ -33,12 +33,12 @@ class GamePlatform extends ObjectType
 				'name' => [
 					'type' => Type::string()
 				],
-                'short' => [
-                    'type' => Type::string()
-                ],
 				'description' => [
 					'type' => Type::string()
 				],
+                'short' => [
+                    'type' => Type::string()
+                ],
                 'manufacturer' => [
                     'type' => Type::string()
                 ],

@@ -58,18 +58,23 @@ class User
                 [
                     'name' => 'id',
                     'description' => 'The STAIL.EU uuid of the user account',
-                    'type' => Type::string()
+                    'type' => Type::string(),
+                    'defaultValue' => NULL
                 ]
             ],
             'resolve' => function (ContainerInterface $container, $args) {
-                $user = \App\Models\User::query()->find($args['id']);
+                $userId = $container->get(Session::class)->getUserId();
+                if ($args['id'] === NULL) {
+                    $user = \App\Models\User::query()->find($userId);
+                } else {
+                    $user = \App\Models\User::query()->find($args['id']);
+                }
                 if ($user == NULL) {
                     return new \Exception('Unknown user', 404);
                 }
-                if ($container->get(Session::class)->isAdmin() == false) {
-                    if ($user->id !== $container->get(Session::class)->getUserId()) {
-                        return new \Exception('Forbidden user', 403);
-                    }
+                if ($container->get(Session::class)->isAdmin() === false &&
+                    $user->id !== $userId) {
+                    return new \Exception('Forbidden user', 403);
                 }
 
                 return $user;

@@ -18,7 +18,8 @@ return [
     'services' => [
         'web_endpoint' => getenv('WEB_ENDPOINT'),
         'docs_endpoint' => getenv('DOCS_ENDPOINT'),
-        'websocket_server_endpoint' => getenv('WEBSOCKET_SERVER_ENDPOINT')
+        'websocket_server_endpoint' => getenv('WEBSOCKET_SERVER_ENDPOINT'),
+        'data_endpoint' => getenv('DATA_ENDPOINT')
     ],
     //staileu id of a default admin (super admin)
     'default_admin_user_id' => getenv('DEFAULT_ADMIN_USER_ID'),
@@ -39,5 +40,6 @@ return [
         'uri' => getenv('REDIS_URI'),
         'password' => getenv('REDIS_PASSWORD'),
         'prefix' => getenv('REDIS_PREFIX')
-    ]
+    ],
+    'upload_path' => dirname(dirname(__DIR__)) . '/' . getenv('UPLOAD_PATH')
 ];

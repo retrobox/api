@@ -43,6 +43,7 @@ $app->group('/', function (){
 
     $this->group('dashboard', function () {
         $this->map(['GET', 'OPTIONS'], '[/]', [\App\Controllers\DashboardController::class, 'getDashboard']);
+        $this->map(['POST', 'OPTIONS'], '/upload', [\App\Controllers\UploadController::class, 'postUpload']);
         $this->map(['GET', 'OPTIONS'], '/delete', [\App\Controllers\DashboardController::class, 'getDelete']);
     })->add(new \App\Middlewares\JWTMiddleware($this->getContainer()));
 

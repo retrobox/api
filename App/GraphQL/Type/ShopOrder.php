@@ -52,6 +52,9 @@ class ShopOrder extends ObjectType
                 'way' => [
                     'type' => Type::string()
                 ],
+                'bill_url' => [
+                    'type' => Types::url()
+                ],
                 'created_at' => [
                     'type' => Types::dateTime()
                 ],

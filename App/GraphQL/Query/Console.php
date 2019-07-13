@@ -4,6 +4,7 @@ namespace App\GraphQL\Query;
 
 use App\Auth\Session;
 use App\GraphQL\Types;
+use App\WebSocketServerClient;
 use GraphQL\Type\Definition\InputObjectType;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
@@ -74,6 +75,11 @@ class Console
                     'name' => 'id',
                     'description' => 'The Id of the console',
                     'type' => Type::string()
+                ],
+                [
+                    'name' => 'with_status',
+                    'description' => 'Flag to retrieve console status thought web socket server and overlay',
+                    'type' => Type::boolean()
                 ]
             ],
             'resolve' => function (ContainerInterface $container, $args) {
@@ -81,10 +87,54 @@ class Console
                 $item = \App\Models\Console::with(['user', 'order'])
                     ->find($args['id']);
                 if ($item === NULL) {
-                    return new \Exception('Unknown shop console', 404);
+                    return new \Exception('Unknown console', 404);
                 }
                 if ($session->isAdmin() || $session->getUserId() == $item['user']['id']) {
+                    if ($args['with_status'] !== null) {
+                        $webSocketClient = $container->get(WebSocketServerClient::class);
+                        $res = $webSocketClient->getConsoleStatus($item['id']);
+                        $item['is_online'] = $res['online'];
+                        $item['up_time'] = $res['status']['up_time'];
+                        $item['used_disk_space'] = floatval(str_replace('G', '', $res['status']['disk']['used']));
+                        $item['free_disk_space'] = floatval(str_replace('G', '', $res['status']['disk']['free']));
+                        $item['disk_usage'] = floatval(str_replace('%', '', $res['status']['disk']['usage']));
+                        $item['disk_size'] = floatval(str_replace('G', '', $res['status']['disk']['size'])); // in gigabytes
+                        $item['cpu_temp'] = $res['status']['cpu_temp'];
+                        $item['gpu_temp'] = $res['status']['gpu_temp'];
+                        $item['ip'] = $res['status']['ip'];
+                        $item['wifi'] = $res['status']['wifi'];
+                        $item['free_memory'] = $res['status']['free_mem'];
+                        $item['total_memory'] = $res['status']['total_mem'];
+                    }
+
                     return $item;
+                } else {
+                    return new \Exception('Forbidden', 403);
+                }
+            }
+        ];
+    }
+
+    public static function getStatus()
+    {
+        return [
+            'type' => Types::console(),
+            'description' => 'Get a console',
+            'args' => [
+                [
+                    'name' => 'id',
+                    'description' => 'The Id of the console',
+                    'type' => Type::string()
+                ]
+            ],
+            'resolve' => function (ContainerInterface $container, $args) {
+                $session = $container->get(Session::class);
+                $item = \App\Models\Console::with(['user', 'order'])
+                    ->find($args['id']);
+                if ($item === NULL) {
+                    return new \Exception('Unknown console', 404);
+                }
+                if ($session->isAdmin() || $session->getUserId() == $item['user']['id']) {
                 } else {
                     return new \Exception('Forbidden', 403);
                 }
@@ -176,22 +226,5 @@ class Console
             $randString = $randString . $characters[rand(0, strlen($characters) - 1)];
         }
         return $randString;
-    }
-
-    public static function getCount()
-    {
-        return [
-            'type' => Type::int(),
-            'description' => 'Get the consoles count',
-            'args' => [],
-            'resolve' => function (ContainerInterface $container) {
-                $session = $container->get(Session::class);
-                if ($session->isAdmin()) {
-                    return \App\Models\Console::all()->count();
-                } else {
-                    return new \Exception('Forbidden', 403);
-                }
-            }
-        ];
     }
 }

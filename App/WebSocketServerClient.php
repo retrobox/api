@@ -5,6 +5,7 @@ namespace App;
 
 use Firebase\JWT\JWT;
 use GuzzleHttp\Client;
+use Psr\Http\Message\ResponseInterface;
 
 class WebSocketServerClient
 {
@@ -27,17 +28,40 @@ class WebSocketServerClient
     {
         $this->jwtKey = $jwtKey;
         $this->baseUrl = $webSocketServerBaseUrl;
-        $this->client = new Client();
+        $this->client = new Client([
+            'headers' => [
+                'Authorization' => 'Bearer ' . JWT::encode(['isApi' => true], $this->jwtKey)
+            ]
+        ]);
     }
 
     public function notifyDesktopLogin(array $payload): void
     {
         $this->client->post($this->baseUrl . '/notify-desktop-login', [
-            'json' => $payload,
-            'headers' => [
-                'Authorization' => 'Bearer ' . JWT::encode(['is_api' => true], $this->jwtKey)
-            ]
+            'json' => $payload
         ]);
+    }
+
+    public function getConnexions(): ResponseInterface
+    {
+        return $this->client->get($this->baseUrl . '/connections');
+    }
+
+    /**
+     * Return the status of a given console, assuming that the console id actually exist in the database
+     *
+     * @param string $consoleId
+     * @return mixed
+     */
+    public function getConsoleStatus(string $consoleId)
+    {
+        $res = $this->client->get($this->baseUrl . '/console/' . $consoleId . '');
+        $json = json_decode($res->getBody()->getContents(), true);
+
+        return [
+            'online' => $json['success'],
+            'status' => $json['success'] ? $json['data'] : null
+        ];
     }
 
     public function serverIsOnline(): bool

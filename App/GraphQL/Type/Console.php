@@ -37,6 +37,45 @@ class Console extends ObjectType
                 ],
                 'updated_at' => [
                     'type' => Types::dateTime()
+                ],
+                'is_online' => [
+                    'type' => Type::boolean()
+                ],
+                'up_time' => [
+                    'type' => Type::int()
+                ],
+                'used_disk_space' => [
+                    'type' => Type::float()
+                ],
+                'free_disk_space' => [
+                    'type' => Type::float()
+                ],
+                'disk_usage' => [
+                    'type' => Type::float()
+                ],
+                'disk_size' => [
+                    'type' => Type::float()
+                ],
+                'cpu_temp' => [
+                    'type' => Type::float()
+                ],
+                'gpu_temp' => [
+                    'type' => Type::float()
+                ],
+                'ip' => [
+                    'type' => Type::string()
+                ],
+                'wifi' => [
+                    'description' => 'The wifi network SSID that the console is connected to',
+                    'type' => Type::string()
+                ],
+                'free_memory' => [
+                    'description' => 'The amount of free memory, in bytes',
+                    'type' => Type::int()
+                ],
+                'total_memory' => [
+                    'description' => 'The total amount of memory, in bytes',
+                    'type' => Type::int()
                 ]
             ]
         ];

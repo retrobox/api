@@ -54,6 +54,8 @@ $app->group('/', function (){
         $this->get('{locale}/item/{slug}', [\App\Controllers\ShopController::class, 'getItem']);
     });
 
+    $this->post('console/verify', [\App\Controllers\ConsoleController::class, 'verifyConsole']);
+
     // downloads
     $this->get('downloads', [\App\Controllers\DownloadController::class, 'getDownloads']);
 

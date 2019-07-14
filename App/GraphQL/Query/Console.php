@@ -79,7 +79,8 @@ class Console
                 [
                     'name' => 'with_status',
                     'description' => 'Flag to retrieve console status thought web socket server and overlay',
-                    'type' => Type::boolean()
+                    'type' => Type::boolean(),
+                    'default' => null
                 ]
             ],
             'resolve' => function (ContainerInterface $container, $args) {
@@ -90,7 +91,7 @@ class Console
                     return new \Exception('Unknown console', 404);
                 }
                 if ($session->isAdmin() || $session->getUserId() == $item['user']['id']) {
-                    if ($args['with_status'] !== null) {
+                    if (isset($args['with_status']) && $args['with_status'] !== null) {
                         $webSocketClient = $container->get(WebSocketServerClient::class);
                         $res = $webSocketClient->getConsoleStatus($item['id']);
                         $item['is_online'] = $res['online'];
@@ -108,33 +109,6 @@ class Console
                     }
 
                     return $item;
-                } else {
-                    return new \Exception('Forbidden', 403);
-                }
-            }
-        ];
-    }
-
-    public static function getStatus()
-    {
-        return [
-            'type' => Types::console(),
-            'description' => 'Get a console',
-            'args' => [
-                [
-                    'name' => 'id',
-                    'description' => 'The Id of the console',
-                    'type' => Type::string()
-                ]
-            ],
-            'resolve' => function (ContainerInterface $container, $args) {
-                $session = $container->get(Session::class);
-                $item = \App\Models\Console::with(['user', 'order'])
-                    ->find($args['id']);
-                if ($item === NULL) {
-                    return new \Exception('Unknown console', 404);
-                }
-                if ($session->isAdmin() || $session->getUserId() == $item['user']['id']) {
                 } else {
                     return new \Exception('Forbidden', 403);
                 }
@@ -213,6 +187,64 @@ class Console
                     }
                 } else {
                     return new \Exception("Forbidden", 403);
+                }
+            }
+        ];
+    }
+
+    public static function shutdown()
+    {
+        return [
+            'type' => Type::boolean(),
+            'description' => 'Shutdown a console',
+            'args' => [
+                [
+                    'name' => 'id',
+                    'description' => 'The Id of the console',
+                    'type' => Type::string()
+                ]
+            ],
+            'resolve' => function (ContainerInterface $container, $args) {
+                $session = $container->get(Session::class);
+                $item = \App\Models\Console::query()
+                    ->find($args['id']);
+                if ($item === NULL) {
+                    return new \Exception('Unknown console', 404);
+                }
+                if ($session->isAdmin() || $session->getUserId() == $item['user_id']) {
+                    $webSocketClient = $container->get(WebSocketServerClient::class);
+                    return $webSocketClient->shutdownConsole($item['id']);
+                } else {
+                    return new \Exception('Forbidden', 403);
+                }
+            }
+        ];
+    }
+
+    public static function reboot()
+    {
+        return [
+            'type' => Type::boolean(),
+            'description' => 'Reboot a console',
+            'args' => [
+                [
+                    'name' => 'id',
+                    'description' => 'The Id of the console',
+                    'type' => Type::string()
+                ]
+            ],
+            'resolve' => function (ContainerInterface $container, $args) {
+                $session = $container->get(Session::class);
+                $item = \App\Models\Console::query()
+                    ->find($args['id']);
+                if ($item === NULL) {
+                    return new \Exception('Unknown console', 404);
+                }
+                if ($session->isAdmin() || $session->getUserId() == $item['user_id']) {
+                    $webSocketClient = $container->get(WebSocketServerClient::class);
+                    return $webSocketClient->rebootConsole($item['id']);
+                } else {
+                    return new \Exception('Forbidden', 403);
                 }
             }
         ];

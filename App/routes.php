@@ -10,6 +10,7 @@
 $app->add(new \App\Middlewares\CorsMiddleware());
 $app->group('/', function (){
     $this->get('', [\App\Controllers\PagesController::class, 'getHome']);
+    $this->get('ping', [\App\Controllers\PagesController::class, 'getPing']);
     $this->map(['POST', 'OPTIONS'], 'newsletter/subscribe', [\App\Controllers\NewsletterController::class, 'postSubscribe']);
     $this->get('newsletter/event', [\App\Controllers\NewsletterController::class, 'getEvent']);
     $this->post('newsletter/event', [\App\Controllers\NewsletterController::class, 'postEvent']);

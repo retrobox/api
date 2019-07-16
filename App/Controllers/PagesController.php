@@ -16,4 +16,9 @@ class PagesController extends Controller
             ]
 		]);
 	}
+
+	public function getPing(Response $response)
+    {
+        return $response->withJson(['success' => true]);
+    }
 }

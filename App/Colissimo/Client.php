@@ -25,8 +25,8 @@ class Client
      */
     public function getPrice(string $from, string $to, int $weight): float
     {
-        $res = $this->client->post("https://www.laposte.fr/professionnel/colissimo-en-ligne/getprice", [
-            "form_params" => [
+        $res = $this->client->post('https://www.laposte.fr/professionnel/colissimo-en-ligne/getprice', [
+            'form_params' => [
                 'fromIsoCode' => $from,
                 'toIsoCode' => $to,
                 'weight' => $weight / 1000

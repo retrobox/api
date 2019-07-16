@@ -64,5 +64,8 @@ $app->group('/', function (){
         $this->get('{locale}/{slug}', [\App\Controllers\DocsController::class, 'getPage']);
     });
 
+    $this->get('websocket/connexions', [\App\Controllers\PagesController::class, 'getWebSocketConnexions'])
+        ->add(new \App\Middlewares\JWTMiddleware($this->getContainer()));
+
     $this->get('health', [\App\Controllers\HealthController::class, 'getHealth']);
 });

@@ -42,9 +42,10 @@ class WebSocketServerClient
         ]);
     }
 
-    public function getConnexions(): ResponseInterface
+    public function getConnexions()
     {
-        return $this->client->get($this->baseUrl . '/connections');
+        $res = $this->client->get($this->baseUrl . '/connections');
+        return json_decode($res->getBody()->getContents(), true)['data'];
     }
 
     /**

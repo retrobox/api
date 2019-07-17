@@ -50,7 +50,8 @@ $app->group('/', function (){
 
     //shop
     $this->group('shop/', function (){
-        $this->get('prices', [\App\Controllers\ShopController::class, 'getPrices']);
+        $this->get('storage-prices', [\App\Controllers\ShopController::class, 'getStoragePrices']);
+        $this->get('shipping-prices', [\App\Controllers\ShopController::class, 'getShippingPrices']);
         $this->get('{locale}/categories', [\App\Controllers\ShopController::class, 'getCategories']);
         $this->get('{locale}/item/{slug}', [\App\Controllers\ShopController::class, 'getItem']);
     });

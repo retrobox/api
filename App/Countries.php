@@ -18,6 +18,7 @@ class Countries
      */
     public function getLocalizedCountries(string $locale)
     {
+        $locale = mb_strtolower($locale);
         $path = $this->getCountriesDirectory() . '/' . $locale . '.json';
         if (!file_exists($path)) {
             return null;
@@ -37,8 +38,9 @@ class Countries
         $path = $this->getCountriesDirectory() . '/en.json';
         $json = json_decode(file_get_contents($path), true);
         $countries = array_filter($json['countries'], function ($country) use ($code) {
-            return $country === $code;
+            return $country['code'] === mb_strtoupper($code);
         });
-        return isset($countries[0]) && $countries[0]['code'] === $code;
+        $countries = array_values($countries);
+        return isset($countries[0]);
     }
 }

@@ -68,5 +68,7 @@ $app->group('/', function (){
     $this->get('websocket/connexions', [\App\Controllers\PagesController::class, 'getWebSocketConnexions'])
         ->add(new \App\Middlewares\JWTMiddleware($this->getContainer()));
 
+    $this->get('countries/{locale}', [\App\Controllers\CountriesController::class, 'getCountries']);
+
     $this->get('health', [\App\Controllers\HealthController::class, 'getHealth']);
 });

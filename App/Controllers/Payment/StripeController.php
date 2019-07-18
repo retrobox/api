@@ -22,25 +22,30 @@ class StripeController extends Controller
         $this->container->get(Manager::class);
 
         $validator = new Validator($request->getParsedBody());
-        $validator->required('token', 'items', 'email');
-        $validator->notEmpty('token', 'items', 'email');
+        $validator->required('token', 'items', 'email', 'shipping_country', 'shipping_method');
+        $validator->notEmpty('token', 'items', 'email', 'shipping_country', 'shipping_method');
         $validator->email('email');
         if ($validator->isValid()) {
-            $paymentManager = new PaymentManager($validator->getValue('items'), $this->container);
-            try {
-                $total = $paymentManager->getTotalPrice();
-            } catch (\Exception $exception){
+            $paymentManager = new PaymentManager(
+                $validator->getValue('items'),
+                $validator->getValue('shipping_country'),
+                $validator->getValue('shipping_method'),
+                $this->container
+            );
+
+            if (!$paymentManager->isValid()) {
                 return $response->withJson([
                     'success' => false,
                     'errors' => [
-                        'Invalid items'
+                        'Invalid inputs'
                     ]
-                ])->withStatus(400);
+                ], 400);
             }
+
             Stripe::setApiKey($this->container->get('stripe')['private']);
             try {
                 $charge = Charge::create([
-                    'amount' => $total * 100,
+                    'amount' => $paymentManager->getTotalPrice() * 100,
                     'currency' => 'EUR',
                     'source' => $validator->getValue('token')
                 ]);
@@ -64,10 +69,12 @@ class StripeController extends Controller
             $order->total_price = $paymentManager->getTotalPrice();
             $order->sub_total_price = $paymentManager->getSubTotalPrice();
             $order->total_shipping_price = $paymentManager->getTotalShippingPrice();
+            $order->shipping_country = $validator->getValue('shipping_country');
+            $order->shipping_method = $validator->getValue('shipping_method');
             $order->on_way_id = $body['id'];
             $order->way = "stripe";
             $order->status = "payed";
-            $order->items()->saveMany($paymentManager->getParsedItems());
+            $order->items()->saveMany($paymentManager->getModels(), $paymentManager->getPivotsAttributes());
             $order->save();
 
             //save the user email

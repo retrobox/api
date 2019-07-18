@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Colissimo\Client;
 use App\Models\ShopItem;
 use PayPal\Api\Amount;
 use PayPal\Api\Details;
@@ -63,13 +64,31 @@ class PaymentManager
      * @var ContainerInterface
      */
     private $container;
+    /**
+     * @var string
+     */
+    private $shippingCountry;
+    /**
+     * @var string
+     */
+    private $shippingMethod;
+    /**
+     * @var float
+     */
+    private $totalWeight;
 
-    public function __construct(array $items, ContainerInterface $container)
+    /**
+     * @var bool
+     */
+    private $isValid = true;
+
+    public function __construct(array $items, string $shippingCountry, string $shippingMethod, ContainerInterface $container)
     {
         $this->container = $container;
         $this->storagePrices = $container->get('shop')['storage_prices'];
-        $this->shippingPrices = $container->get('shop')['shipping_prices'];
         $this->items = $items;
+        $this->shippingCountry = $shippingCountry;
+        $this->shippingMethod = $shippingMethod;
         $this->items = $this->fetchItems();
     }
 
@@ -93,7 +112,9 @@ class PaymentManager
                 }
                 $toAddItem = ShopItem::query()->find($item['id']);
                 if ($toAddItem == NULL) {
-                    throw new \Exception('Unknown item', 404);
+                    // the item is not found
+                    $this->isValid = false;
+                    return [];
                 }
                 $toAddItem = $toAddItem->toArray();
 
@@ -115,14 +136,15 @@ class PaymentManager
                 $toAddItem['sub_total_price'] = $toAddItem['price']
                     + $this->getOptionPrice($toAddItem);
                 $this->subTotalPrice += $toAddItem['sub_total_price'];
-                $toAddItem['shipping_price'] = $this->getShippingPrice($toAddItem);
-                $this->totalShippingPrice += $toAddItem['shipping_price'];
-                $this->totalPrice += $toAddItem['sub_total_price'] + $toAddItem['shipping_price'];
+                $this->totalWeight += (float)$toAddItem['weight'];
 
                 $this->pivotsAttributes[] = $pivotsAttributes;
                 $items[] = $toAddItem;
             }
         }
+
+        $this->totalShippingPrice = $this->getShippingPrice($this->totalWeight);
+        $this->totalPrice += $this->subTotalPrice + $this->totalShippingPrice;
         return $items;
     }
 
@@ -136,14 +158,28 @@ class PaymentManager
         return 0.00;
     }
 
-    private function getShippingPrice(array $item): float
+    private function getShippingPrice(float $weight): float
     {
-        foreach ($this->shippingPrices as $shippingPrice) {
-            if ($shippingPrice['to'] >= $item['weight'] && $shippingPrice['from'] <= $item['weight']) {
-                return $shippingPrice['cost'];
-            }
+        $client = $this->container->get(Client::class);
+        $countriesHelper = $this->container->get(Countries::class);
+        if (!$countriesHelper->isCountryCodeValid($this->shippingCountry)) {
+            // invalid shipping country
+            $this->isValid = false;
+            return 0;
         }
-        return 0.00;
+        switch ($this->shippingMethod) {
+            case 'colissimo':
+                return $client->getPrice('fr', $this->shippingCountry, $weight);
+                break;
+            case 'dhl':
+                return 0;
+                break;
+            default:
+                // invalid shipping method
+                $this->isValid = false;
+                return 0;
+                break;
+        }
     }
 
     public function getTotalShippingPrice(): float
@@ -206,6 +242,11 @@ class PaymentManager
             $models[] = ShopItem::query()->where('id', '=', $item['id'])->first();
         }
         return $models;
+    }
+
+    public function isValid(): bool
+    {
+        return $this->isValid;
     }
 
 }

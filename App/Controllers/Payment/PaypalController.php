@@ -21,18 +21,23 @@ class PaypalController extends Controller
         $this->container->get(Manager::class);
 
         $validator = new Validator($request->getParsedBody());
-        $validator->required('items');
-        $validator->notEmpty('items');
+        $validator->required('items', 'shipping_method', 'shipping_country');
+        $validator->notEmpty('items', 'shipping_method', 'shipping_country');
         if ($validator->isValid()) {
-            try {
-                $paymentManager = new PaymentManager($validator->getValue('items'), $this->container);
-            } catch (\Exception $exception) {
+            $paymentManager = new PaymentManager(
+                $validator->getValue('items'),
+                $validator->getValue('shipping_country'),
+                $validator->getValue('shipping_method'),
+                $this->container
+            );
+
+            if (!$paymentManager->isValid()) {
                 return $response->withJson([
                     'success' => false,
                     'errors' => [
-                        'Invalid items'
+                        'Invalid inputs'
                     ]
-                ])->withStatus(400);
+                ], 400);
             }
 
             $transaction = $paymentManager->toPaypalTransaction();
@@ -67,6 +72,8 @@ class PaypalController extends Controller
             $order->total_price = $paymentManager->getTotalPrice();
             $order->sub_total_price = $paymentManager->getSubTotalPrice();
             $order->total_shipping_price = $paymentManager->getTotalShippingPrice();
+            $order->shipping_country = $validator->getValue('shipping_country');
+            $order->shipping_method = $validator->getValue('shipping_method');
             $order->on_way_id = $_payment->getId();
             $order->way = "paypal";
             $order->status = "not-payed";
@@ -99,7 +106,7 @@ class PaypalController extends Controller
         if ($validator->isValid()) {
             try {
                 $payment = \PayPal\Api\Payment::get($validator->getValue('paymentId'), $apiContext);
-            }catch (\Exception $e){
+            } catch (\Exception $e) {
                 return $response->withJson([
                     'success' => false,
                     'errors' => [
@@ -115,7 +122,7 @@ class PaypalController extends Controller
                 ->where('way', '=', 'paypal')
                 ->first();
 
-            if ($order == NULL){
+            if ($order == NULL) {
                 return $response->withJson([
                     'success' => false,
                     'errors' => [
@@ -123,7 +130,7 @@ class PaypalController extends Controller
                     ]
                 ])->withStatus(400);
             }
-            if ($order['status'] == "payed"){
+            if ($order['status'] == "payed") {
                 return $response->withJson([
                     'success' => false,
                     'errors' => [
@@ -134,6 +141,8 @@ class PaypalController extends Controller
 
             $paymentManager = new PaymentManager(
                 $order->items->toArray(),
+                $order->shipping_country,
+                $order->shipping_method,
                 $this->container
             );
             $execution = (new \PayPal\Api\PaymentExecution())

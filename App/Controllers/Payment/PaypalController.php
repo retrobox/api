@@ -65,10 +65,20 @@ class PaypalController extends Controller
                     ]
                 ])->withStatus(500);
             }
+            $user = User::query()->find($session->getUser()['id']);
+
+            // before creating a new order, we will delete all the non payed order of the user
+            $notPayedOrders = $user->shopOrders()
+                ->where('status', '=', 'not-payed')
+                ->get();
+            ShopOrder::destroy(array_map(function ($order) {
+                return $order['id'];
+            }, $notPayedOrders->toArray()));
+
             //save the payment in a database
             $order = new ShopOrder();
             $order->id = uniqid();
-            $order->user()->associate(User::query()->find($session->getUser()['id']));
+            $order->user()->associate($user);
             $order->total_price = $paymentManager->getTotalPrice();
             $order->sub_total_price = $paymentManager->getSubTotalPrice();
             $order->total_shipping_price = $paymentManager->getTotalShippingPrice();

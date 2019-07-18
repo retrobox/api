@@ -113,7 +113,7 @@ class ShopController extends Controller
             'success' => true,
             'data' => [
                 'colissimo' => $colissimoPrice,
-                'dhlPrice' => 0
+                'dhl' => 0
             ]
         ]);
     }

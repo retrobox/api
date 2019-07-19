@@ -74,8 +74,8 @@ return [
         );
     },
 
-    \App\MailChimp::class => function (ContainerInterface $container) {
-        return new \App\MailChimp($container->get('mailchimp')['api_key']);
+    \App\Utils\MailChimp::class => function (ContainerInterface $container) {
+        return new \App\Utils\MailChimp($container->get('mailchimp')['api_key']);
     },
 
     \Predis\Client::class => function (ContainerInterface $container) {
@@ -87,14 +87,14 @@ return [
         ]);
     },
 
-    \App\WebSocketServerClient::class => function (ContainerInterface $container) {
-        return new \App\WebSocketServerClient(
+    \App\Utils\WebSocketServerClient::class => function (ContainerInterface $container) {
+        return new \App\Utils\WebSocketServerClient(
             $container->get('jwt')['key'],
             $container->get('services')['websocket_server_endpoint']
         );
     },
 
-    Lefuturiste\LocalStorage\LocalStorage::class => function (ContainerInterface $container) {
-        return new Lefuturiste\LocalStorage\LocalStorage(dirname(__FILE__) . '/../../tmp/localstorage.json');
+    Lefuturiste\LocalStorage\LocalStorage::class => function () {
+        return new Lefuturiste\LocalStorage\LocalStorage(\App\App::getBasePath() . '/tmp/localstorage.json');
     }
 ];

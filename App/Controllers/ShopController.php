@@ -3,9 +3,9 @@
 namespace App\Controllers;
 
 use App\Colissimo\Client;
-use App\Countries;
 use App\Models\ShopCategory;
 use App\Models\ShopItem;
+use App\Utils\Countries;
 use Illuminate\Database\Capsule\Manager;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Http\Response;

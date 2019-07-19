@@ -1,20 +1,20 @@
 <?php
 namespace App\GraphQL;
 use App\GraphQL\Type\Console;
+use App\GraphQL\Type\Game;
+use App\GraphQL\Type\GameEditor;
 use App\GraphQL\Type\GameMedia;
 use App\GraphQL\Type\GamePlatform;
 use App\GraphQL\Type\GameTag;
-use App\GraphQL\Type\ShopOrder;
 use App\GraphQL\Type\Post;
 use App\GraphQL\Type\Scalar\DateTime;
-use App\GraphQL\Type\GameEditor;
-use App\GraphQL\Type\Game;
 use App\GraphQL\Type\Scalar\FloatType;
 use App\GraphQL\Type\Scalar\NonEmpty;
 use App\GraphQL\Type\Scalar\Url;
 use App\GraphQL\Type\ShopCategory;
 use App\GraphQL\Type\ShopImage;
 use App\GraphQL\Type\ShopItem;
+use App\GraphQL\Type\ShopOrder;
 use App\GraphQL\Type\User;
 
 /**
@@ -169,7 +169,7 @@ class Types
 	{
 		return self::$shopCategory ?: (self::$shopCategory = new ShopCategory(false));
 	}
-	
+
 	/**
 	 * @return ShopCategory
 	 */

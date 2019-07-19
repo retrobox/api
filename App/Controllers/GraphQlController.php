@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\App;
 use GraphQL\GraphQL;
 use Illuminate\Database\Capsule\Manager;
 use Psr\Http\Message\ServerRequestInterface;
@@ -12,7 +13,7 @@ class GraphQlController extends Controller
 	public function newRequest(ServerRequestInterface $request, Response $response)
 	{
 	    $this->container->get(Manager::class);
-		$schema = require dirname(__DIR__) . '/GraphQL/schema.php';
+		$schema = require App::getBasePath() . '/App/GraphQL/schema.php';
 		$input = $request->getParsedBody();
 		$query = $input['query'];
 		$variableValues = isset($input['variables']) ? $input['variables'] : NULL;

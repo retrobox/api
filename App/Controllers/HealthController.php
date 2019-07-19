@@ -2,7 +2,7 @@
 
 namespace App\Controllers;
 
-use App\WebSocketServerClient;
+use App\Utils\WebSocketServerClient;
 use Illuminate\Database\Capsule\Manager;
 use Lefuturiste\RabbitMQPublisher\Client;
 use Slim\Http\Response;

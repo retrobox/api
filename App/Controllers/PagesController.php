@@ -3,7 +3,7 @@
 namespace App\Controllers;
 
 use App\Auth\Session;
-use App\WebSocketServerClient;
+use App\Utils\WebSocketServerClient;
 use Slim\Http\Response;
 
 class PagesController extends Controller

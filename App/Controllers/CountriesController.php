@@ -3,7 +3,7 @@
 namespace App\Controllers;
 
 
-use App\Countries;
+use App\Utils\Countries;
 use Slim\Http\Response;
 
 class CountriesController extends Controller

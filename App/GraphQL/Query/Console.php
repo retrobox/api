@@ -4,7 +4,7 @@ namespace App\GraphQL\Query;
 
 use App\Auth\Session;
 use App\GraphQL\Types;
-use App\WebSocketServerClient;
+use App\Utils\WebSocketServerClient;
 use GraphQL\Type\Definition\InputObjectType;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;

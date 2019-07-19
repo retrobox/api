@@ -2,10 +2,10 @@
 
 namespace App\Controllers;
 
-use App\AcceptLanguage;
 use App\Auth\Session;
 use App\Models\User;
-use App\WebSocketServerClient;
+use App\Utils\AcceptLanguage;
+use App\Utils\WebSocketServerClient;
 use Carbon\Carbon;
 use Dflydev\FigCookies\FigRequestCookies;
 use Dflydev\FigCookies\FigResponseCookies;

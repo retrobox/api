@@ -34,6 +34,8 @@ class UploadController extends Controller
                 ]
             ], 400);
         }
+        // TODO: validate request input like 'console_id'
+        
         $uploadedFiles = $request->getUploadedFiles();
         // validate that uploaded file count is only one
         if (count($uploadedFiles) !== 1 || !isset($uploadedFiles['file'])) {
@@ -47,6 +49,9 @@ class UploadController extends Controller
         }
         /** @var UploadedFileInterface $uploadedFile */
         $uploadedFile = $uploadedFiles['file'];
+
+        // TODO: validate allowed extension
+
         $id = Uuid::uuid();
         $fileName = 'rom__' . $id . '__' . $uploadedFile->getClientFilename();
         $target = $this->container->get('upload_path') . '/' . $fileName;
@@ -61,6 +66,10 @@ class UploadController extends Controller
                 ]
             ], 400);
         }
+
+        // TODO: store a game in db under owned_by: userId
+        // TODO: send an event to the websocket server to install the rom on a targeted console
+
         return $response->withJson([
             'success' => true,
             'data' => [

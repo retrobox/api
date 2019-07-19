@@ -2,9 +2,9 @@
 
 namespace App;
 
-use Slim\Handlers\NotFound;
-use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Slim\Handlers\NotFound;
 
 class NotFoundHandler extends NotFound
 {

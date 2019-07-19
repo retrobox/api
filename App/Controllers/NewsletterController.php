@@ -2,10 +2,9 @@
 
 namespace App\Controllers;
 
-use App\MailChimp;
+use App\Utils\MailChimp;
 use DiscordWebhooks\Client;
 use DiscordWebhooks\Embed;
-use Monolog\Logger;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Http\Response;
 use Validator\Validator;

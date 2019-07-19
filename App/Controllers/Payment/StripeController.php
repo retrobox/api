@@ -6,7 +6,7 @@ use App\Auth\Session;
 use App\Controllers\Controller;
 use App\Models\ShopOrder;
 use App\Models\User;
-use App\PaymentManager;
+use App\Utils\PaymentManager;
 use Illuminate\Database\Capsule\Manager;
 use Lefuturiste\RabbitMQPublisher\Client;
 use Psr\Http\Message\ServerRequestInterface;

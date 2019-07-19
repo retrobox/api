@@ -41,5 +41,5 @@ return [
         'password' => getenv('REDIS_PASSWORD'),
         'prefix' => getenv('REDIS_PREFIX')
     ],
-    'upload_path' => dirname(dirname(__DIR__)) . '/' . getenv('UPLOAD_PATH')
+    'upload_path' => \App\App::getBasePath() . '/' . getenv('UPLOAD_PATH')
 ];

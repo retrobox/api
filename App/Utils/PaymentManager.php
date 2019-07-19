@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Utils;
 
 use App\Colissimo\Client;
 use App\Models\ShopItem;

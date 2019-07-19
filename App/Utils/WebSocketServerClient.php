@@ -1,11 +1,10 @@
 <?php
 
-namespace App;
+namespace App\Utils;
 // simple helper
 
 use Firebase\JWT\JWT;
 use GuzzleHttp\Client;
-use Psr\Http\Message\ResponseInterface;
 
 class WebSocketServerClient
 {

@@ -15,8 +15,6 @@ class App extends \DI\Bridge\Slim\App
 
     public function __construct()
     {
-        self::$basePath = dirname(__DIR__);
-
         parent::__construct();
 
         $this->add(new Middlewares\CorsMiddleware());

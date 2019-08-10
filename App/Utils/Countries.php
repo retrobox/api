@@ -6,7 +6,7 @@ class Countries
 {
     public function getCountriesDirectory()
     {
-        return dirname(__DIR__) . '/public/locales';
+        return dirname(dirname(__DIR__)) . '/countries';
     }
 
     /**

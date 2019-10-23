@@ -8,7 +8,6 @@ use Faker\Provider\Uuid;
 use GraphQL\Type\Definition\InputObjectType;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
-use Lefuturiste\RabbitMQPublisher\Client;
 use Psr\Container\ContainerInterface;
 
 class Game
@@ -148,16 +147,7 @@ class Game
                         }
                     }
 
-                    $game->save();
-
-                    $container->get(Client::class)
-                        ->publish(
-                            \App\Models\Game::with(['platform', 'editor', 'medias', 'tags'])
-                                ->find($game['id'])
-                                ->toArray()
-                            ,'game.created');
-
-                    return ['id' => $game['id'], 'saved' => true];
+                    return ['id' => $game['id'], 'saved' => $game->save()];
                 } else {
                     return new \Exception("Forbidden", 403);
                 }
@@ -236,16 +226,7 @@ class Game
                         }
                     }
 
-                    $game->save();
-
-                    $container->get(Client::class)
-                        ->publish(
-                            \App\Models\Game::with(['platform', 'editor', 'medias', 'tags'])
-                                ->find($game['id'])
-                                ->toArray()
-                            ,'game.created');
-
-                    return true;
+                    return $game->save();
                 } else {
                     return new \Exception('Forbidden', 403);
                 }
@@ -273,9 +254,7 @@ class Game
                         $game->medias()->get()->toArray()
                     );
                     \App\Models\GameMedia::destroy($mediaIds);
-                    \App\Models\Game::destroy($game['id']);
-                    $container->get(Client::class)->publish(['id' => $game['id']], 'game.destroyed');
-                    return true;
+                    return \App\Models\Game::destroy($game['id']);
                 } else {
                     return new \Exception('Forbidden', 403);
                 }

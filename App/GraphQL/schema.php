@@ -10,6 +10,7 @@ return new \GraphQL\Type\Schema([
 	'gamePlatform' => (new \App\GraphQL\Type\GamePlatform()),
 	'gameTag' => (new \App\GraphQL\Type\GameTag()),
 	'gameMedia' => (new \App\GraphQL\Type\GameMedia()),
+	'gameRom' => (new \App\GraphQL\Type\GameRom()),
 
 	//blog
 	'post' => (new \App\GraphQL\Type\Post()),

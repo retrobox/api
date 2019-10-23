@@ -29,6 +29,11 @@ class Mutations extends ObjectType {
                 'updateGameMedia' => \App\GraphQL\Query\GameMedia::update(),
                 'destroyGameMedia' => \App\GraphQL\Query\GameMedia::destroy(),
 
+                // game rom
+                'storeGameRom' => \App\GraphQL\Query\GameRom::store(),
+                'updateGameRom' => \App\GraphQL\Query\GameRom::update(),
+                'destroyGameRom' => \App\GraphQL\Query\GameRom::destroy(),
+
                 // game tags
                 'storeGameTag' => \App\GraphQL\Query\GameTag::store(),
                 'updateGameTag' => \App\GraphQL\Query\GameTag::update(),

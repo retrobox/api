@@ -27,6 +27,10 @@ class Query extends ObjectType
                 'getManyGameMedias' => \App\GraphQL\Query\GameMedia::getMany(),
                 'getOneGameMedia' => \App\GraphQL\Query\GameMedia::getOne(),
 
+                // game rom
+                'getManyGameRoms' => \App\GraphQL\Query\GameRom::getMany(),
+                'getOneGameRom' => \App\GraphQL\Query\GameRom::getOne(),
+
                 //game tag
                 'getManyGameTags' => \App\GraphQL\Query\GameTag::getMany(),
                 'getOneGameTag' => \App\GraphQL\Query\GameTag::getOne(),

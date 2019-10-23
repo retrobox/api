@@ -5,6 +5,7 @@ use App\GraphQL\Type\Game;
 use App\GraphQL\Type\GameEditor;
 use App\GraphQL\Type\GameMedia;
 use App\GraphQL\Type\GamePlatform;
+use App\GraphQL\Type\GameRom;
 use App\GraphQL\Type\GameTag;
 use App\GraphQL\Type\Post;
 use App\GraphQL\Type\Scalar\DateTime;
@@ -39,6 +40,7 @@ class Types
     private static $gameTag;
     private static $gameTagWithDepth;
     private static $gameMedia;
+    private static $gameRom;
     private static $post;
 	private static $shopItem;
 	private static $shopCategory;
@@ -138,7 +140,16 @@ class Types
         return self::$gameMedia ?: (self::$gameMedia = new GameMedia());
     }
 
-	/**
+    /**
+     * @return GameRom
+     */
+    public static function gameRom()
+    {
+        return self::$gameRom ?: (self::$gameRom = new GameRom());
+    }
+
+
+    /**
 	 * @return Post
 	 */
 	public static function post()

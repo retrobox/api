@@ -60,13 +60,11 @@ class GamePlatform
                 ]
             ],
             'resolve' => function (ContainerInterface $container, $args) {
-                $platform = \App\Models\GamePlatform::query()->find($args['id']);
+                $platform = \App\Models\GamePlatform::with(['games', 'medias'])->find($args['id']);
                 if ($platform == NULL) {
                     return new \Exception('Unknown GamePlatform', 404);
                 } else {
-                    return $platform
-                        ->with('games', 'medias')
-                        ->first();
+                    return $platform;
                 }
             }
         ];

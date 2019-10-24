@@ -164,7 +164,7 @@ class Console
                             return new \Exception('Unknown user', 404);
                         }
                     }
-                    if (isset($args['console']['order_id'])) {
+                    if (isset($args['console']['order_id']) && !empty($args['console']['order_id'])) {
                         $order = \App\Models\ShopOrder::query()->find($args['console']['order_id']);
                         if ($order != NULL) {
                             $console->order()->associate($order);

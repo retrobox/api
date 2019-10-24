@@ -27,10 +27,11 @@ class App extends \DI\Bridge\Slim\App
         $this->map(['POST','OPTIONS'], '/graphql', [Controllers\GraphQlController::class, 'newRequest'])
             ->add(new Middlewares\JWTMiddleware($this->getContainer()));
 
-        $this->get('/paysafecard/get_url', [Controllers\Payment\PaysafeCardController::class, 'getUrl']);
+        //Routes deprecated
+        /*$this->get('/paysafecard/get_url', [Controllers\Payment\PaysafeCardController::class, 'getUrl']);
         $this->post('/paysafecard/capture_payment', [Controllers\Payment\PaysafeCardController::class, 'postCapturePayment']);
         $this->get('/paysafecard/success', [Controllers\Payment\PaysafeCardController::class, 'getSuccess']);
-        $this->get('/paysafecard/failure', [Controllers\Payment\PaysafeCardController::class, 'getFailure']);
+        $this->get('/paysafecard/failure', [Controllers\Payment\PaysafeCardController::class, 'getFailure']);*/
         $this->map(['POST','OPTIONS'], '/stripe/execute', [Controllers\Payment\StripeController::class, 'postExecute'])
             ->add(new Middlewares\JWTMiddleware($this->getContainer()));
         $this->map(['POST','OPTIONS'], '/paypal/get-url', [Controllers\Payment\PaypalController::class, 'postGetUrl'])

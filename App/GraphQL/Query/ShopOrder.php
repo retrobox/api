@@ -34,10 +34,24 @@ class ShopOrder
                     'description' => 'Direction of the order',
                     'type' => Type::string(),
                     'defaultValue' => 'desc'
+                ],
+                [
+                    'name' => 'all',
+                    'description' => 'True to get all orders',
+                    'type' => Type::boolean(),
+                    'defaultValue' => true
                 ]
             ],
             'resolve' => function (ContainerInterface $container, $args) {
-                if ($container->get(Session::class)->isAdmin()) {
+                if (!$args['all']) {
+                    return \App\Models\ShopOrder::query()
+                        ->with(['user', 'items'])
+                        ->withCount('items')
+                        ->where('user_id', '=', $container->get(Session::class)->getUserId())
+                        ->limit($args['limit'])
+                        ->orderBy($args['orderBy'], strtolower($args['orderDir']))
+                        ->get();
+                } else if ($container->get(Session::class)->isAdmin() && $args['all']) {
                     return \App\Models\ShopOrder::query()
                         ->with(['user', 'items'])
                         ->withCount('items')

@@ -192,6 +192,52 @@ class Console
         ];
     }
 
+    public static function update()
+    {
+        return [
+            'type' => Type::boolean(),
+            'description' => 'Update a console',
+            'args' => [
+                [
+                    'name' => 'console',
+                    'description' => 'Console to update',
+                    'type' => Type::nonNull(new InputObjectType([
+                        'name' => 'ConsoleUpdateInput',
+                        'fields' => [
+                            'id' => ['type' => Type::string()],
+                            'order_id' => ['type' => Type::string()],
+                            'user_id' => ['type' => Type::string()],
+                            'color' => ['type' => Type::nonNull(Type::string())],
+                            'storage' => ['type' => Type::nonNull(Type::string())]
+                        ]
+                    ]))
+                ]
+            ],
+            'resolve' => function (ContainerInterface $container, $args) {
+                $session = $container->get(Session::class);
+                $console = \App\Models\Console::with(['user', 'order'])
+                    ->find($args['console']['id']);
+                if ($console === NULL) {
+                    return new \Exception('Unknown console', 404);
+                }
+                if ($session->isAdmin()) {
+                    /** @var $console \App\Models\Console */
+                    $console->setAttributesFromGraphQL($args['console'], [
+                        'id',
+                        'order_id',
+                        'user_id',
+                        'color',
+                        'storage'
+                    ]);
+
+                    return $console->save();
+                } else {
+                    return new \Exception('Forbidden', 403);
+                }
+            }
+        ];
+    }
+
     public static function shutdown()
     {
         return [

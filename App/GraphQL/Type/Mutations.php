@@ -41,6 +41,7 @@ class Mutations extends ObjectType {
 
 				//post
 				'storePost' => \App\GraphQL\Query\Post::store(),
+
                 //user
                 'updateUser' => \App\GraphQL\Query\User::update(),
                 'destroyUser' => \App\GraphQL\Query\User::destroy(),
@@ -49,15 +50,19 @@ class Mutations extends ObjectType {
                 'storeShopItem' => \App\GraphQL\Query\ShopItem::store(),
                 'updateShopItem' => \App\GraphQL\Query\ShopItem::update(),
                 'destroyShopItem' => \App\GraphQL\Query\ShopItem::destroy(),
+
                 //shop category
                 'storeShopCategory' => \App\GraphQL\Query\ShopCategory::store(),
                 'updateShopCategory' => \App\GraphQL\Query\ShopCategory::update(),
                 'updateShopCategoriesOrder' => \App\GraphQL\Query\ShopCategory::updateOrder(),
                 'destroyShopCategory' => \App\GraphQL\Query\ShopCategory::destroy(),
+
                 //shop image
                 'destroyShopImage' => \App\GraphQL\Query\ShopImage::destroy(),
+
                 //shop order
                 'updateShopOrder' => \App\GraphQL\Query\ShopOrder::update(),
+
                 //console
                 'storeConsole' => \App\GraphQL\Query\Console::store(),
                 'updateConsole' => \App\GraphQL\Query\Console::update(),

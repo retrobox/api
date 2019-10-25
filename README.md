@@ -14,6 +14,7 @@
 - clone this repo
 - composer install
 - Use `.env.example` to create your own `.env`
+- start the api with `php -S 127.0.0.1:8000 -t public`
 
 ## Ressources
 

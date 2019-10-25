@@ -114,7 +114,7 @@ class ShopCategory
                     $item->is_customizable = $args['category']['is_customizable'];
                     $item->locale = $args['category']['locale'];
                     //take by default the order in the bottom
-                    $item->order = $args['category']['locale'];
+                    $item->order = 0;
                     if ($item->save()){
                         return [
                             'saved' => true,

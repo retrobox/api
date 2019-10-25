@@ -10,6 +10,10 @@ ini_set('display_errors', 1);
 
 date_default_timezone_set('Europe/Paris');
 
+if (getenv('SENTRY_DSN') !== null && is_string(getenv('SENTRY_DSN'))) {
+    Sentry\init(['dsn' => getenv('SENTRY_DSN') ]);
+}
+
 $app = new \App\App();
 
 \App\Utils\WhoopsGuard::load($app, $app->getContainer());

@@ -319,7 +319,7 @@ class Console
         ];
     }
 
-    private static function generateRandom(int $length): string
+    public static function generateRandom(int $length): string
     {
         $characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $randString = '';

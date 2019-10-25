@@ -6,6 +6,7 @@ use App\Auth\Session;
 use App\Controllers\Controller;
 use App\Models\ShopOrder;
 use App\Models\User;
+use App\Utils\ConsoleManager;
 use App\Utils\PaymentManager;
 use Illuminate\Database\Capsule\Manager;
 use Lefuturiste\RabbitMQPublisher\Client;
@@ -184,6 +185,9 @@ class PaypalController extends Controller
                 $user->save();
                 //emit "order.payed" event
                 $rabbitMQPublisher->publish(['id' => $order['id']], 'order.payed');
+                /** @var $order ShopOrder */
+                ConsoleManager::createConsolesFromOrder($order);
+
                 //redirect to checkout success page
                 return $this->redirect($response, $this->container->get('services')['web_endpoint'] . '/shop/checkout/success');
             } else {

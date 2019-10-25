@@ -296,6 +296,29 @@ class Console
         ];
     }
 
+    public static function destroy()
+    {
+        return [
+            'type' => Type::boolean(),
+            'args' => [
+                'id' => [
+                    'type' => Type::id()
+                ]
+            ],
+            'resolve' => function (ContainerInterface $container, $args) {
+                if ($container->get(Session::class)->isAdmin()) {
+                    $order = \App\Models\Console::query()->find($args['id']);
+                    if ($order == NULL){
+                        return new \Exception('Unknown Console', 404);
+                    }
+                    return \App\Models\Console::destroy($order['id']);
+                } else {
+                    return new \Exception('Forbidden', 403);
+                }
+            }
+        ];
+    }
+
     private static function generateRandom(int $length): string
     {
         $characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';

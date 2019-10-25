@@ -75,6 +75,8 @@ class App extends \DI\Bridge\Slim\App
 
         $this->get('/websocket/connexions', [Controllers\PagesController::class, 'getWebSocketConnexions'])
             ->add(new Middlewares\JWTMiddleware($this->getContainer()));
+        $this->get('/test-send-email-event', [Controllers\PagesController::class, 'testSendEmailEvent'])
+            ->add(new Middlewares\JWTMiddleware($this->getContainer()));
 
         $this->get('/countries/{locale}', [Controllers\CountriesController::class, 'getCountries']);
 

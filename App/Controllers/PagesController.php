@@ -36,4 +36,18 @@ class PagesController extends Controller
             'data' => $this->container->get(WebSocketServerClient::class)->getConnexions()
         ]);
     }
+
+    public function testSendEmailEvent(Response $response, Session $session) {
+        if (!$session->isAdmin()) {
+            return $response->withJson([
+                'success' => false,
+                'errors' => ['Forbidden']
+            ], 403);
+        }
+        $rabbitMQ = $this->container->get(\Lefuturiste\RabbitMQPublisher\Client::class);
+        $rabbitMQ->publish(['lel' => 'lel'], 'test.email');
+        return $response->withJson([
+            'success' => true
+        ]);
+    }
 }

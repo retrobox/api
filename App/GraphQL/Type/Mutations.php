@@ -43,6 +43,8 @@ class Mutations extends ObjectType {
 				'storePost' => \App\GraphQL\Query\Post::store(),
                 //user
                 'updateUser' => \App\GraphQL\Query\User::update(),
+                'destroyUser' => \App\GraphQL\Query\User::destroy(),
+
                 //shop item
                 'storeShopItem' => \App\GraphQL\Query\ShopItem::store(),
                 'updateShopItem' => \App\GraphQL\Query\ShopItem::update(),

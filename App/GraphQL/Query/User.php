@@ -139,4 +139,27 @@ class User
             }
         ];
     }
+
+    public static function destroy() {
+        return [
+            'type' => Type::boolean(),
+            'args' => [
+                'id' => [
+                    'type' => Type::id()
+                ]
+            ],
+            'resolve' => function (ContainerInterface $container, $args) {
+                if ($container->get(Session::class)->isAdmin()) {
+                    $user = \App\Models\User::query()->find($args['id']);
+                    if ($user == NULL){
+                        return new \Exception('Unknown User', 404);
+                    }
+                    return \App\Models\User::destroy($user['id']);
+                } else {
+                    return new \Exception('Forbidden', 403);
+                }
+            }
+        ];
+    }
+
 }

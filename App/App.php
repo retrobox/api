@@ -18,6 +18,7 @@ class App extends \DI\Bridge\Slim\App
         parent::__construct();
 
         $this->add(new Middlewares\CorsMiddleware());
+
         $this->get('/', [Controllers\PagesController::class, 'getHome']);
         $this->get('/ping', [Controllers\PagesController::class, 'getPing']);
         $this->map(['POST', 'OPTIONS'], '/newsletter/subscribe', [Controllers\NewsletterController::class, 'postSubscribe']);

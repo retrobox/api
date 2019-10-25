@@ -16,11 +16,12 @@ class ConsoleManager
      */
     public static function createConsolesFromOrder($shopOrder)
     {
-        $consolesId = [];
+        $result = ['consoles_ids' => [], 'items' => []];
         foreach ($shopOrder['items'] as $item) {
             /**
              * @var $item ShopItem
              */
+            $result['items'][] = $item->toArray();
             $category = $item->category()->first()->toArray();
             if ($category['is_customizable']) {
                 // at this point we consider this shop item as a console
@@ -32,9 +33,9 @@ class ConsoleManager
                 $console['color'] = $item['pivot']['shop_item_custom_option_color'];
                 $console['token'] = \App\GraphQL\Query\Console::generateRandom(32);
                 $console->save();
-                $consolesId[] = $console['id'];
+                $consolesId['consoles_ids'][] = $console['id'];
             }
         }
-        return $consolesId;
+        return $result;
     }
 }

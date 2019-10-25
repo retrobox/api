@@ -85,10 +85,11 @@ class StripeController extends Controller
             //emit "order.payed" event
             $rabbitMQPublisher->publish(['id' => $orderId], 'order.payed');
 
-            ConsoleManager::createConsolesFromOrder($order);
+            $resultConsoleCreation = ConsoleManager::createConsolesFromOrder($order);
 
             return $response->withJson([
-                'success' => true
+                'success' => true,
+                'console_creation' => $resultConsoleCreation
             ]);
         } else {
             return $response->withJson([

@@ -22,7 +22,7 @@ return [
     "paypal" => [
         "public" => getenv('PAYPAL_PUBLIC'),
         "private" => getenv('PAYPAL_PRIVATE'),
-        "return_redirect_url" => "http://localhost:8000/paypal/execute",
+        "return_redirect_url" => getenv('API_ENDPOINT') . "/paypal/execute",
         "cancel_redirect_url" => getenv('WEB_ENDPOINT') . "/checkout/error"
     ],
     "jwt" => [

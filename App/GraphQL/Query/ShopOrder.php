@@ -43,17 +43,18 @@ class ShopOrder
                 ]
             ],
             'resolve' => function (ContainerInterface $container, $args) {
+                $query = \App\Models\ShopOrder::query()
+                    ->with(['user', 'items'])
+                    ->where('status', '!=', 'not-payed');
                 if (!$args['all']) {
-                    return \App\Models\ShopOrder::query()
-                        ->with(['user', 'items'])
+                    return $query
                         ->withCount('items')
                         ->where('user_id', '=', $container->get(Session::class)->getUserId())
                         ->limit($args['limit'])
                         ->orderBy($args['orderBy'], strtolower($args['orderDir']))
                         ->get();
                 } else if ($container->get(Session::class)->isAdmin() && $args['all']) {
-                    return \App\Models\ShopOrder::query()
-                        ->with(['user', 'items'])
+                    return $query
                         ->withCount('items')
                         ->limit($args['limit'])
                         ->orderBy($args['orderBy'], strtolower($args['orderDir']))

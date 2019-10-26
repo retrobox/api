@@ -34,6 +34,12 @@ class ShopOrder extends ObjectType
                 'user' => [
                     'type' => Types::user()
                 ],
+                'shipping_method' => [
+                    'type' => Type::string()
+                ],
+                'shipping_id' => [
+                    'type' => Type::string()
+                ],
                 'on_way_id' => [
                     'type' => Type::string()
                 ],

@@ -106,6 +106,7 @@ class ShopOrder
                         'name' => 'ShopOrderUpdateInput',
                         'fields' => [
                             'id' => ['type' => Type::nonNull(Type::string())],
+                            'shipping_id' => ['type' => Type::string()],
                             'status' => ['type' => Type::string()],
                             'bill_url' => ['type' => Type::string()]
                         ]
@@ -127,6 +128,9 @@ class ShopOrder
                         }
                         if (isset($args['order']['bill_url'])) {
                             $order['bill_url'] = $args['order']['bill_url'];
+                        }
+                        if (isset($args['order']['shipping_id']) && !empty($args['order']['shipping_id'])) {
+                            $order['shipping_id'] = $args['order']['shipping_id'];
                         }
 
                         return $order->save();

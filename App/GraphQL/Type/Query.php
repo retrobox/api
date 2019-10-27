@@ -57,7 +57,8 @@ class Query extends ObjectType
 
                 //console
                 'getManyConsoles' => \App\GraphQL\Query\Console::getMany(),
-                'getOneConsole' => \App\GraphQL\Query\Console::getOne()
+                'getOneConsole' => \App\GraphQL\Query\Console::getOne(),
+                'getConsoleVersions' => \App\GraphQL\Query\Console::getConsoleVersions()
             ]
         ];
 

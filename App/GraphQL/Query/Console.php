@@ -319,6 +319,19 @@ class Console
         ];
     }
 
+    public static function getConsoleVersions()
+    {
+        return [
+            'type' => Type::listOf(Type::string()),
+            'description' => 'Get all the console versions',
+            'resolve' => function (ContainerInterface $container) {
+                return array_map(function ($version) {
+                    return $version['id'];
+                }, $container->get('console-versions'));
+            }
+        ];
+    }
+
     public static function generateRandom(int $length): string
     {
         $characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';

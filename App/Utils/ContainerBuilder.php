@@ -12,7 +12,8 @@ class ContainerBuilder
         'api',
         'database',
         'shop',
-        'containers'
+        'containers',
+        'console-versions'
     ];
 
     public static function getContainerBuilder(\DI\ContainerBuilder $containerBuilder = null): \DI\ContainerBuilder

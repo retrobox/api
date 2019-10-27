@@ -23,6 +23,9 @@ class Console extends ObjectType
                 'order' => [
                     'type' => Types::shopOrder()
                 ],
+                'version' => [
+                    'type' => Type::string()
+                ],
                 'storage' => [
                     'type' => Type::string()
                 ],

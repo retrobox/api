@@ -134,6 +134,7 @@ class Console
                         'name' => 'ConsoleStoreInput',
                         'fields' => [
                             'id' => ['type' => Type::string()],
+                            'version' => ['type' => Type::string()],
                             'order_id' => ['type' => Type::string()],
                             'user_id' => ['type' => Type::string()],
                             'color' => ['type' => Type::nonNull(Type::string())],
@@ -172,6 +173,12 @@ class Console
                             return new \Exception('Unknown order', 404);
                         }
                     }
+                    if (isset($args['console']['version']) && !empty($args['console']['version'])) {
+                        $console['version'] = $args['console']['version'];
+                    } else {
+                        // by default we give the console the last version
+                        $console['version'] = last($rootValue->get('console-versions'))['id'];
+                    }
                     $console['color'] = $args['console']['color'];
                     $console['storage'] = $args['console']['storage'];
                     if ($console->save()) {
@@ -205,6 +212,7 @@ class Console
                         'name' => 'ConsoleUpdateInput',
                         'fields' => [
                             'id' => ['type' => Type::string()],
+                            'version' => ['type' => Type::string()],
                             'order_id' => ['type' => Type::string()],
                             'user_id' => ['type' => Type::string()],
                             'color' => ['type' => Type::nonNull(Type::string())],
@@ -227,7 +235,8 @@ class Console
                         'order_id',
                         'user_id',
                         'color',
-                        'storage'
+                        'storage',
+                        'version'
                     ]);
 
                     return $console->save();

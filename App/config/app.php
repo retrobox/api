@@ -19,7 +19,8 @@ return [
         'web_endpoint' => getenv('WEB_ENDPOINT'),
         'docs_endpoint' => getenv('DOCS_ENDPOINT'),
         'websocket_server_endpoint' => getenv('WEBSOCKET_SERVER_ENDPOINT'),
-        'data_endpoint' => getenv('DATA_ENDPOINT')
+        'data_endpoint' => getenv('DATA_ENDPOINT'),
+        'card_images_endpoint' => 'https://static.retrobox.tech/os' // static.retrobox.tech/os/{version}.img
     ],
     //staileu id of a default admin (super admin)
     'default_admin_user_id' => getenv('DEFAULT_ADMIN_USER_ID'),

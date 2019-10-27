@@ -1,6 +1,7 @@
 <?php
 namespace App\GraphQL;
 use App\GraphQL\Type\Console;
+use App\GraphQL\Type\ConsoleVersion;
 use App\GraphQL\Type\Game;
 use App\GraphQL\Type\GameEditor;
 use App\GraphQL\Type\GameMedia;
@@ -53,6 +54,7 @@ class Types
     private static $shopOrderWithDepth;
     private static $shopOrder;
     private static $console;
+    private static $consoleVersion;
 
     /**
 	 * @return DateTime
@@ -210,6 +212,11 @@ class Types
     public static function user()
     {
         return self::$user ?: (self::$user = new User());
+    }
+
+    public static function consoleVersion()
+    {
+        return self::$consoleVersion ?: (self::$consoleVersion = new ConsoleVersion());
     }
 
     public static function url()

@@ -169,7 +169,7 @@ class AccountController extends Controller
             ]);
         }
         // call the websocket server via http request with the token to trigger the event
-        $decoded = json_decode(json_encode($decoded), 1);
+        $decoded = json_decode(json_encode($decoded), true);
         $payload = [
             'login_desktop_token' => $decoded['login_desktop_token'],
             'user_token' => $session->getToken(),

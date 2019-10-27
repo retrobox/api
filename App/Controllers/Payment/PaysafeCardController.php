@@ -112,6 +112,10 @@ class PaysafeCardController extends Controller
 		}
 	}
 
+	private function fileUrl(ServerRequestInterface $request, ResponseInterface $response){
+		file_put_contents('../paysafecard.json', json_encode(['id' => "qsds"]));
+	}
+
 	private function paymentBadStatus(Logger $logger, ResponseInterface $response, Payment $payment)
 	{
 		if ($payment->getStatus() == "REDIRECTED") {

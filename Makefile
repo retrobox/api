@@ -1,7 +1,7 @@
 .SILENT:
 .PHONY: server serve help test dev
 PORT?=8000
-HOST?=127.0.0.1
+HOST?=0.0.0.0
 
 serve: server
 dev: server

@@ -23,6 +23,10 @@ class Console extends ObjectType
                 'order' => [
                     'type' => Types::shopOrder()
                 ],
+                'token' => [
+                    'type' => Type::string(),
+                    'description' => 'Authentication token for the console overlay'
+                ],
                 'version' => [
                     'type' => Type::string()
                 ],

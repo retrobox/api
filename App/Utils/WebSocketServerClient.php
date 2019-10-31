@@ -82,6 +82,17 @@ class WebSocketServerClient
         return $res->getStatusCode() === 200;
     }
 
+    public function openConsoleSshSession(string $consoleId, string $webSessionId): bool
+    {
+        $res = $this->client->get($this->baseUrl . '/console/' . $consoleId . '/open-ssh-session', [
+            'http_errors' => false,
+            'headers' => [
+                'X-Web-Session' => $webSessionId
+            ]
+        ]);
+        return $res->getStatusCode() === 200;
+    }
+
     public function serverIsOnline(): bool
     {
         $response = $this->client->get($this->baseUrl . '/ping');

@@ -305,6 +305,42 @@ class Console
         ];
     }
 
+    public static function openConsoleSshSession()
+    {
+        return [
+            'type' => Type::boolean(),
+            'description' => 'Open a remote ssh session on a console',
+            'args' => [
+                [
+                    'name' => 'id',
+                    'description' => 'The Id of the console',
+                    'type' => Type::string()
+                ],
+                [
+                    'name' => 'webSessionId',
+                    'description' => 'The id of the websocket session opened by a client',
+                    'type' => Type::string(),
+                    'default' => ''
+                ]
+            ],
+            'resolve' => function (ContainerInterface $container, $args) {
+                $session = $container->get(Session::class);
+                $item = \App\Models\Console::query()
+                    ->find($args['id']);
+                if ($item === NULL) {
+                    return new \Exception('Unknown console', 404);
+                }
+                if ($session->isAdmin() || $session->getUserId() == $item['user_id']) {
+                    $webSocketClient = $container->get(WebSocketServerClient::class);
+                    return $webSocketClient->openConsoleSshSession($item['id'], $args['webSessionId']);
+                } else {
+                    return new \Exception('Forbidden', 403);
+                }
+            }
+        ];
+    }
+
+
     public static function destroy()
     {
         return [

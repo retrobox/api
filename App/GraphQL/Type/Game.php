@@ -52,6 +52,13 @@ class Game extends ObjectType
 				'released_at' => [
 					'type' => Types::dateTime()
 				],
+                'original_file_name' => [
+                    'type' => Type::string(),
+                    'description' => 'The original file name used when the rom file was uploaded by a user'
+                ],
+                'user' => [
+                    'type' => Types::user()
+                ],
 				'platform' => [
 					'type' => Types::gamePlatform()
 				],

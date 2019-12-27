@@ -90,14 +90,17 @@ class ShopController extends Controller
         $validator = new Validator($request->getQueryParams());
         $validator->required('weight', 'country');
         $validator->notEmpty('weight', 'country');
-        $validator->integer('weight');
+        //$validator->integer('weight');
+        // Here we have an issue with the lefuturiste/validator library, because the value of weight can be sometime a float
+        // the validator doesn't provide a float verification method, so we are kind of suck here...
+        // we will use tmp a float type forcing to do the job
         if (!$validator->isValid()) {
             return $response->withJson([
                 'success' => false,
                 'errors' => $validator->getErrors(true)
             ], 400);
         }
-        $weight = $validator->getValue('weight');
+        $weight = (float) $validator->getValue('weight');
         $country = $validator->getValue('country');
         $countriesHelper = $this->container->get(Countries::class);
         if (!$countriesHelper->isCountryCodeValid($country)) {
@@ -109,11 +112,12 @@ class ShopController extends Controller
             ]);
         }
         $colissimoPrice = $this->container->get(Client::class)->getPrice('fr', $country, $weight);
+
         return $response->withJson([
             'success' => true,
             'data' => [
                 'colissimo' => $colissimoPrice,
-                'dhl' => 0
+                'dhl' => 1.00
             ]
         ]);
     }

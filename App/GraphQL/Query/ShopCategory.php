@@ -114,6 +114,7 @@ class ShopCategory
                     $item->is_customizable = $args['category']['is_customizable'];
                     $item->locale = $args['category']['locale'];
                     //take by default the order in the bottom
+                    // TODO: Take by default the last order (so we will have to fetch all the orders value to see the highest and compute from that)
                     $item->order = 0;
                     if ($item->save()){
                         return [
@@ -200,6 +201,7 @@ class ShopCategory
                 //only admin
                 if ($rootValue->get(Session::class)->isAdmin()){
                     $item = \App\Models\ShopCategory::find($args['id']);
+                    // TODO: Re Order the categories to do something that make sense
                     if ($item == NULL){
                         return new \Exception("ShopCategory not found", 404);
                     }else{

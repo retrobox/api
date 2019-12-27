@@ -54,10 +54,12 @@ class ShopSeeder extends AbstractSeed
             }));
 
             $shopCategoryId = $shopCategoriesWithLocale[rand(0, count($shopCategoriesWithLocale) - 1)]['id'];
+            $slug = $faker[$locale]->slug();
             array_push($shopItems, [
                 'id' => uniqid(),
                 'title' => $faker[$locale]->realText(rand(20,30)),
-                'slug' => $faker[$locale]->slug(),
+                'identifier' => substr($slug, 0, 35),
+                'slug' => $slug,
                 'description_short' => $faker[$locale]->sentence(1),
                 'description_long' => $md,
                 'image' => "https://static.retrobox.tech/img/about/RETROBOX1.png",

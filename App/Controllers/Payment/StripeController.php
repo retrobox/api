@@ -21,9 +21,8 @@ class StripeController extends Controller
     public function postExecute(ServerRequestInterface $request, Response $response, Session $session, Client $rabbitMQPublisher)
     {
         $this->container->get(Manager::class);
-
         $validator = new Validator($request->getParsedBody());
-        $validator->required('token', 'items', 'email', 'shipping_country', 'shipping_method');
+        $validator->required('token', 'items', 'email', 'shipping_country', 'shipping_method', 'order_note');
         $validator->notEmpty('token', 'items', 'email', 'shipping_country', 'shipping_method');
         $validator->email('email');
         if ($validator->isValid()) {
@@ -75,6 +74,7 @@ class StripeController extends Controller
             $order->on_way_id = $body['id'];
             $order->way = "stripe";
             $order->status = "payed";
+            $order->note = $validator->getValue('order_note');
             $order->items()->saveMany($paymentManager->getModels(), $paymentManager->getPivotsAttributes());
             $order->save();
 
@@ -92,6 +92,8 @@ class StripeController extends Controller
                 'console_creation' => $resultConsoleCreation
             ]);
         } else {
+            var_dump($validator->getErrors());
+            die();
             return $response->withJson([
                 'success' => false,
                 'errors' => $validator->getErrors()

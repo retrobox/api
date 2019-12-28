@@ -61,6 +61,10 @@ class ShopOrder extends ObjectType
                 'bill_url' => [
                     'type' => Types::url()
                 ],
+                'note' => [
+                    'type' => Type::string(),
+                    'description' => "A message left by customer at checkout to specify instructions to the order agent (or preparator)"
+                ],
                 'created_at' => [
                     'type' => Types::dateTime()
                 ],

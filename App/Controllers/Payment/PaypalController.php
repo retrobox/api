@@ -22,7 +22,7 @@ class PaypalController extends Controller
         $this->container->get(Manager::class);
 
         $validator = new Validator($request->getParsedBody());
-        $validator->required('items', 'shipping_method', 'shipping_country');
+        $validator->required('items', 'shipping_method', 'shipping_country', 'order_note');
         $validator->notEmpty('items', 'shipping_method', 'shipping_country');
         if ($validator->isValid()) {
             $paymentManager = new PaymentManager(
@@ -88,6 +88,7 @@ class PaypalController extends Controller
             $order->on_way_id = $_payment->getId();
             $order->way = "paypal";
             $order->status = "not-payed";
+            $order->note = $validator->getValue('order_note');
             $order->items()->saveMany($paymentManager->getModels(), $paymentManager->getPivotsAttributes());
             $order->save();
 

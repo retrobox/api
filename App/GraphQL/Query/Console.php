@@ -95,17 +95,19 @@ class Console
                         $webSocketClient = $container->get(WebSocketServerClient::class);
                         $res = $webSocketClient->getConsoleStatus($item['id']);
                         $item['is_online'] = $res['online'];
-                        $item['up_time'] = $res['status']['up_time'];
-                        $item['used_disk_space'] = floatval(str_replace('G', '', $res['status']['disk']['used']));
-                        $item['free_disk_space'] = floatval(str_replace('G', '', $res['status']['disk']['free']));
-                        $item['disk_usage'] = floatval(str_replace('%', '', $res['status']['disk']['usage']));
-                        $item['disk_size'] = floatval(str_replace('G', '', $res['status']['disk']['size'])); // in gigabytes
-                        $item['cpu_temp'] = $res['status']['cpu_temp'];
-                        $item['gpu_temp'] = $res['status']['gpu_temp'];
-                        $item['ip'] = $res['status']['ip'];
-                        $item['wifi'] = $res['status']['wifi'];
-                        $item['free_memory'] = $res['status']['free_mem'];
-                        $item['total_memory'] = $res['status']['total_mem'];
+                        if ($res['status'] !== null) {
+                            $item['up_time'] = $res['status']['up_time'];
+                            $item['used_disk_space'] = floatval(str_replace('G', '', $res['status']['disk']['used']));
+                            $item['free_disk_space'] = floatval(str_replace('G', '', $res['status']['disk']['free']));
+                            $item['disk_usage'] = floatval(str_replace('%', '', $res['status']['disk']['usage']));
+                            $item['disk_size'] = floatval(str_replace('G', '', $res['status']['disk']['size'])); // in gigabytes
+                            $item['cpu_temp'] = $res['status']['cpu_temp'];
+                            $item['gpu_temp'] = $res['status']['gpu_temp'];
+                            $item['ip'] = $res['status']['ip'];
+                            $item['wifi'] = $res['status']['wifi'];
+                            $item['free_memory'] = $res['status']['free_mem'];
+                            $item['total_memory'] = $res['status']['total_mem'];
+                        }
                     }
 
                     return $item;

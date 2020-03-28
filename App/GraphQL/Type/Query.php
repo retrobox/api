@@ -59,7 +59,7 @@ class Query extends ObjectType
                 'getManyConsoles' => \App\GraphQL\Query\Console::getMany(),
                 'getOneConsole' => \App\GraphQL\Query\Console::getOne(),
                 'getConsoleVersions' => \App\GraphQL\Query\Console::getConsoleVersions(),
-                'openConsoleSshSession' => \App\GraphQL\Query\Console::openConsoleSshSession()
+                'openConsoleTerminalSession' => \App\GraphQL\Query\Console::openConsoleTerminalSession()
             ]
         ];
 

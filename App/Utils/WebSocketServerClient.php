@@ -82,12 +82,13 @@ class WebSocketServerClient
         return $res->getStatusCode() === 200;
     }
 
-    public function openConsoleSshSession(string $consoleId, string $webSessionId): bool
+    public function openConsoleTerminalSession(string $consoleId, string $webSessionId, string $userId): bool
     {
-        $res = $this->client->get($this->baseUrl . '/console/' . $consoleId . '/open-ssh-session', [
+        $res = $this->client->get($this->baseUrl . '/console/' . $consoleId . '/open-terminal-session', [
             'http_errors' => false,
             'headers' => [
-                'X-Web-Session' => $webSessionId
+                'X-Web-Session' => $webSessionId,
+                'X-User-Id' => $userId
             ]
         ]);
         return $res->getStatusCode() === 200;

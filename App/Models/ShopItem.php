@@ -25,7 +25,7 @@ class ShopItem extends Model
 
 	public function category()
     {
-        return $this->belongsTo(ShopCategory::class, 'shop_category_id','id');
+        return $this->belongsTo(ShopCategory::class, 'shop_category_id', 'id');
     }
 
     public function images()

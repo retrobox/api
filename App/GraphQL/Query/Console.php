@@ -307,11 +307,11 @@ class Console
         ];
     }
 
-    public static function openConsoleSshSession()
+    public static function openConsoleTerminalSession()
     {
         return [
             'type' => Type::boolean(),
-            'description' => 'Open a remote ssh session on a console',
+            'description' => 'Open a remote terminal session on a console',
             'args' => [
                 [
                     'name' => 'id',
@@ -320,7 +320,7 @@ class Console
                 ],
                 [
                     'name' => 'webSessionId',
-                    'description' => 'The id of the websocket session opened by a client',
+                    'description' => 'The id of the websocket session opened by a web client',
                     'type' => Type::string(),
                     'default' => ''
                 ]
@@ -334,7 +334,7 @@ class Console
                 }
                 if ($session->isAdmin() || $session->getUserId() == $item['user_id']) {
                     $webSocketClient = $container->get(WebSocketServerClient::class);
-                    return $webSocketClient->openConsoleSshSession($item['id'], $args['webSessionId']);
+                    return $webSocketClient->openConsoleTerminalSession($item['id'], $args['webSessionId'], $item['user_id']);
                 } else {
                     return new \Exception('Forbidden', 403);
                 }

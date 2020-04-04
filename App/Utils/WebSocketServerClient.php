@@ -82,6 +82,20 @@ class WebSocketServerClient
         return $res->getStatusCode() === 200;
     }
 
+    /**
+     * Will force the overlay process to disconnect and exit (very dangerous!)
+     *
+     * @param string $consoleId
+     * @return bool
+     */
+    public function killOverlay(string $consoleId): bool
+    {
+        $res =  $this->client->get($this->baseUrl . '/console/' . $consoleId . '/kill-overlay', [
+            'http_errors' => false
+        ]);
+        return $res->getStatusCode() === 200;
+    }
+
     public function openConsoleTerminalSession(string $consoleId, string $webSessionId, string $userId): bool
     {
         $res = $this->client->get($this->baseUrl . '/console/' . $consoleId . '/open-terminal-session', [

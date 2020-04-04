@@ -307,6 +307,46 @@ class Console
         ];
     }
 
+    public static function resetToken()
+    {
+        return [
+            'type' => new ObjectType([
+                'name' => 'ConsoleResetTokenOutput',
+                'fields' => [
+                    'token' => ['type' => Type::string()],
+                    'overlay_killed' => ['type' => Type::boolean()]
+                ]
+            ]),
+            'description' => 'Reset a console token',
+            'args' => [
+                [
+                    'name' => 'id',
+                    'description' => 'The Id of the console',
+                    'type' => Type::string()
+                ]
+            ],
+            'resolve' => function (ContainerInterface $container, $args) {
+                $session = $container->get(Session::class);
+                $item = \App\Models\Console::query()
+                    ->find($args['id']);
+                if ($item === NULL) {
+                    return new \Exception('Unknown console', 404);
+                }
+                if ($session->isAdmin() || $session->getUserId() == $item['user_id']) {
+                    $item['token'] = self::generateRandom(32);
+                    $item->save();
+                    $webSocketClient = $container->get(WebSocketServerClient::class);
+                    return [
+                        'token' => $item['token'],
+                        'overlay_killed' => $webSocketClient->killOverlay($item['id'])
+                    ];
+                } else {
+                    return new \Exception('Forbidden', 403);
+                }
+            }
+        ];
+    }
+
     public static function openConsoleTerminalSession()
     {
         return [

@@ -50,24 +50,33 @@ class ShopController extends Controller
             $render = $localStorage->get("shop_item_" . $locale . "_" . $slug);
         } else {
             $this->container->get(Manager::class);
-            $item = ShopItem::with('categoryWithItems', 'images')
-                ->where('slug', '=', $slug)
-                ->where('locale', '=', $locale)
-                ->first();
-            if ($item == NULL) {
+            if (array_search($locale, $this->container->get('locales')) !== false) {
+                $item = ShopItem::with('categoryWithItems', 'images')
+                    ->where('slug', '=', $slug)
+                    ->where('locale', '=', $locale)
+                    ->first();
+                if ($item == NULL) {
+                    return $response->withJson([
+                        'success' => false,
+                        'errors' => [
+                            'Unknown shop item'
+                        ]
+                    ])->withStatus(404);
+                } else {
+                    $render = $item->toArray();
+                    $render['category'] = $render['category_with_items'];
+                    unset($render['category_with_items']);
+
+                    $localStorage->set("shop_item_" . $locale . "_" . $slug, $render);
+                    $localStorage->save();
+                }
+            } else {
                 return $response->withJson([
                     'success' => false,
                     'errors' => [
-                        'Unknown shop item'
+                        'Unknown locale slug'
                     ]
                 ])->withStatus(404);
-            } else {
-                $render = $item->toArray();
-                $render['category'] = $render['category_with_items'];
-                unset($render['category_with_items']);
-
-                $localStorage->set("shop_item_" . $locale . "_" . $slug, $render);
-                $localStorage->save();
             }
         }
         return $response->withJson([

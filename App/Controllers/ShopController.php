@@ -7,34 +7,41 @@ use App\Models\ShopCategory;
 use App\Models\ShopItem;
 use App\Utils\Countries;
 use Illuminate\Database\Capsule\Manager;
+use Lefuturiste\LocalStorage\LocalStorage;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Http\Response;
 use Validator\Validator;
 
 class ShopController extends Controller
 {
-    public function getCategories($locale, Response $response)
+    public function getCategories($locale, Response $response, LocalStorage $localStorage)
     {
-        $this->container->get(Manager::class);
-        if (array_search($locale, $this->container->get('locales')) !== false) {
-            $categories = ShopCategory::with('items')
-                ->where('locale', '=', $locale)
-                ->orderBy('order', 'asc')
-                ->get();
-            return $response->withJson([
-                'success' => true,
-                'data' => [
-                    'categories' => $categories->toArray()
-                ]
-            ]);
+        if ($localStorage->exists("shop_categories_" . $locale)) {
+            $categories = $localStorage->get("shop_categories_" . $locale);
         } else {
-            return $response->withJson([
-                'success' => false,
-                'errors' => [
-                    'Unknown locale slug'
-                ]
-            ])->withStatus(404);
+            $this->container->get(Manager::class);
+            if (array_search($locale, $this->container->get('locales')) !== false) {
+                $categories = ShopCategory::with('items')
+                    ->where('locale', '=', $locale)
+                    ->orderBy('order', 'asc')
+                    ->get();
+                $localStorage->set("shop_categories_" . $locale, $categories->toArray());
+                $localStorage->save();
+            } else {
+                return $response->withJson([
+                    'success' => false,
+                    'errors' => [
+                        'Unknown locale slug'
+                    ]
+                ])->withStatus(404);
+            }
         }
+        return $response->withJson([
+            'success' => true,
+            'data' => [
+                'categories' => $categories
+            ]
+        ]);
     }
 
     public function getItem($locale, $slug, Response $response)

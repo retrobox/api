@@ -82,6 +82,10 @@ class ShopItem extends ObjectType
                 'show_version' => [
                     'type' => Type::boolean()
                 ],
+                'allow_indexing' => [
+                    'description' => 'If true, the item should be indexed by robots',
+                    'type' => Type::boolean()
+                ],
                 'created_at' => [
                     'type' => Types::dateTime()
                 ],

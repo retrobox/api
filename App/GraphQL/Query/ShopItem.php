@@ -110,6 +110,7 @@ class ShopItem
                             'weight' => ['type' => Type::nonNull(Types::float())],
                             'image' => ['type' => Type::nonNull(Types::url())],
                             'version' => ['type' => Type::string()],
+                            'allow_indexing' => ['type' => Type::boolean(), 'default' => false],
                             'category_id' => ['type' => Type::nonNull(Type::string())],
                             'images' => ['type' => Type::listOf(new InputObjectType([
                                 'name' => 'ShopImageStoreInput',
@@ -152,6 +153,7 @@ class ShopItem
                     $item->price = (float) $args['item']['price'];
                     $item->weight = (float) $args['item']['weight'];
                     $item->slug = Str::slug($args['item']['identifier']);
+                    $item->allow_indexing = $args['item']['allow_indexing'];
 
                     return [
                         'saved' => $item->save(),
@@ -186,6 +188,7 @@ class ShopItem
                             'weight' => ['type' => Type::nonNull(Types::float())],
                             'image' => ['type' => Type::nonNull(Type::string())],
                             'version' => ['type' => Type::string()],
+                            'allow_indexing' => ['type' => Type::boolean(), 'default' => null],
                             'category_id' => ['type' => Type::nonNull(Type::string())],
                             'images' => ['type' => Type::listOf(new InputObjectType([
                                 'name' => 'ShopImageUpdateInput',
@@ -233,6 +236,7 @@ class ShopItem
                         $item->price = (float) $args['item']['price'];
                         $item->weight = (float) $args['item']['weight'];
                         $item->slug = Str::slug($args['item']['identifier']);
+                        $item->allow_indexing = $args['item']['allow_indexing'] === NULL ? $item['allow_indexing'] : $args['item']['allow_indexing'];
 
                         return $item->save();
                     }

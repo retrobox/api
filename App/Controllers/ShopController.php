@@ -44,31 +44,38 @@ class ShopController extends Controller
         ]);
     }
 
-    public function getItem($locale, $slug, Response $response)
+    public function getItem($locale, $slug, Response $response, LocalStorage $localStorage)
     {
-        $this->container->get(Manager::class);
-        $item = ShopItem::with('categoryWithItems', 'images')
-            ->where('slug', '=', $slug)
-            ->where('locale', '=', $locale)
-            ->first();
-        if ($item == NULL) {
-            return $response->withJson([
-                'success' => false,
-                'errors' => [
-                    'Unknown shop item'
-                ]
-            ])->withStatus(404);
+        if ($localStorage->exists("shop_item_" . $locale . "_" . $slug)) {
+            $render = $localStorage->get("shop_item_" . $locale . "_" . $slug);
         } else {
-            $render = $item->toArray();
-            $render['category'] = $render['category_with_items'];
-            unset($render['category_with_items']);
-            return $response->withJson([
-                'success' => true,
-                'data' => [
-                    'item' => $render
-                ]
-            ]);
+            $this->container->get(Manager::class);
+            $item = ShopItem::with('categoryWithItems', 'images')
+                ->where('slug', '=', $slug)
+                ->where('locale', '=', $locale)
+                ->first();
+            if ($item == NULL) {
+                return $response->withJson([
+                    'success' => false,
+                    'errors' => [
+                        'Unknown shop item'
+                    ]
+                ])->withStatus(404);
+            } else {
+                $render = $item->toArray();
+                $render['category'] = $render['category_with_items'];
+                unset($render['category_with_items']);
+
+                $localStorage->set("shop_item_" . $locale . "_" . $slug, $render);
+                $localStorage->save();
+            }
         }
+        return $response->withJson([
+            'success' => true,
+            'data' => [
+                'item' => $render
+            ]
+        ]);
     }
 
     public function getStoragePrices(Response $response)

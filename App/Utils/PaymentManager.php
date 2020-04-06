@@ -171,7 +171,7 @@ class PaymentManager
             case 'colissimo':
                 return $client->getPrice('fr', $this->shippingCountry, $weight);
                 break;
-            case 'dhl':
+            case 'chronopost':
                 return 0;
                 break;
             default:

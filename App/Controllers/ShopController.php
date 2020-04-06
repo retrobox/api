@@ -140,7 +140,7 @@ class ShopController extends Controller
             'success' => true,
             'data' => [
                 'colissimo' => $colissimoPrice,
-                'dhl' => 1.00
+                'chronopost' => 1.00
             ]
         ]);
     }

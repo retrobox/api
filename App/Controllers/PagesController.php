@@ -3,7 +3,11 @@
 namespace App\Controllers;
 
 use App\Auth\Session;
+use App\Models\ShopItem;
+use App\Utils\CacheManager;
 use App\Utils\WebSocketServerClient;
+use Illuminate\Database\Capsule\Manager;
+use Psr\Container\ContainerInterface;
 use Slim\Http\Response;
 
 class PagesController extends Controller
@@ -46,6 +50,34 @@ class PagesController extends Controller
         }
         $rabbitMQ = $this->container->get(\Lefuturiste\RabbitMQPublisher\Client::class);
         $rabbitMQ->publish(['lel' => 'lel'], 'test.email');
+        return $response->withJson([
+            'success' => true
+        ]);
+    }
+
+    /**
+     * This route will generate all the localstorage cache of the shop
+     *
+     * @param Response $response
+     * @param Session $session
+     * @param ContainerInterface $container
+     * @return Response
+     */
+    public function generateShopCache(Response $response, Session $session, ContainerInterface $container) {
+        if (!$session->isAdmin()) {
+            return $response->withJson([
+                'success' => false,
+                'errors' => ['Forbidden']
+            ], 403);
+        }
+        $container->get(Manager::class);
+        foreach ($container->get('locales') as $locale) {
+            CacheManager::generateShopCategories($container, $locale);
+        }
+        $items = ShopItem::all()->toArray();
+        foreach ($items as $item) {
+            CacheManager::generateShopItem($container, $item['locale'], $item['slug']);
+        }
         return $response->withJson([
             'success' => true
         ]);

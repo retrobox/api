@@ -74,7 +74,7 @@ class App extends \DI\Bridge\Slim\App
             $this->get('/{locale}/{slug}', [Controllers\DocsController::class, 'getPage']);
         });
 
-        $this->get('/cache/shop/regenerate', [Controllers\PagesController::class, 'generateShopCache'])
+        $this->get('/cache/shop/generate', [Controllers\PagesController::class, 'generateShopCache'])
             ->add(new Middlewares\JWTMiddleware($this->getContainer()));
         $this->get('/websocket/connexions', [Controllers\PagesController::class, 'getWebSocketConnexions'])
             ->add(new Middlewares\JWTMiddleware($this->getContainer()));

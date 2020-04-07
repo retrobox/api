@@ -71,15 +71,21 @@ class PagesController extends Controller
             ], 403);
         }
         $container->get(Manager::class);
+        $categories = [];
         foreach ($container->get('locales') as $locale) {
-            CacheManager::generateShopCategories($container, $locale);
+            $categories[] = CacheManager::generateShopCategories($container, $locale);
         }
         $items = ShopItem::all()->toArray();
+        $itemsCached = [];
         foreach ($items as $item) {
-            CacheManager::generateShopItem($container, $item['locale'], $item['slug']);
+            $itemsCached[] = CacheManager::generateShopItem($container, $item['locale'], $item['slug']);
         }
         return $response->withJson([
-            'success' => true
+            'success' => true,
+            'data' => [
+                'categories' => $categories,
+                'items' => $itemsCached
+            ]
         ]);
     }
 }

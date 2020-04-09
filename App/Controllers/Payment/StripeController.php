@@ -92,8 +92,6 @@ class StripeController extends Controller
                 'console_creation' => $resultConsoleCreation
             ]);
         } else {
-            var_dump($validator->getErrors());
-            die();
             return $response->withJson([
                 'success' => false,
                 'errors' => $validator->getErrors()

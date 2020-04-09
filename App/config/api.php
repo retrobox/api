@@ -12,7 +12,9 @@ return [
     "stripe" => [
         "is_test" => (getenv("STRIPE_IS_TEST") ? true : false),
         "public" => getenv("STRIPE_PUBLIC"),
-        "private" => getenv("STRIPE_PRIVATE")
+        "private" => getenv("STRIPE_PRIVATE"),
+        "return_redirect_url" => getenv('WEB_ENDPOINT') . "/shop/checkout/success",
+        "cancel_redirect_url" => getenv('WEB_ENDPOINT') . "/shop/checkout/payment"
     ],
     "staileu" => [
         "public" => getenv("STAILEU_PUBLIC"),
@@ -23,7 +25,7 @@ return [
         "public" => getenv('PAYPAL_PUBLIC'),
         "private" => getenv('PAYPAL_PRIVATE'),
         "return_redirect_url" => getenv('API_ENDPOINT') . "/paypal/execute",
-        "cancel_redirect_url" => getenv('WEB_ENDPOINT') . "/checkout/error"
+        "cancel_redirect_url" => getenv('WEB_ENDPOINT') . "/shop/checkout/payment"
     ],
     "jwt" => [
         "key" => getenv("JWT_KEY")

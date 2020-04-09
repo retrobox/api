@@ -249,4 +249,30 @@ class PaymentManager
         return $this->isValid;
     }
 
+    public function toStripeSession(): array
+    {
+        $items = [];
+        foreach ($this->getParsedItems() as $item) {
+            $items[] = [
+                'name' => $item['title'],
+                'description' => $item['description_short'],
+                'images' => [$item['image']],
+                'amount' => $item['sub_total_price'] * 100,
+                'currency' => 'eur',
+                'quantity' => 1
+            ];
+        }
+        $items[] = [
+            'name' => 'Shipping',
+            'description' => ucfirst($this->shippingMethod) . ' ' . $this->shippingCountry,
+            'images' => ['https://static.retrobox.tech/img/shipping/' . $this->shippingMethod . '.png'],
+            'amount' => $this->getTotalShippingPrice() * 100,
+            'currency' => 'eur',
+            'quantity' => 1
+        ];
+        return [
+            'line_items' => $items
+        ];
+    }
+
 }

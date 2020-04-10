@@ -4,6 +4,8 @@ namespace App\Utils;
 
 use App\Colissimo\Client;
 use App\Models\ShopItem;
+use App\Models\ShopOrder;
+use App\Models\User;
 use PayPal\Api\Amount;
 use PayPal\Api\Details;
 use PayPal\Api\Item;
@@ -275,4 +277,36 @@ class PaymentManager
         ];
     }
 
+    /**
+     * Will remove all non payed orders entries of an given user
+     *
+     * @param User $user
+     */
+    public static function destroyNotPayedOrder(User $user): void
+    {
+        $notPayedOrders = $user->shopOrders()
+            ->where('status', '=', 'not-payed')
+            ->get();
+        ShopOrder::destroy(array_map(function ($order) {
+            return $order['id'];
+        }, $notPayedOrders->toArray()));
+    }
+
+    /**
+     * Will return a ShopOrder entry based of the PaymentManager data
+     *
+     * @return ShopOrder
+     */
+    public function toShopOrder(): ShopOrder
+    {
+        $order = new ShopOrder();
+        $order['id'] = uniqid();
+        $order['total_price'] = $this->getTotalPrice();
+        $order['sub_total_price'] = $this->getSubTotalPrice();
+        $order['total_shipping_price'] = $this->getTotalShippingPrice();
+        $order['status'] = 'not-payed';
+        $order->items()->saveMany($this->getModels(), $this->getPivotsAttributes());
+
+        return $order;
+    }
 }

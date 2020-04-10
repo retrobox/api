@@ -37,8 +37,9 @@ class App extends \DI\Bridge\Slim\App
         // STRIPE
         $this->map(['POST','OPTIONS'], '/stripe/create', [Controllers\Payment\StripeController::class, 'postCreateSession'])
             ->add(new Middlewares\JWTMiddleware($this->getContainer()));
-        $this->map(['POST','OPTIONS'], '/stripe/execute', [Controllers\Payment\StripeController::class, 'postExecute'])
-            ->add(new Middlewares\JWTMiddleware($this->getContainer()));
+        $this->map(['POST','OPTIONS'], '/stripe/execute', [Controllers\Payment\StripeController::class, 'postExecute']);
+
+        // PAYPAL
         $this->map(['POST','OPTIONS'], '/paypal/get-url', [Controllers\Payment\PaypalController::class, 'postGetUrl'])
             ->add(new Middlewares\JWTMiddleware($this->getContainer()));
         $this->get('/paypal/execute', [Controllers\Payment\PaypalController::class, 'postExecute']);

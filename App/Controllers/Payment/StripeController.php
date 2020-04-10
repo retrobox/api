@@ -56,6 +56,16 @@ class StripeController extends Controller
                 ]
             ], 400);
         }
+        $user = User::query()->find($session->getUserId())->first();
+        PaymentManager::destroyNotPayedOrder($user);
+        // create order entry from payment manager
+        $order = $paymentManager->toShopOrder();
+        $order['shipping_country'] = $validator->getValue('shipping_country');
+        $order['shipping_method'] = $validator->getValue('shipping_method');
+        $order['note'] = $validator->getValue('order_note');
+        $order['way'] = 'stripe';
+        $order->user()->associate($user);
+
         try {
             $stripeSession = \Stripe\Checkout\Session::create(array_merge(
                 $paymentManager->toStripeSession(),
@@ -63,7 +73,13 @@ class StripeController extends Controller
                     'payment_method_types' => ['card'],
                     'success_url' => $this->container->get('stripe')['return_redirect_url'],
                     'cancel_url' => $this->container->get('stripe')['cancel_redirect_url'],
-                ]
+                    'metadata' => [
+                        'user_id' => $session->getUserId(),
+                        'order_id' => $order['id'],
+                        'total_price' => $order['total_price']
+                    ]
+                ],
+                isset($session->getUser()['email']) ? ['customer_email' => $session->getUser()['email']] : []
             ));
         } catch (ApiErrorException $e) {
             return $response->withJson([
@@ -76,18 +92,116 @@ class StripeController extends Controller
                 ]
             ], 400);
         }
+
+        $order['on_way_id'] = $stripeSession->id . '_intent_' . $stripeSession->payment_intent;
+        $order->save();
+
         return $response->withJson([
             'success' => true,
             'data' => [
                 'stripe_session' => [
                     'id' => $stripeSession->id,
+                    'payment_intent' => $stripeSession->payment_intent,
                     'data' => $stripeSession->toArray()
-                ]
+                ],
+                'order_id' => $order['id']
             ]
         ]);
     }
 
-    public function postExecute(ServerRequestInterface $request, Response $response, Session $session, Client $rabbitMQPublisher)
+    public function postExecute(ServerRequestInterface $request, Response $response, Client $rabbitMQPublisher)
+    {
+        $this->container->get(Manager::class);
+        Stripe::setApiKey($this->container->get('stripe')['private']);
+        $error = null;
+        $errorDetails = null;
+        $event = null;
+        if (!$request->hasHeader('stripe-signature')) {
+            return $response->withJson([
+                'success' => false,
+                'error' => 'Invalid headers, need stripe-signature header to be set'
+            ], 400);
+        }
+        try {
+            $event = \Stripe\Webhook::constructEvent(
+                $request->getBody()->getContents(),
+                $request->getHeader('stripe-signature')[0],
+                $this->container->get('stripe')['webhook_secret']
+            );
+        } catch(\UnexpectedValueException $e) {
+            $error = 'invalid-payload';
+            $errorDetails = $e;
+        } catch(\Stripe\Exception\SignatureVerificationException $e) {
+            $error = 'invalid-signature';
+            $errorDetails = $e;
+        }
+        if ($error !== null) {
+            return $response->withJson([
+                'success' => false,
+                'error' => [
+                    'name' => 'Stripe webhook error',
+                    'key' => $error,
+                    'code' => $errorDetails->getCode(),
+                    'message' => $errorDetails->getMessage(),
+                    'trace' => $errorDetails->getTraceAsString()
+                ],
+            ], 400);
+        }
+        if ($event->type !== 'checkout.session.completed') {
+            return $response->withJson([
+                'success' => true,
+                'notice' => 'This WebHook is only interested in checkout.session.completed event type. This endpoint is not very interested in other shitty types of WebHooks, thanks for your comprehension.'
+            ]);
+        }
+        // if order not found throw error and return
+        // check if order was already processed (so payed)
+        // if order is already processed, throw error and return
+        // process the order
+        $onWayId = $event->data['object']['id'] . '_intent_' . $event->data['object']['payment_intent'];
+        $order = ShopOrder::query()
+            ->with('items', 'user')
+            ->where('on_way_id','=', $onWayId)
+            ->where('way', '=', 'stripe')
+            ->first();
+        if ($order == NULL) {
+            return $response->withJson([
+                'success' => false,
+                'errors' => [
+                    "Invalid order"
+                ]
+            ])->withStatus(400);
+        }
+        if ($order['status'] == 'payed') {
+            return $response->withJson([
+                'success' => false,
+                'errors' => [
+                    "Order already payed"
+                ]
+            ])->withStatus(400);
+        }
+
+        $order['status'] = 'payed';
+        $order->save();
+
+        $rabbitMQPublisher->publish(['id' => $order['id']], 'order.payed');
+
+        /** @var $order ShopOrder */
+        ConsoleManager::createConsolesFromOrder($order);
+
+        return $response->withJson([
+            'success' => true,
+            'notice' => 'Thanks you for this really cool event. This is very grateful from you. Love you!',
+            'debug' => [
+                'id' => $event->data['object']['id'],
+                'payment_intent' => $event->data['object']['payment_intent'],
+                'order_id' => $event->data['object']['metadata']['order_id'],
+                'user_id' => $event->data['object']['metadata']['user_id'],
+                'on_way_id' => $onWayId
+            ]
+        ], 201);
+    }
+
+    public function oldPostExecute(ServerRequestInterface $request, Response $response, Session $session, Client $rabbitMQPublisher)
     {
         $this->container->get(Manager::class);
         $validator = new Validator($request->getParsedBody());

@@ -13,7 +13,10 @@ use Lefuturiste\RabbitMQPublisher\Client;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Http\Response;
 use Stripe\Exception\ApiErrorException;
+use Stripe\Exception\SignatureVerificationException;
 use Stripe\Stripe;
+use Stripe\Webhook;
+use UnexpectedValueException;
 use Validator\Validator;
 
 class StripeController extends Controller
@@ -122,15 +125,15 @@ class StripeController extends Controller
             ], 400);
         }
         try {
-            $event = \Stripe\Webhook::constructEvent(
+            $event = Webhook::constructEvent(
                 $request->getBody()->getContents(),
                 $request->getHeader('stripe-signature')[0],
                 $this->container->get('stripe')['webhook_secret']
             );
-        } catch(\UnexpectedValueException $e) {
+        } catch(UnexpectedValueException $e) {
             $error = 'invalid-payload';
             $errorDetails = $e;
-        } catch(\Stripe\Exception\SignatureVerificationException $e) {
+        } catch(SignatureVerificationException $e) {
             $error = 'invalid-signature';
             $errorDetails = $e;
         }

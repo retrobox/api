@@ -13,7 +13,7 @@ return [
         "is_test" => (getenv("STRIPE_IS_TEST") ? true : false),
         "public" => getenv("STRIPE_PUBLIC"),
         "private" => getenv("STRIPE_PRIVATE"),
-        "return_redirect_url" => getenv('WEB_ENDPOINT') . "/shop/checkout/payment",
+        "return_redirect_url" => getenv('WEB_ENDPOINT') . "/shop/checkout/success",
         "cancel_redirect_url" => getenv('WEB_ENDPOINT') . "/shop/checkout/payment",
         "webhook_secret" => getenv('STRIPE_WEBHOOK_SECRET')
     ],

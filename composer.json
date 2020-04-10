@@ -47,7 +47,7 @@
     "dflydev/fig-cookies": "^1.0",
     "firebase/php-jwt": "^5.0",
     "stripe/stripe-php": "^7.14",
-    "lefuturiste/rabbitmq-publisher": "^1.1",
+    "lefuturiste/rabbitmq-publisher": "^1.2.3",
     "akrabat/ip-address-middleware": "^1.0",
     "paypal/rest-api-sdk-php": "^1.13",
     "staileu/php-sdk": "^0.0.3",

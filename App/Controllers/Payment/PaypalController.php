@@ -10,6 +10,10 @@ use App\Utils\ConsoleManager;
 use App\Utils\PaymentManager;
 use Illuminate\Database\Capsule\Manager;
 use Lefuturiste\RabbitMQPublisher\Client;
+use PayPal\Api\Payer;
+use PayPal\Api\Payment;
+use PayPal\Api\PaymentExecution;
+use PayPal\Api\RedirectUrls;
 use PayPal\Rest\ApiContext;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Http\Response;
@@ -43,53 +47,37 @@ class PaypalController extends Controller
 
             $transaction = $paymentManager->toPaypalTransaction();
 
-            $payment = new \PayPal\Api\Payment();
+            $payment = new Payment();
             $payment->addTransaction($transaction);
             $payment->setIntent('sale');
 
-            $redirectUrls = (new \PayPal\Api\RedirectUrls())
+            $redirectUrls = (new RedirectUrls())
                 ->setReturnUrl($this->container->get('paypal')['return_redirect_url'])
                 ->setCancelUrl($this->container->get('paypal')['cancel_redirect_url']);
             $payment->setRedirectUrls($redirectUrls);
-            $payment->setPayer((new \PayPal\Api\Payer())->setPaymentMethod('paypal'));
+            $payment->setPayer((new Payer())->setPaymentMethod('paypal'));
 
             try {
                 $_payment = $payment->create($apiContext);
             } catch (\Exception $e) {
                 return $response->withJson([
                     'success' => false,
-                    'errors' => [
-                        [
-                            $e->getMessage(),
-                            $e->getCode()
-                        ]
-                    ]
+                    'errors' => [[$e->getMessage(), $e->getCode()]]
                 ])->withStatus(500);
             }
-            $user = User::query()->find($session->getUser()['id']);
+            $user = User::query()->find($session->getUser()['id'])->first();
 
             // before creating a new order, we will delete all the non payed order of the user
-            $notPayedOrders = $user->shopOrders()
-                ->where('status', '=', 'not-payed')
-                ->get();
-            ShopOrder::destroy(array_map(function ($order) {
-                return $order['id'];
-            }, $notPayedOrders->toArray()));
+            PaymentManager::destroyNotPayedOrder($user);
 
-            //save the payment in a database
-            $order = new ShopOrder();
-            $order->id = uniqid();
+            // save the payment in a database
+            $order = $paymentManager->toShopOrder();
             $order->user()->associate($user);
-            $order->total_price = $paymentManager->getTotalPrice();
-            $order->sub_total_price = $paymentManager->getSubTotalPrice();
-            $order->total_shipping_price = $paymentManager->getTotalShippingPrice();
-            $order->shipping_country = $validator->getValue('shipping_country');
-            $order->shipping_method = $validator->getValue('shipping_method');
-            $order->on_way_id = $_payment->getId();
-            $order->way = "paypal";
-            $order->status = "not-payed";
-            $order->note = $validator->getValue('order_note');
-            $order->items()->saveMany($paymentManager->getModels(), $paymentManager->getPivotsAttributes());
+            $order['shipping_country'] = $validator->getValue('shipping_country');
+            $order['shipping_method'] = $validator->getValue('shipping_method');
+            $order['on_way_id'] = $_payment->getId();
+            $order['way'] = 'paypal';
+            $order['note'] = $validator->getValue('order_note');
             $order->save();
 
             $redirectTo = $payment->getApprovalLink();
@@ -117,7 +105,7 @@ class PaypalController extends Controller
         $validator->notEmpty('token', 'paymentId', 'PayerID');
         if ($validator->isValid()) {
             try {
-                $payment = \PayPal\Api\Payment::get($validator->getValue('paymentId'), $apiContext);
+                $payment = Payment::get($validator->getValue('paymentId'), $apiContext);
             } catch (\Exception $e) {
                 return $response->withJson([
                     'success' => false,
@@ -157,7 +145,7 @@ class PaypalController extends Controller
                 $order->shipping_method,
                 $this->container
             );
-            $execution = (new \PayPal\Api\PaymentExecution())
+            $execution = (new PaymentExecution())
                 ->setPayerId($validator->getValue('PayerID'))
                 ->addTransaction($paymentManager->toPaypalTransaction());
 
@@ -166,30 +154,26 @@ class PaypalController extends Controller
             } catch (\Exception $e) {
                 return $response->withJson([
                     'success' => false,
-                    'errors' => [
-                        [
-                            $e->getMessage(),
-                            $e->getCode()
-                        ]
-                    ]
+                    'errors' => [[$e->getMessage(), $e->getCode()]]
                 ])->withStatus(500);
             }
 
             if ($successPayment->getState() == 'approved') {
-                //success
-                //change the state in db
+                // we have a successful payment
+                // change the state in db
                 $order->status = 'payed';
                 $order->save();
-                //change user's email in the db
+                // change user's email in the db
                 $user = $order->user()->first();
                 $user['last_email'] = $payment->getPayer()->getPayerInfo()->getEmail();
                 $user->save();
-                //emit "order.payed" event
+                // emit "order.payed" event
                 $rabbitMQPublisher->publish(['id' => $order['id']], 'order.payed');
+
                 /** @var $order ShopOrder */
                 ConsoleManager::createConsolesFromOrder($order);
 
-                //redirect to checkout success page
+                // redirect to checkout success page
                 return $this->redirect($response, $this->container->get('services')['web_endpoint'] . '/shop/checkout/success');
             } else {
                 return $response->withJson([

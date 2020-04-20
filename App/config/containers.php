@@ -92,9 +92,5 @@ return [
             $container->get('jwt')['key'],
             $container->get('services')['websocket_server_endpoint']
         );
-    },
-
-    Lefuturiste\LocalStorage\LocalStorage::class => function () {
-        return new Lefuturiste\LocalStorage\LocalStorage(\App\App::getBasePath() . '/tmp/localstorage.json');
     }
 ];

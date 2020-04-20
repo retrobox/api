@@ -3,15 +3,14 @@
 namespace App\Controllers;
 
 use GuzzleHttp\Client;
-use Lefuturiste\LocalStorage\LocalStorage;
 use Slim\Http\Response;
 
 class DownloadController
 {
-    public function getDownloads(Response $response, LocalStorage $localStorage)
+    public function getDownloads(Response $response, \Predis\Client $redis)
     {
-        if ($localStorage->exist("desktop_last_release")) {
-            $lastRelease = $localStorage->get("desktop_last_release");
+        if ($redis->exists("desktop_last_release")) {
+            $lastRelease = json_decode($redis->get("desktop_last_release"), true);
         } else {
             $client = new Client();
             $ghApiResponse = $client->get("https://api.github.com/repos/retrobox/desktop/releases/latest");
@@ -46,8 +45,7 @@ class DownloadController
                 "published_at" => $lastRelease['published_at'],
                 "versions" => $versions
             ];
-            $localStorage->set("desktop_last_release", $lastRelease);
-            $localStorage->save();
+            $redis->set("desktop_last_release", json_encode($lastRelease));
         }
         return $response->withJson([
             'success' => true,

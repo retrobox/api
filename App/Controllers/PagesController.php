@@ -56,7 +56,7 @@ class PagesController extends Controller
     }
 
     /**
-     * This route will generate all the localstorage cache of the shop
+     * This route will generate all the cache of the shop
      *
      * @param Response $response
      * @param Session $session

@@ -39,7 +39,7 @@ return [
     ],
     'redis' => [
         'uri' => getenv('REDIS_URI'),
-        'password' => getenv('REDIS_PASSWORD'),
+        //'password' => getenv('REDIS_PASSWORD'),
         'prefix' => getenv('REDIS_PREFIX')
     ],
     'upload_path' => \App\App::getBasePath() . '/' . getenv('UPLOAD_PATH')

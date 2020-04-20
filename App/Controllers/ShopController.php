@@ -6,7 +6,6 @@ use App\Colissimo\Client;
 use App\Utils\CacheManager;
 use App\Utils\Countries;
 use Illuminate\Database\Capsule\Manager;
-use Lefuturiste\LocalStorage\LocalStorage;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Http\Response;
@@ -16,9 +15,9 @@ class ShopController extends Controller
 {
     public function getCategories($locale, Response $response, ContainerInterface $container)
     {
-        $localStorage = $container->get(LocalStorage::class);
-        if ($localStorage->exists("shop_categories_" . $locale)) {
-            $categories = $localStorage->get("shop_categories_" . $locale);
+        $redis = $container->get(\Predis\Client::class);
+        if ($redis->exists("shop_categories_" . $locale)) {
+            $categories = json_decode($redis->get("shop_categories_" . $locale), true);
         } else {
             $this->container->get(Manager::class);
             if (array_search($locale, $this->container->get('locales')) !== false) {
@@ -42,10 +41,10 @@ class ShopController extends Controller
 
     public function getItem($locale, $slug, Response $response, ContainerInterface $container)
     {
-        $localStorage = $container->get(LocalStorage::class);
+        $redis = $container->get(\Predis\Client::class);
         $key = 'shop_item_' . $locale . '_' . $slug;
-        if ($localStorage->exists($key)) {
-            $render = $localStorage->get($key);
+        if ($redis->exists($key)) {
+            $render = json_decode($redis->get($key), true);
         } else {
             $this->container->get(Manager::class);
             if (array_search($locale, $this->container->get('locales')) !== false) {

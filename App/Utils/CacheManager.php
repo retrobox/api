@@ -4,7 +4,7 @@ namespace App\Utils;
 
 use App\Models\ShopCategory;
 use App\Models\ShopItem;
-use Lefuturiste\LocalStorage\LocalStorage;
+use Predis\Client;
 use Psr\Container\ContainerInterface;
 
 class CacheManager {
@@ -30,10 +30,8 @@ class CacheManager {
         $render['category'] = $render['category_with_items'];
         unset($render['category_with_items']);
         $key = 'shop_item_' . $locale . '_' . $slug;
-        $container->get(LocalStorage::class)
-            ->remove($key)
-            ->set($key, $render)
-            ->save();
+        $redis = $container->get(Client::class);
+        $redis->set($key, json_encode($render));
         return $render;
     }
 
@@ -52,10 +50,8 @@ class CacheManager {
             ->get()
             ->toArray();
         $key = 'shop_categories_' . $locale;
-        $container->get(LocalStorage::class)
-            ->remove($key)
-            ->set($key, $categories)
-            ->save();
+        $redis = $container->get(Client::class);
+        $redis->set($key, json_encode($categories));
         return $categories;
     }
 }

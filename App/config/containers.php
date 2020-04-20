@@ -81,7 +81,7 @@ return [
     \Predis\Client::class => function (ContainerInterface $container) {
         return new \Predis\Client($container->get('redis')['uri'], [
             'parameters' => [
-                'password' => $container->get('redis')['password']
+                //'password' => $container->get('redis')['password']
             ],
             'prefix' => $container->get('redis')['prefix']
         ]);

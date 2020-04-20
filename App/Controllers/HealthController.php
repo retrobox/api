@@ -62,10 +62,6 @@ class HealthController extends Controller
                 'have_issues' => $issues !== [],
                 'issues' => $issues,
                 'connexions' => [
-                    'rabbitmq' =>
-                        $rabbitMqConnexion !== null &&
-                        $rabbitMqConnexion->connexion !== null &&
-                        $rabbitMqConnexion->connexion->getConnection(),
                     'mysql' =>
                         $mysqlConnexion !== null &&
                         $mysqlConnexion->select('SHOW TABLES') !== null,
@@ -74,7 +70,7 @@ class HealthController extends Controller
                         $redisResponse !== null &&
                         $redisResponse->getPayload() === 'PONG' &&
                         $redisClient->set("foo", "bar") &&
-                        $redisClient->get("foo") === "bar",
+                        $redisClient->get("foo") === "bar" && $redisClient->del(["foo"]),
                     'websocket_server' =>
                         $webSocketClient !== null &&
                         $webSocketOnline

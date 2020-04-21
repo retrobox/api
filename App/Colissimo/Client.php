@@ -26,12 +26,11 @@ class Client
      */
     public function getPrice(string $from, string $to, int $weight): float
     {
-        $res = $this->client->get('https://www.laposte.fr/professionnel/configurator/getConfiguratorNetPrice', [
-            'query' => [
-                'fromisocode' => mb_strtolower($from),
-                'toisocode' => mb_strtolower($to),
-                'weight' => $weight / 1000,
-                'contenanttype' => 'COLIS_STANDARD'
+        $res = $this->client->post('https://www.laposte.fr/colissimo-en-ligne/getprice', [
+            'form_params' => [
+                'fromIsoCode' => mb_strtolower($from),
+                'toIsoCode' => mb_strtolower($to),
+                'weight' => $weight / 1000
             ]
         ]);
         $json = json_decode($res->getBody()->getContents(), true);

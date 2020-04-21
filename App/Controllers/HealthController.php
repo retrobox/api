@@ -4,7 +4,7 @@ namespace App\Controllers;
 
 use App\Utils\WebSocketServerClient;
 use Illuminate\Database\Capsule\Manager;
-use Lefuturiste\RabbitMQPublisher\Client;
+use Lefuturiste\Jobatator\Client;
 use Slim\Http\Response;
 
 class HealthController extends Controller
@@ -12,9 +12,9 @@ class HealthController extends Controller
     public function getHealth(Response $response)
     {
         $issues = [];
-        $rabbitMqConnexion = null;
+        $queue = null;
         try {
-            $rabbitMqConnexion = $this->container->get(Client::class);
+            $queue = $this->container->get(Client::class);
         } catch (\Exception $exception) {
             $issues[] = [
                 'code' => $exception->getCode(),
@@ -62,6 +62,7 @@ class HealthController extends Controller
                 'have_issues' => $issues !== [],
                 'issues' => $issues,
                 'connexions' => [
+                    'jobatator' => $queue !== null && $queue->hasConnexion(),
                     'mysql' =>
                         $mysqlConnexion !== null &&
                         $mysqlConnexion->select('SHOW TABLES') !== null,

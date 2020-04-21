@@ -62,18 +62,6 @@ return [
         );
     },
 
-    \Lefuturiste\RabbitMQPublisher\Client::class => function (ContainerInterface $container) {
-        return new Lefuturiste\RabbitMQPublisher\Client(
-            new AMQPStreamConnection(
-              $container->get('rabbitmq')['host'],
-              $container->get('rabbitmq')['port'],
-              $container->get('rabbitmq')['username'],
-              $container->get('rabbitmq')['password'],
-              $container->get('rabbitmq')['virtual_host']
-            )
-        );
-    },
-
     \App\Utils\MailChimp::class => function (ContainerInterface $container) {
         return new \App\Utils\MailChimp($container->get('mailchimp')['api_key']);
     },
@@ -92,5 +80,17 @@ return [
             $container->get('jwt')['key'],
             $container->get('services')['websocket_server_endpoint']
         );
+    },
+
+    \Lefuturiste\Jobatator\Client::class => function (ContainerInterface $container) {
+        $client = new Lefuturiste\Jobatator\Client(
+            $container->get('jobatator')['host'],
+            $container->get('jobatator')['port'],
+            $container->get('jobatator')['username'],
+            $container->get('jobatator')['password'],
+            $container->get('jobatator')['group']
+        );
+        $client->createConnexion();
+        return $client;
     }
 ];

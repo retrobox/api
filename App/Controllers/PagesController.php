@@ -7,6 +7,7 @@ use App\Models\ShopItem;
 use App\Utils\CacheManager;
 use App\Utils\WebSocketServerClient;
 use Illuminate\Database\Capsule\Manager;
+use Lefuturiste\Jobatator\Client;
 use Psr\Container\ContainerInterface;
 use Slim\Http\Response;
 
@@ -48,8 +49,8 @@ class PagesController extends Controller
                 'errors' => ['Forbidden']
             ], 403);
         }
-        $rabbitMQ = $this->container->get(\Lefuturiste\RabbitMQPublisher\Client::class);
-        $rabbitMQ->publish(['lel' => 'lel'], 'test.email');
+        $queue = $this->container->get(Client::class);
+        $queue->publish('test.email', ['lel' => 'lel']);
         return $response->withJson([
             'success' => true
         ]);

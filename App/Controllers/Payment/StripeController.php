@@ -9,7 +9,7 @@ use App\Models\User;
 use App\Utils\ConsoleManager;
 use App\Utils\PaymentManager;
 use Illuminate\Database\Capsule\Manager;
-use Lefuturiste\RabbitMQPublisher\Client;
+use Lefuturiste\Jobatator\Client;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Http\Response;
 use Stripe\Exception\ApiErrorException;
@@ -111,7 +111,7 @@ class StripeController extends Controller
         ]);
     }
 
-    public function postExecute(ServerRequestInterface $request, Response $response, Client $rabbitMQPublisher)
+    public function postExecute(ServerRequestInterface $request, Response $response, Client $queue)
     {
         $this->container->get(Manager::class);
         Stripe::setApiKey($this->container->get('stripe')['private']);
@@ -185,7 +185,7 @@ class StripeController extends Controller
         $order['status'] = 'payed';
         $order->save();
 
-        $rabbitMQPublisher->publish(['id' => $order['id']], 'order.payed');
+        $queue->publish('order.payed', ['id' => $order['id']]);
 
         /** @var $order ShopOrder */
         ConsoleManager::createConsolesFromOrder($order);

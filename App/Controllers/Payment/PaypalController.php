@@ -9,7 +9,7 @@ use App\Models\User;
 use App\Utils\ConsoleManager;
 use App\Utils\PaymentManager;
 use Illuminate\Database\Capsule\Manager;
-use Lefuturiste\RabbitMQPublisher\Client;
+use Lefuturiste\Jobatator\Client;
 use PayPal\Api\Payer;
 use PayPal\Api\Payment;
 use PayPal\Api\PaymentExecution;
@@ -96,7 +96,7 @@ class PaypalController extends Controller
         }
     }
 
-    public function postExecute(ServerRequestInterface $request, Response $response, ApiContext $apiContext, Client $rabbitMQPublisher)
+    public function postExecute(ServerRequestInterface $request, Response $response, ApiContext $apiContext, Client $queue)
     {
         $this->container->get(Manager::class);
 
@@ -168,7 +168,7 @@ class PaypalController extends Controller
                 $user['last_email'] = $payment->getPayer()->getPayerInfo()->getEmail();
                 $user->save();
                 // emit "order.payed" event
-                $rabbitMQPublisher->publish(['id' => $order['id']], 'order.payed');
+                $queue->publish('order.payed', ['id' => $order['id']]);
 
                 /** @var $order ShopOrder */
                 ConsoleManager::createConsolesFromOrder($order);

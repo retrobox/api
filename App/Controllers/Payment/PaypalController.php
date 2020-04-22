@@ -65,7 +65,8 @@ class PaypalController extends Controller
                     'errors' => [[$e->getMessage(), $e->getCode()]]
                 ])->withStatus(500);
             }
-            $user = User::query()->find($session->getUser()['id'])->first();
+            /** @var $user User */
+            $user = User::query()->find($session->getUser()['id']);
 
             // before creating a new order, we will delete all the non payed order of the user
             PaymentManager::destroyNotPayedOrder($user);
@@ -163,10 +164,7 @@ class PaypalController extends Controller
                 // change the state in db
                 $order->status = 'payed';
                 $order->save();
-                // change user's email in the db
-                $user = $order->user()->first();
-                $user['last_email'] = $payment->getPayer()->getPayerInfo()->getEmail();
-                $user->save();
+
                 // emit "order.payed" event
                 $queue->publish('order.payed', ['id' => $order['id']]);
 

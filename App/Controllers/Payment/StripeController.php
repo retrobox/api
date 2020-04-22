@@ -58,7 +58,9 @@ class StripeController extends Controller
                 ]
             ], 400);
         }
-        $user = User::query()->find($session->getUserId())->first();
+        /** @var $user User */
+        $user = User::query()->find($session->getUserId());
+
         PaymentManager::destroyNotPayedOrder($user);
         // create order entry from payment manager
         $order = $paymentManager->toShopOrder();

@@ -4,7 +4,7 @@
 
 ## Requirement
 
-- Php 7.3 or higher
+- Php 7.4 or higher
 - Mysql 5 or higher server
 - Rabbit-MQ
 - Redis server
@@ -16,14 +16,11 @@
 - Use `.env.example` to create your own `.env`
 - start the api with `php -S 127.0.0.1:8000 -t public`
 
-## Ressources
+## Debug setup
 
-- game
-- editor
-- genre
-- media
-- platform
-- post
+Recommended environment variables values:
+- In development: `SENTRY_ENABLE=0` because you don't want to float sentry and `APP_DEBUG=1` to get the nice pretty whoops guard web interface to debug.
+- In production: 'SENTRY_ENABLE=1' to get log to sentry and `APP_DEBUG=0` to hide details of exception, but still if APP_DEBUG is false you will get some kind of details in JSON when the server fail
 
 ## Description route API
 

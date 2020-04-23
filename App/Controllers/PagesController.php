@@ -13,36 +13,38 @@ use Slim\Http\Response;
 
 class PagesController extends Controller
 {
-	public function getHome(Response $response)
-	{
-		return $response->withJson([
-		    'success' => true,
+    public function getHome(Response $response)
+    {
+        return $response->withJson([
+            'success' => true,
             'data' => [
                 'name' => $this->container->get('app_name'),
                 'env' => $this->container->get('env_name')
             ]
-		]);
-	}
+        ]);
+    }
 
-	public function getPing(Response $response)
+    public function getPing(Response $response)
     {
         return $response->withJson(['success' => true]);
     }
 
-    public function getWebSocketConnexions(Response $response, Session $session) {
-	    if (!$session->isAdmin()) {
+    public function getWebSocketConnexions(Response $response, Session $session)
+    {
+        if (!$session->isAdmin()) {
             return $response->withJson([
                 'success' => false,
                 'errors' => ['Forbidden']
             ], 403);
         }
-	    return $response->withJson([
-	        'success' => true,
+        return $response->withJson([
+            'success' => true,
             'data' => $this->container->get(WebSocketServerClient::class)->getConnexions()
         ]);
     }
 
-    public function testSendEmailEvent(Response $response, Session $session) {
+    public function testSendEmailEvent(Response $response, Session $session)
+    {
         if (!$session->isAdmin()) {
             return $response->withJson([
                 'success' => false,
@@ -64,7 +66,8 @@ class PagesController extends Controller
      * @param ContainerInterface $container
      * @return Response
      */
-    public function generateShopCache(Response $response, Session $session, ContainerInterface $container) {
+    public function generateShopCache(Response $response, Session $session, ContainerInterface $container)
+    {
         if (!$session->isAdmin()) {
             return $response->withJson([
                 'success' => false,

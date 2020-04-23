@@ -1,28 +1,30 @@
 <?php
 
+use App\NotFoundHandler;
+use App\Utils\MailChimp;
+use App\Utils\WebSocketServerClient;
+use DI\Container;
+use DiscordHandler\DiscordHandler;
+use Illuminate\Database\Capsule\Manager;
+use Monolog\Logger;
 use PayPal\Auth\OAuthTokenCredential;
-use PhpAmqpLib\Connection\AMQPStreamConnection;
+use PayPal\Rest\ApiContext;
 use Psr\Container\ContainerInterface;
+use SebastianWalker\Paysafecard\Client;
+use SebastianWalker\Paysafecard\Urls;
 
 return [
-    'settings.displayErrorDetails' => function (ContainerInterface $container) {
-        return $container->get('app_debug');
-    },
-    'settings.debug' => function (ContainerInterface $container) {
-        return $container->get('app_debug');
-    },
+    'settings.displayErrorDetails' => true,
+    'settings.debug' => true,
+    'notFoundHandler' => new NotFoundHandler(),
 
-    'notFoundHandler' => function (ContainerInterface $container) {
-        return new \App\NotFoundHandler();
-    },
-
-    \Monolog\Logger::class => function (ContainerInterface $container) {
+    Logger::class => function (ContainerInterface $container) {
         $log = new Monolog\Logger($container->get('app_name'));
 
         $log->pushHandler(new Monolog\Handler\StreamHandler($container->get('log')['path'], $container->get('log')['level']));
 
         if ($container->get('log')['discord']) {
-            $log->pushHandler(new \DiscordHandler\DiscordHandler(
+            $log->pushHandler(new DiscordHandler(
                 $container->get('log')['discord_webhooks'],
                 $container->get('app_name'),
                 $container->get('env_name'),
@@ -33,8 +35,8 @@ return [
         return $log;
     },
 
-    \Illuminate\Database\Capsule\Manager::class => function (\DI\Container $container) {
-        $capsule = new \Illuminate\Database\Capsule\Manager;
+    Manager::class => function (Container $container) {
+        $capsule = new Manager;
         $capsule->addConnection($container->get('mysql'));
 
         $capsule->setAsGlobal();
@@ -43,27 +45,31 @@ return [
         return $capsule;
     },
 
-    \SebastianWalker\Paysafecard\Client::class => function (\DI\Container $container) {
-        $client = new \SebastianWalker\Paysafecard\Client($container->get('paysafecard')['api_key']);
+    Client::class => function (Container $container) {
+        $client = new Client($container->get('paysafecard')['api_key']);
 
         $client->setTestingMode($container->get('paysafecard')['testing_mode']);
-        $client->setUrls(new \SebastianWalker\Paysafecard\Urls($container->get('paysafecard')['urls'][0], $container->get('paysafecard')['urls'][1], $container->get('paysafecard')['urls'][2]));
+        $client->setUrls(new Urls(
+            $container->get('paysafecard')['urls'][0],
+            $container->get('paysafecard')['urls'][1],
+            $container->get('paysafecard')['urls'][2]
+        ));
 
         return $client;
     },
 
-    \STAILEUAccounts\Client::class => function (\DI\Container $container) {
+    \STAILEUAccounts\Client::class => function (Container $container) {
         return new \STAILEUAccounts\Client($container->get('staileu')['public'], $container->get('staileu')['private']);
     },
 
-    \PayPal\Rest\ApiContext::class => function (ContainerInterface $container) {
-        return new \PayPal\Rest\ApiContext(
+    ApiContext::class => function (ContainerInterface $container) {
+        return new ApiContext(
             new OAuthTokenCredential($container->get('paypal')['public'], $container->get('paypal')['private'])
         );
     },
 
-    \App\Utils\MailChimp::class => function (ContainerInterface $container) {
-        return new \App\Utils\MailChimp($container->get('mailchimp')['api_key']);
+    MailChimp::class => function (ContainerInterface $container) {
+        return new MailChimp($container->get('mailchimp')['api_key']);
     },
 
     \Predis\Client::class => function (ContainerInterface $container) {
@@ -75,8 +81,8 @@ return [
         ]);
     },
 
-    \App\Utils\WebSocketServerClient::class => function (ContainerInterface $container) {
-        return new \App\Utils\WebSocketServerClient(
+    WebSocketServerClient::class => function (ContainerInterface $container) {
+        return new WebSocketServerClient(
             $container->get('jwt')['key'],
             $container->get('services')['websocket_server_endpoint']
         );

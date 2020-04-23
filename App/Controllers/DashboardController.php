@@ -11,9 +11,9 @@ class DashboardController extends Controller
     public function getDashboard(Response $response, Session $session){
         $this->loadDatabase();
 
+        /** @var $user User */
         $user = User::query()
-            ->find($session->getUserId())
-            ->first();
+            ->find($session->getUserId());
         $orders = $user
             ->shopOrders()
             ->orderBy('created_at', 'DESC')

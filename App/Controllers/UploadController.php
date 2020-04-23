@@ -15,7 +15,8 @@ class UploadController extends Controller
     {
         // validate user permission, user must own at least one console
         $this->loadDatabase();
-        $user = User::query()->find($session->getUserId())->first();
+        /** @var $user User */
+        $user = User::query()->find($session->getUserId());
         if ($user === NULL) {
             return $response->withJson([
                 'success' => false,

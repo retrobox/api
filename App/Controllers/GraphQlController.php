@@ -15,6 +15,12 @@ class GraphQlController extends Controller
 	    $this->container->get(Manager::class);
 		$schema = require App::getBasePath() . '/App/GraphQL/schema.php';
 		$input = $request->getParsedBody();
+		if (!isset($input['query'])) {
+            return $response->withJson([
+                'success' => false,
+                'error' => "'query' field required on a GraphQL endpoint"
+            ])->withStatus(400);
+        }
 		$query = $input['query'];
 		$variableValues = isset($input['variables']) ? $input['variables'] : NULL;
 		try {

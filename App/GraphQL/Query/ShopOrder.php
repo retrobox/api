@@ -21,7 +21,7 @@ class ShopOrder
                     'name' => 'limit',
                     'description' => 'Number of items to get',
                     'type' => Type::int(),
-                    'defaultValue' => 10
+                    'defaultValue' => -1
                 ],
                 [
                     'name' => 'orderBy',
@@ -154,7 +154,7 @@ class ShopOrder
             'resolve' => function (ContainerInterface $container, $args) {
                 if ($container->get(Session::class)->isAdmin()) {
                     $order = \App\Models\ShopOrder::query()->find($args['id']);
-                    if ($order == NULL){
+                    if ($order == NULL) {
                         return new \Exception('Unknown ShopOrder', 404);
                     }
                     return \App\Models\ShopOrder::destroy($order['id']);

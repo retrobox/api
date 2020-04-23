@@ -19,7 +19,7 @@ class Post
 					'name' => 'limit',
 					'description' => 'Number of items to get',
 					'type' => Type::int(),
-					'defaultValue' => 10
+					'defaultValue' => -1
 				],
 				[
 					'name' => 'orderBy',

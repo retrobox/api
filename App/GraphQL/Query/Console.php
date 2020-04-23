@@ -22,7 +22,7 @@ class Console
                     'name' => 'limit',
                     'description' => 'Number of items to get',
                     'type' => Type::int(),
-                    'defaultValue' => 10
+                    'defaultValue' => -1
                 ],
                 [
                     'name' => 'orderBy',
@@ -51,8 +51,7 @@ class Console
                     ->orderBy($args['orderBy'], strtolower($args['orderDir']));
                 if ($args['all']) {
                     if ($session->isAdmin()) {
-                        return $query
-                            ->get();
+                        return $query->get();
                     } else {
                         return new \Exception('Forbidden', 403);
                     }

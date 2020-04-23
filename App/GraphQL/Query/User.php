@@ -72,8 +72,7 @@ class User
                 if ($user == NULL) {
                     return new \Exception('Unknown user', 404);
                 }
-                if ($container->get(Session::class)->isAdmin() === false &&
-                    $user->id !== $userId) {
+                if ($container->get(Session::class)->isAdmin() === false && $user->id !== $userId) {
                     return new \Exception('Forbidden user', 403);
                 }
 

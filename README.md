@@ -6,8 +6,8 @@
 
 - Php 7.4 or higher
 - Mysql 5 or higher server
-- Rabbit-MQ
-- Redis server
+- [Jobatator](https://github.com/lefuturiste/keyvaluer) to manage queue/jobs
+- Redis or a Redis compatible server like [KeyValuer](https://github.com/lefuturiste/keyvaluer)
 
 ## Install
 

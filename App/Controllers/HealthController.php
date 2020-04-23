@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Utils\WebSocketServerClient;
+use Exception;
 use Illuminate\Database\Capsule\Manager;
 use Lefuturiste\Jobatator\Client;
 use Slim\Http\Response;
@@ -15,7 +16,7 @@ class HealthController extends Controller
         $queue = null;
         try {
             $queue = $this->container->get(Client::class);
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             $issues[] = [
                 'code' => $exception->getCode(),
                 'message' => $exception->getMessage()
@@ -25,7 +26,7 @@ class HealthController extends Controller
         try {
             $mysqlConnexion = $this->container->get(Manager::class)->getConnection();
             $mysqlConnexion->reconnect();
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             $mysqlConnexion = null;
             $issues[] = [
                 'code' => $exception->getCode(),
@@ -37,7 +38,7 @@ class HealthController extends Controller
         try {
             $redisClient = $this->container->get(\Predis\Client::class);
             $redisResponse = $redisClient->ping();
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             $issues[] = [
                 'code' => $exception->getCode(),
                 'message' => $exception->getMessage()
@@ -49,7 +50,7 @@ class HealthController extends Controller
         try {
             $webSocketClient = $this->container->get(WebSocketServerClient::class);
             $webSocketOnline = $webSocketClient->serverIsOnline();
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             $issues[] = [
                 'code' => $exception->getCode(),
                 'message' => $exception->getMessage()
@@ -77,6 +78,6 @@ class HealthController extends Controller
                         $webSocketOnline
                 ]
             ]
-        ]);
+        ], $issues !== [] ? 500 : 200);
     }
 }

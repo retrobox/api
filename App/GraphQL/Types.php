@@ -1,6 +1,7 @@
 <?php
 namespace App\GraphQL;
 use App\GraphQL\Type\Console;
+use App\GraphQL\Type\ConsoleImage;
 use App\GraphQL\Type\ConsoleVersion;
 use App\GraphQL\Type\Game;
 use App\GraphQL\Type\GameEditor;
@@ -55,6 +56,7 @@ class Types
     private static $shopOrder;
     private static $console;
     private static $consoleVersion;
+    private static $consoleImage;
 
     /**
 	 * @return DateTime
@@ -77,7 +79,15 @@ class Types
         return self::$console ?: (self::$console = new Console());
     }
 
-	/**
+    /**
+     * @return ConsoleImage
+     */
+    public static function consoleImage()
+    {
+        return self::$consoleImage ?: (self::$consoleImage = new ConsoleImage());
+    }
+
+    /**
 	 * @return Game
 	 */
 	public static function game()

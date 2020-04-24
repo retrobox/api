@@ -9,4 +9,9 @@ class ConsoleImage extends Model
     protected $keyType = 'string';
 
     public $incrementing = false;
+
+    public function generateVersion(): void
+    {
+        $this['version'] = 'h' . $this['console_version'] . '-s' . $this['software_version'];
+    }
 }

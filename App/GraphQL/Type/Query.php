@@ -59,7 +59,10 @@ class Query extends ObjectType
                 'getManyConsoles' => \App\GraphQL\Query\Console::getMany(),
                 'getOneConsole' => \App\GraphQL\Query\Console::getOne(),
                 'getConsoleVersions' => \App\GraphQL\Query\Console::getConsoleVersions(),
-                'openConsoleTerminalSession' => \App\GraphQL\Query\Console::openConsoleTerminalSession()
+                'openConsoleTerminalSession' => \App\GraphQL\Query\Console::openConsoleTerminalSession(),
+
+                //consoleImages
+                'getManyConsoleImages' => \App\GraphQL\Query\ConsoleImage::getMany()
             ]
         ];
 

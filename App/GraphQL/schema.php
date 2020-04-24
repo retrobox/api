@@ -18,5 +18,6 @@ return new \GraphQL\Type\Schema([
 	'shop_item' => (new \App\GraphQL\Type\ShopItem()),
 	'shop_category' => (new \App\GraphQL\Type\ShopCategory()),
     'shop_order' => (new \App\GraphQL\Type\ShopOrder()),
-	'console' => (new \App\GraphQL\Type\Console())
+	'console' => (new \App\GraphQL\Type\Console()),
+	'consoleImage' => (new \App\GraphQL\Type\ConsoleImage())
 ]);

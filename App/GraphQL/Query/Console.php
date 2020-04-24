@@ -382,7 +382,6 @@ class Console
         ];
     }
 
-
     public static function destroy()
     {
         return [

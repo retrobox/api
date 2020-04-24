@@ -70,7 +70,12 @@ class Mutations extends ObjectType {
                 'destroyConsole' => \App\GraphQL\Query\Console::destroy(),
                 'shutdownConsole' => \App\GraphQL\Query\Console::shutdown(),
                 'rebootConsole' => \App\GraphQL\Query\Console::reboot(),
-                'resetConsoleToken' => \App\GraphQL\Query\Console::resetToken()
+                'resetConsoleToken' => \App\GraphQL\Query\Console::resetToken(),
+
+                //console images
+                'storeConsoleImage' => \App\GraphQL\Query\ConsoleImage::store(),
+                'updateConsoleImage' => \App\GraphQL\Query\ConsoleImage::update(),
+                'destroyConsoleImage' => \App\GraphQL\Query\ConsoleImage::destroy()
 			]
 		];
 

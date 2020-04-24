@@ -2,9 +2,9 @@
 
 namespace App\Utils;
 
+use App\JsonWhoopsResponseHandler;
 use Psr\Container\ContainerInterface;
 use Slim\App;
-use Whoops\Handler\JsonResponseHandler;
 use function Sentry\captureException;
 
 class WhoopsGuard
@@ -26,7 +26,7 @@ class WhoopsGuard
         if (boolval(getenv('SENTRY_ENABLE')))
             $handlers[] = fn($e) => captureException($e);
         if (!boolval(getenv('APP_DEBUG')))
-            $handlers[] = new JsonResponseHandler();
+            $handlers[] = new JsonWhoopsResponseHandler();
         $whoopsGuard->setHandlers($handlers);
         $whoopsGuard->install();
     }

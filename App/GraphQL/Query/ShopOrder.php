@@ -6,7 +6,7 @@ use App\Auth\Session;
 use App\GraphQL\Types;
 use GraphQL\Type\Definition\InputObjectType;
 use GraphQL\Type\Definition\Type;
-use Lefuturiste\RabbitMQPublisher\Client;
+use Lefuturiste\Jobatator\Client;
 use Psr\Container\ContainerInterface;
 
 class ShopOrder
@@ -121,8 +121,8 @@ class ShopOrder
                     } else {
                         if (isset($args['order']['status'])) {
                             if ($order['status'] === 'payed' && $args['order']['status'] == 'shipped') {
-                                //emit order.shipped
-                                $container->get(Client::class)->publish(['id' => $order['id']], 'order.shipped');
+                                // emit order.shipped
+                                $container->get(Client::class)->publish('order.shipped', ['id' => $order['id']]);
                             }
                             $order['status'] = $args['order']['status'];
                         }

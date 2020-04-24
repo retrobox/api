@@ -1,6 +1,5 @@
 <?php
 
-
 use Phinx\Migration\AbstractMigration;
 
 class AddUserIdColumnToGamesTable extends AbstractMigration

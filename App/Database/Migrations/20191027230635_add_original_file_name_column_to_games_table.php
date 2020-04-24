@@ -1,6 +1,5 @@
 <?php
 
-
 use Phinx\Migration\AbstractMigration;
 
 class AddOriginalFileNameColumnToGamesTable extends AbstractMigration

@@ -1,6 +1,5 @@
 <?php
 
-
 use Phinx\Migration\AbstractMigration;
 
 class AddBillUrlToShopOrdersTable extends AbstractMigration

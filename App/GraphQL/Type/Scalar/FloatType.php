@@ -36,27 +36,4 @@ class FloatType extends CustomScalarType
         }
         return $value;
     }
-
-    /**
-     * Parses an externally provided literal value (hardcoded in GraphQL query) to use as an input.
-     *
-     * E.g.
-     * {
-     *   user(email: "user@example.com")
-     * }
-     *
-     * @param \GraphQL\Language\AST\Node $valueNode
-     * @return string
-     * @throws Error
-     */
-    /*public function parseLiteral($valueNode)
-    {
-        if (!$valueNode instanceof StringValueNode) {
-            throw new Error('Query error: Can only parse strings got: ' . $valueNode->kind, [$valueNode]);
-        }
-        if (Validator::floatType()->validate((float) $valueNode->value)) {
-            throw new Error("Not a valid float", [$valueNode]);
-        }
-        return $valueNode->value;
-    }*/
 }

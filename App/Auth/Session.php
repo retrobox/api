@@ -10,19 +10,23 @@ class Session
 {
 
 	/**
-	 * @var array
-	 */
-	private $data;
-
-	/**
+     * Raw JSON Web token sent by the client
+     *
 	 * @var string
 	 */
-	private $token;
+	private string $token;
+
+    /**
+     * Data decoded contained inside the JWT
+     *
+     * @var array
+     */
+    private array $data;
 
 	/**
 	 * @var ContainerInterface
 	 */
-	private $container;
+	private ContainerInterface $container;
 
 	public function __construct(ContainerInterface $container)
 	{
@@ -37,13 +41,11 @@ class Session
      */
 	public function create($user) : string
 	{
-        $jwt = JWT::encode([
+        return JWT::encode([
             'iss' => $this->container->get('app_name') . '._.' . $this->container->get('env_name'),
             'iat' => Carbon::now()->timestamp,
             'user' => $user
         ], $this->container->get('jwt')['key']);
-
-        return $jwt;
 	}
 
 	/**

@@ -4,6 +4,7 @@ namespace App\GraphQL\Query;
 
 use App\Auth\Session;
 use App\GraphQL\Types;
+use Exception;
 use Faker\Provider\Uuid;
 use GraphQL\Type\Definition\InputObjectType;
 use GraphQL\Type\Definition\ObjectType;
@@ -44,7 +45,7 @@ class GameMedia
                         ->orderBy($args['orderBy'], strtolower($args['orderDir']))
                         ->get();
                 } else {
-                    return new \Exception("Forbidden", 403);
+                    return new Exception("Forbidden", 403);
                 }
             }
         ];
@@ -66,13 +67,13 @@ class GameMedia
                 if ($container->get(Session::class)->isAdmin()) {
                     $media = \App\Models\GameMedia::query()->find($args['id']);
                     if ($media == NULL) {
-                        return new \Exception('Unknown GameMedia', 404);
+                        return new Exception('Unknown GameMedia', 404);
                     } else {
                         return $media
                             ->first();
                     }
                 } else {
-                    return new \Exception("Forbidden", 403);
+                    return new Exception("Forbidden", 403);
                 }
             }
         ];
@@ -115,7 +116,7 @@ class GameMedia
 
                     return ['id' => $media['id'], 'saved' => $media->save()];
                 } else {
-                    return new \Exception("Forbidden", 403);
+                    return new Exception("Forbidden", 403);
                 }
             }
         ];
@@ -142,7 +143,7 @@ class GameMedia
                 if ($container->get(Session::class)->isAdmin()) {
                     $media = \App\Models\GameMedia::query()->find($args['media']['id']);
                     if ($media == NULL){
-                        return new \Exception('Unknown GameMedia', 404);
+                        return new Exception('Unknown GameMedia', 404);
                     }
                     /** @var $media \App\Models\GameMedia */
                     $media->setAttributesFromGraphQL($args['media'], [
@@ -152,7 +153,7 @@ class GameMedia
                     ]);
                     return $media->save();
                 } else {
-                    return new \Exception('Forbidden', 403);
+                    return new Exception('Forbidden', 403);
                 }
             }
         ];
@@ -171,11 +172,11 @@ class GameMedia
                 if ($container->get(Session::class)->isAdmin()) {
                     $editor = \App\Models\GameMedia::query()->find($args['id']);
                     if ($editor == NULL){
-                        return new \Exception('Unknown GameMedia', 404);
+                        return new Exception('Unknown GameMedia', 404);
                     }
                     return \App\Models\GameMedia::destroy($editor['id']);
                 } else {
-                    return new \Exception('Forbidden', 403);
+                    return new Exception('Forbidden', 403);
                 }
             }
         ];

@@ -4,6 +4,7 @@ namespace App\GraphQL\Query;
 
 use App\Auth\Session;
 use App\GraphQL\Types;
+use Exception;
 use Faker\Provider\Uuid;
 use GraphQL\Type\Definition\InputObjectType;
 use GraphQL\Type\Definition\ObjectType;
@@ -37,7 +38,7 @@ class GameEditor
                     'defaultValue' => 'desc'
                 ]
             ],
-            'resolve' => function (ContainerInterface $container, $args) {
+            'resolve' => function ($_, $args) {
                 return \App\Models\GameEditor::query()
                     ->withCount('games')
                     ->limit($args['limit'])
@@ -59,10 +60,10 @@ class GameEditor
                     'type' => Type::string()
                 ]
             ],
-            'resolve' => function (ContainerInterface $container, $args) {
+            'resolve' => function ($_, $args) {
                 $editor = \App\Models\GameEditor::query()->find($args['id']);
                 if ($editor == NULL) {
-                    return new \Exception('Unknown GameEditor', 404);
+                    return new Exception('Unknown GameEditor', 404);
                 } else {
                     return $editor
                         ->with('games')
@@ -106,7 +107,7 @@ class GameEditor
 
                     return ['id' => $editor['id'], 'saved' => $editor->save()];
                 } else {
-                    return new \Exception("Forbidden", 403);
+                    return new Exception("Forbidden", 403);
                 }
             }
         ];
@@ -132,13 +133,13 @@ class GameEditor
                 if ($container->get(Session::class)->isAdmin()) {
                     $editor = \App\Models\GameEditor::query()->find($args['editor']['id']);
                     if ($editor == NULL){
-                        return new \Exception('Unknown GameEditor', 404);
+                        return new Exception('Unknown GameEditor', 404);
                     }
                     $editor['name'] = $args['editor']['name'];
                     $editor['description'] = $args['editor']['description'];
                     return $editor->save();
                 } else {
-                    return new \Exception('Forbidden', 403);
+                    return new Exception('Forbidden', 403);
                 }
             }
         ];
@@ -157,11 +158,11 @@ class GameEditor
                 if ($container->get(Session::class)->isAdmin()) {
                     $editor = \App\Models\GameEditor::query()->find($args['id']);
                     if ($editor == NULL){
-                        return new \Exception('Unknown GameEditor', 404);
+                        return new Exception('Unknown GameEditor', 404);
                     }
                     return \App\Models\GameEditor::destroy($editor['id']);
                 } else {
-                    return new \Exception('Forbidden', 403);
+                    return new Exception('Forbidden', 403);
                 }
             }
         ];

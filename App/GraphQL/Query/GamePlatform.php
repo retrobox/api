@@ -4,6 +4,7 @@ namespace App\GraphQL\Query;
 
 use App\Auth\Session;
 use App\GraphQL\Types;
+use Exception;
 use Faker\Provider\Uuid;
 use GraphQL\Type\Definition\InputObjectType;
 use GraphQL\Type\Definition\ObjectType;
@@ -37,7 +38,7 @@ class GamePlatform
                     'defaultValue' => 'desc'
                 ]
             ],
-            'resolve' => function (ContainerInterface $container, $args) {
+            'resolve' => function ($_, $args) {
                 return \App\Models\GamePlatform::query()
                     ->withCount('games', 'medias')
                     ->limit($args['limit'])
@@ -59,15 +60,49 @@ class GamePlatform
                     'type' => Type::string()
                 ]
             ],
-            'resolve' => function (ContainerInterface $container, $args) {
+            'resolve' => function ($_, $args) {
                 $platform = \App\Models\GamePlatform::with(['games', 'medias'])->find($args['id']);
                 if ($platform == NULL) {
-                    return new \Exception('Unknown GamePlatform', 404);
+                    return new Exception('Unknown GamePlatform', 404);
                 } else {
                     return $platform;
                 }
             }
         ];
+    }
+
+    private static function set(\App\Models\GamePlatform $platform, $args): \App\Models\GamePlatform
+    {
+        $platform->setAttributesFromGraphQL($args['platform'], [
+            'name',
+            'description',
+            'short',
+            'manufacturer',
+            'cpu',
+            'memory',
+            'graphics',
+            'sound',
+            'display',
+            'media',
+            'max_controllers',
+            'thegamesdb_rating',
+            'released_at'
+        ]);
+
+        if (isset($args['platform']['medias'])) {
+            foreach ($args['platform']['medias'] as $mediaId) {
+                /** @var $media \App\Models\GameMedia */
+                $media = \App\Models\GameMedia::query()->find($mediaId);
+                if ($media != NULL) {
+                    $media['platform_id'] = $platform['id'];
+                    $media->save();
+                } else {
+                    new Exception("Unknown media '{$media}'", 404);
+                }
+            }
+        }
+
+        return $platform;
     }
 
     public static function store()
@@ -108,39 +143,12 @@ class GamePlatform
                 if ($container->get(Session::class)->isAdmin()) {
                     $platform = new \App\Models\GamePlatform();
                     $platform['id'] = Uuid::uuid();
-                    $platform->setAttributesFromGraphQL($args['platform'], [
-                        'name',
-                        'description',
-                        'short',
-                        'manufacturer',
-                        'cpu',
-                        'memory',
-                        'graphics',
-                        'sound',
-                        'display',
-                        'media',
-                        'max_controllers',
-                        'thegamesdb_rating',
-                        'released_at'
-                    ]);
 
-
-                    if (isset($args['platform']['medias'])) {
-                        foreach ($args['platform']['medias'] as $mediaId) {
-                            /** @var $media \App\Models\GameMedia */
-                            $media = \App\Models\GameMedia::query()->find($mediaId);
-                            if ($media != NULL) {
-                                $media['platform_id'] = $platform['id'];
-                                $media->save();
-                            } else {
-                                new \Exception("Unknown media '{$media}'", 404);
-                            }
-                        }
-                    }
+                    $platform = self::set($platform, $args);
 
                     return ['id' => $platform['id'], 'saved' => $platform->save()];
                 } else {
-                    return new \Exception("Forbidden", 403);
+                    return new Exception("Forbidden", 403);
                 }
             }
         ];
@@ -177,40 +185,14 @@ class GamePlatform
                 if ($container->get(Session::class)->isAdmin()) {
                     $platform = \App\Models\GamePlatform::query()->find($args['platform']['id']);
                     if ($platform == NULL){
-                        return new \Exception('Unknown GamePlatform', 404);
+                        return new Exception('Unknown GamePlatform', 404);
                     }
                     /** @var $platform \App\Models\GamePlatform */
-                    $platform->setAttributesFromGraphQL($args['platform'], [
-                        'name',
-                        'description',
-                        'short',
-                        'manufacturer',
-                        'cpu',
-                        'memory',
-                        'graphics',
-                        'sound',
-                        'display',
-                        'media',
-                        'max_controllers',
-                        'thegamesdb_rating',
-                        'released_at'
-                    ]);
+                    $platform = self::set($platform, $args);
 
-                    if (isset($args['platform']['medias'])) {
-                        foreach ($args['platform']['medias'] as $mediaId) {
-                            /** @var $media \App\Models\GameMedia */
-                            $media = \App\Models\GameMedia::query()->find($mediaId);
-                            if ($media != NULL) {
-                                $media['platform_id'] = $platform['id'];
-                                $media->save();
-                            } else {
-                                new \Exception("Unknown media '{$media}'", 404);
-                            }
-                        }
-                    }
                     return $platform->save();
                 } else {
-                    return new \Exception('Forbidden', 403);
+                    return new Exception('Forbidden', 403);
                 }
             }
         ];
@@ -229,11 +211,11 @@ class GamePlatform
                 if ($container->get(Session::class)->isAdmin()) {
                     $platform = \App\Models\GamePlatform::query()->find($args['id']);
                     if ($platform == NULL){
-                        return new \Exception('Unknown GamePlatform', 404);
+                        return new Exception('Unknown GamePlatform', 404);
                     }
                     return \App\Models\GamePlatform::destroy($platform['id']);
                 } else {
-                    return new \Exception('Forbidden', 403);
+                    return new Exception('Forbidden', 403);
                 }
             }
         ];

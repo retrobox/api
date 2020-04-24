@@ -20,31 +20,28 @@ class UploadController extends Controller
         if ($user === NULL) {
             return $response->withJson([
                 'success' => false,
-                'error' => [
-                    'message' => 'Invalid user',
-                    'code' => 400
+                'errors' => [
+                    ['message' => 'Invalid user']
                 ]
             ], 400);
         }
         if (empty($user->consoles()->get())) {
             return $response->withJson([
                 'success' => false,
-                'error' => [
-                    'message' => "You can't upload a file because you don't have any console registered on your account",
-                    'code' => 400
+                'errors' => [
+                    ['message' => "You can't upload a file because you don't have any console registered on your account"]
                 ]
             ], 400);
         }
         // TODO: validate request input like 'console_id'
-        
+
         $uploadedFiles = $request->getUploadedFiles();
         // validate that uploaded file count is only one
         if (count($uploadedFiles) !== 1 || !isset($uploadedFiles['file'])) {
             return $response->withJson([
                 'success' => false,
-                'error' => [
-                    'message' => 'You must upload at least one file or not more than one.',
-                    'code' => 400
+                'errors' => [
+                    ['message' => "You must upload at least one file or not more than one."]
                 ]
             ], 400);
         }
@@ -62,15 +59,13 @@ class UploadController extends Controller
             return $response->withJson([
                 'success' => false,
                 'errors' => [
-                    'message' => 'Unsuccessful upload: invalid upload err code',
-                    'code' => $uploadedFile->getError()
+                    ['message' => 'Unsuccessful upload: invalid upload err code', 'code' => $uploadedFile->getError()]
                 ]
             ], 400);
         }
 
         // TODO: store a game in db under owned_by: userId
         // TODO: send an event to the websocket server to install the rom on a targeted console
-
         return $response->withJson([
             'success' => true,
             'data' => [

@@ -4,6 +4,7 @@ namespace App\GraphQL\Query;
 
 use App\Auth\Session;
 use App\GraphQL\Types;
+use Exception;
 use Faker\Provider\Uuid;
 use GraphQL\Type\Definition\InputObjectType;
 use GraphQL\Type\Definition\ObjectType;
@@ -37,7 +38,7 @@ class Game
                     'defaultValue' => 'desc'
                 ]
             ],
-            'resolve' => function (ContainerInterface $container, $args) {
+            'resolve' => function ($_, $args) {
                 return \App\Models\Game::query()
                     ->with('editor')
                     ->limit($args['limit'])
@@ -59,10 +60,10 @@ class Game
                     'type' => Type::string()
                 ]
             ],
-            'resolve' => function (ContainerInterface $container, $args) {
+            'resolve' => function ($_, $args) {
                 $game = \App\Models\Game::query()->find($args['id']);
                 if ($game == NULL) {
-                    return new \Exception('Unknown Game', 404);
+                    return new Exception('Unknown Game', 404);
                 } else {
                     return $game
                         ->with('editor')
@@ -70,6 +71,49 @@ class Game
                 }
             }
         ];
+    }
+
+    private static function set(\App\Models\Game $game, $args): \App\Models\Game
+    {
+        $game->setAttributesFromGraphQL($args['game'], [
+            'name',
+            'description',
+            'esrb_level',
+            'locales',
+            'players',
+            'thegamesdb_rating',
+            'rom_url',
+            'editor_id',
+            'platform_id',
+            'released_at'
+        ]);
+
+        if (isset($args['game']['tags'])) {
+            $tags = [];
+            foreach ($args['game']['tags'] as $tagId) {
+                $tag = \App\Models\GameTag::query()->find($tagId);
+                if ($tag != NULL) {
+                    $tags[] = $tagId;
+                } else {
+                    new Exception("Unknown tag '{$tagId}'", 404);
+                }
+            }
+            $game->tags()->toggle($tags);
+        }
+
+        if (isset($args['game']['medias'])) {
+            foreach ($args['game']['medias'] as $mediaId) {
+                $media = \App\Models\GameMedia::query()->find($mediaId);
+                if ($media != NULL) {
+                    $media->game()->associate($args['game']['id']);
+                    $media->save();
+                } else {
+                    new Exception("Unknown media '{$media}'", 404);
+                }
+            }
+        }
+
+        return $game;
     }
 
     public static function store()
@@ -109,47 +153,12 @@ class Game
                 if ($container->get(Session::class)->isAdmin()) {
                     $game = new \App\Models\Game();
                     $game['id'] = Uuid::uuid();
-                    $game->setAttributesFromGraphQL($args['game'], [
-                        'name',
-                        'description',
-                        'esrb_level',
-                        'locales',
-                        'players',
-                        'thegamesdb_rating',
-                        'rom_url',
-                        'editor_id',
-                        'platform_id',
-                        'released_at'
-                    ]);
 
-                    if (isset($args['game']['tags'])) {
-                        $tags = [];
-                        foreach ($args['game']['tags'] as $tagId) {
-                            $tag = \App\Models\GameTag::query()->find($tagId);
-                            if ($tag != NULL) {
-                                $tags[] = $tagId;
-                            } else {
-                                return new \Exception("Unknown tag '{$tagId}'", 404);
-                            }
-                        }
-                        $game->tags()->toggle($tags);
-                    }
-
-                    if (isset($args['game']['medias'])) {
-                        foreach ($args['game']['medias'] as $mediaId) {
-                            $media = \App\Models\GameMedia::query()->find($mediaId);
-                            if ($media != NULL) {
-                                $media->game()->associate($args['game']['id']);
-                                $media->save();
-                            } else {
-                                new \Exception("Unknown media '{$media}'", 404);
-                            }
-                        }
-                    }
+                    $game = self::set($game, $args);
 
                     return ['id' => $game['id'], 'saved' => $game->save()];
                 } else {
-                    return new \Exception("Forbidden", 403);
+                    return new Exception("Forbidden", 403);
                 }
             }
         ];
@@ -185,50 +194,15 @@ class Game
                 if ($container->get(Session::class)->isAdmin()) {
                     /** @var \App\Models\Game $game */
                     $game = \App\Models\Game::query()->find($args['game']['id']);
-                    if ($game == NULL){
-                        return new \Exception('Unknown Game', 404);
-                    }
-                    $game->setAttributesFromGraphQL($args['game'], [
-                        'name',
-                        'description',
-                        'esrb_level',
-                        'locales',
-                        'players',
-                        'thegamesdb_rating',
-                        'rom_url',
-                        'editor_id',
-                        'platform_id',
-                        'released_at'
-                    ]);
-
-                    if (isset($args['game']['tags'])) {
-                        $tags = [];
-                        foreach ($args['game']['tags'] as $tagId) {
-                            $tag = \App\Models\GameTag::query()->find($tagId);
-                            if ($tag != NULL) {
-                                $tags[] = $tagId;
-                            } else {
-                                return new \Exception("Unknown tag '{$tagId}'", 404);
-                            }
-                        }
-                        $game->tags()->toggle($tags);
+                    if ($game == NULL) {
+                        return new Exception('Unknown Game', 404);
                     }
 
-                    if (isset($args['game']['medias'])) {
-                        foreach ($args['game']['medias'] as $mediaId) {
-                            $media = \App\Models\GameMedia::query()->find($mediaId);
-                            if ($media != NULL) {
-                                $media->game()->associate($args['game']['id']);
-                                $media->save();
-                            } else {
-                                new \Exception("Unknown media '{$media}'", 404);
-                            }
-                        }
-                    }
+                    $game = self::set($game, $args);
 
                     return $game->save();
                 } else {
-                    return new \Exception('Forbidden', 403);
+                    return new Exception('Forbidden', 403);
                 }
             }
         ];
@@ -246,17 +220,19 @@ class Game
             'resolve' => function (ContainerInterface $container, $args) {
                 if ($container->get(Session::class)->isAdmin()) {
                     $game = \App\Models\Game::query()->find($args['id']);
-                    if ($game == NULL){
-                        return new \Exception('Unknown game', 404);
+                    if ($game == NULL) {
+                        return new Exception('Unknown game', 404);
                     }
                     $mediaIds = array_map(
-                        function ($media) { return $media['id']; },
+                        function ($media) {
+                            return $media['id'];
+                        },
                         $game->medias()->get()->toArray()
                     );
                     \App\Models\GameMedia::destroy($mediaIds);
                     return \App\Models\Game::destroy($game['id']);
                 } else {
-                    return new \Exception('Forbidden', 403);
+                    return new Exception('Forbidden', 403);
                 }
             }
         ];

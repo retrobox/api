@@ -8,7 +8,7 @@ class Client
     /**
      * @var \GuzzleHttp\Client
      */
-    private $client;
+    private \GuzzleHttp\Client $client;
 
     public function __construct()
     {

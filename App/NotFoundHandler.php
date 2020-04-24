@@ -15,8 +15,8 @@ class NotFoundHandler extends NotFound
 		return $response->withJson([
 			'success' => false,
 			'errors' => [
-				'Route not found'
+				['message' => 'Route not found']
 			]
-		])->withStatus(404);
+		], 404);
 	}
 }

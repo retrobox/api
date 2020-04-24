@@ -26,9 +26,9 @@ class ShopController extends Controller
                 return $response->withJson([
                     'success' => false,
                     'errors' => [
-                        'Unknown locale slug'
+                        ['message' => 'Unknown locale slug']
                     ]
-                ])->withStatus(404);
+                ], 404);
             }
         }
         return $response->withJson([
@@ -53,17 +53,17 @@ class ShopController extends Controller
                     return $response->withJson([
                         'success' => false,
                         'errors' => [
-                            'Unknown shop item'
+                            ['message' => 'Unknown shop item']
                         ]
-                    ])->withStatus(404);
+                    ], m);
                 }
             } else {
                 return $response->withJson([
                     'success' => false,
                     'errors' => [
-                        'Unknown locale slug'
+                        ['message' => 'Unknown locale slug']
                     ]
-                ])->withStatus(404);
+                ], 404);
             }
         }
         return $response->withJson([
@@ -117,7 +117,7 @@ class ShopController extends Controller
             return $response->withJson([
                 'success' => false,
                 'errors' => [
-                    'Invalid country code'
+                    ['message' => 'Invalid country code']
                 ]
             ]);
         }

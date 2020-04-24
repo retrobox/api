@@ -3,11 +3,12 @@
 namespace App\Utils;
 
 use App\App;
+use Exception;
 use Psr\Container\ContainerInterface;
 
 class ContainerBuilder
 {
-    private static $definitions = [
+    private static array $definitions = [
         'app',
         'api',
         'database',
@@ -32,7 +33,7 @@ class ContainerBuilder
     {
         try {
             return $containerBuilder->build();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return NULL;
         }
     }

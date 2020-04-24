@@ -3,6 +3,7 @@
 namespace App\Middlewares;
 
 use App\Auth\Session;
+use Exception;
 use Firebase\JWT\JWT;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -13,7 +14,7 @@ class JWTMiddleware
 	/**
 	 * @var ContainerInterface
 	 */
-	private $container;
+	private ContainerInterface $container;
 
 	/**
 	 * @var Session|mixed
@@ -37,7 +38,7 @@ class JWTMiddleware
             }
 			try {
 				$decoded = JWT::decode($token, $this->container->get('jwt')['key'], ['HS256']);
-			} catch (\Exception $e) {
+			} catch (Exception $e) {
 				return $response->withStatus(401)->withJson([
 					'success' => false,
 					'errors' => [

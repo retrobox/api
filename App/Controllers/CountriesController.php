@@ -14,7 +14,9 @@ class CountriesController extends Controller
         if ($countries === NULL) {
             return $response->withJson([
                 'success' => false,
-                'errors' => ['Invalid locale code']
+                'errors' => [
+                    ['message' => 'Invalid locale code']
+                ]
             ], 400);
         }
         return $response->withJson([

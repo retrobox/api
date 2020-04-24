@@ -36,27 +36,4 @@ class Url extends CustomScalarType
         }
         return $value;
     }
-
-    /**
-     * Parses an externally provided literal value (hardcoded in GraphQL query) to use as an input.
-     *
-     * E.g.
-     * {
-     *   user(email: "user@example.com")
-     * }
-     *
-     * @param \GraphQL\Language\AST\Node $valueNode
-     * @return string
-     * @throws Error
-     */
-//    public function parseLiteral($valueNode)
-//    {
-//        if (!$valueNode instanceof StringValueNode) {
-//            throw new Error('Query error: Can only parse strings got: ' . $valueNode->kind, [$valueNode]);
-//        }
-//        if (Validator::url()->validate($valueNode->value)) {
-//            throw new Error("Not a valid url", [$valueNode]);
-//        }
-//        return $valueNode->value;
-//    }
 }

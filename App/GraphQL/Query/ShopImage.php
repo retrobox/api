@@ -3,6 +3,7 @@
 namespace App\GraphQL\Query;
 
 use App\Auth\Session;
+use Exception;
 use GraphQL\Type\Definition\Type;
 use Psr\Container\ContainerInterface;
 
@@ -26,12 +27,12 @@ class ShopImage
                 if ($container->get(Session::class)->isAdmin()) {
                     $item = \App\Models\ShopImage::query()->find($args['id']);
                     if ($item == NULL) {
-                        return new \Exception("Unknown ShopImage", 404);
+                        return new Exception("Unknown ShopImage", 404);
                     } else {
                         return \App\Models\ShopImage::destroy($args['id']);
                     }
                 } else {
-                    return new \Exception("Forbidden", 403);
+                    return new Exception("Forbidden", 403);
                 }
             }
         ];

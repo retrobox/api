@@ -4,6 +4,7 @@ namespace App\GraphQL\Query;
 
 use App\Auth\Session;
 use App\GraphQL\Types;
+use Exception;
 use GraphQL\Type\Definition\InputObjectType;
 use GraphQL\Type\Definition\Type;
 use Psr\Container\ContainerInterface;
@@ -43,7 +44,7 @@ class User
                         ->orderBy($args['orderBy'], strtolower($args['orderDir']))
                         ->get();
                 } else {
-                    return new \Exception("Forbidden", 403);
+                    return new Exception("Forbidden", 403);
                 }
             }
         ];
@@ -70,10 +71,10 @@ class User
                     $user = \App\Models\User::query()->find($args['id']);
                 }
                 if ($user == NULL) {
-                    return new \Exception('Unknown user', 404);
+                    return new Exception('Unknown user', 404);
                 }
-                if ($container->get(Session::class)->isAdmin() === false && $user->id !== $userId) {
-                    return new \Exception('Forbidden user', 403);
+                if ($container->get(Session::class)->isAdmin() === false && $user['id'] !== $userId) {
+                    return new Exception('Forbidden user', 403);
                 }
 
                 return $user;
@@ -105,34 +106,34 @@ class User
                     ])
                 ]
             ],
-            'resolve' => function (ContainerInterface $container, $args) {
+            'resolve' => function ($_, $args) {
                 $user = \App\Models\User::query()->find($args['user']['id']);
                 if ($user == NULL) {
-                    return new \Exception('Unknown user', 404);
+                    return new Exception('Unknown user', 404);
                 }
                 if (isset($args['user']['first_name'])) {
-                    $user->first_name = $args['user']['first_name'];
+                    $user['first_name'] = $args['user']['first_name'];
                 }
                 if (isset($args['user']['last_name'])) {
-                    $user->last_name = $args['user']['last_name'];
+                    $user['last_name'] = $args['user']['last_name'];
                 }
                 if (isset($args['user']['address_first_line'])) {
-                    $user->address_first_line = $args['user']['address_first_line'];
+                    $user['address_first_line'] = $args['user']['address_first_line'];
                 }
                 if (isset($args['user']['address_second_line'])) {
-                    $user->address_second_line = $args['user']['address_second_line'];
+                    $user['address_second_line'] = $args['user']['address_second_line'];
                 }
                 if (isset($args['user']['address_postal_code'])) {
-                    $user->address_postal_code = $args['user']['address_postal_code'];
+                    $user['address_postal_code'] = $args['user']['address_postal_code'];
                 }
                 if (isset($args['user']['address_city'])) {
-                    $user->address_city = $args['user']['address_city'];
+                    $user['address_city'] = $args['user']['address_city'];
                 }
                 if (isset($args['user']['address_country'])) {
-                    $user->address_country = $args['user']['address_country'];
+                    $user['address_country'] = $args['user']['address_country'];
                 }
                 if (isset($args['user']['is_admin'])) {
-                    $user->is_admin = $args['user']['is_admin'];
+                    $user['is_admin'] = $args['user']['is_admin'];
                 }
                 return $user->save();
             }
@@ -151,11 +152,11 @@ class User
                 if ($container->get(Session::class)->isAdmin()) {
                     $user = \App\Models\User::query()->find($args['id']);
                     if ($user == NULL){
-                        return new \Exception('Unknown User', 404);
+                        return new Exception('Unknown User', 404);
                     }
                     return \App\Models\User::destroy($user['id']);
                 } else {
-                    return new \Exception('Forbidden', 403);
+                    return new Exception('Forbidden', 403);
                 }
             }
         ];

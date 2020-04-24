@@ -9,19 +9,21 @@ use GuzzleHttp\Client;
 class WebSocketServerClient
 {
     /**
+     * The JWT key used to authenticate with the ws server
+     *
      * @var string
      */
-    public $jwtKey = '';
+    public string $jwtKey = '';
 
     /**
      * @var string
      */
-    public $baseUrl = '';
+    public string $baseUrl = '';
 
     /**
      * @var Client
      */
-    private $client;
+    private Client $client;
 
     public function __construct(string $jwtKey, string $webSocketServerBaseUrl)
     {

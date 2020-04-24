@@ -4,6 +4,7 @@ namespace App\GraphQL\Query;
 
 use App\Auth\Session;
 use App\GraphQL\Types;
+use Exception;
 use Faker\Provider\Uuid;
 use GraphQL\Type\Definition\InputObjectType;
 use GraphQL\Type\Definition\ObjectType;
@@ -44,7 +45,7 @@ class GameRom
                         ->orderBy($args['orderBy'], strtolower($args['orderDir']))
                         ->get();
                 } else {
-                    return new \Exception("Forbidden", 403);
+                    return new Exception("Forbidden", 403);
                 }
             }
         ];
@@ -66,13 +67,13 @@ class GameRom
                 if ($container->get(Session::class)->isAdmin()) {
                     $rom = \App\Models\GameRom::query()->find($args['id']);
                     if ($rom == NULL) {
-                        return new \Exception('Unknown GameRom', 404);
+                        return new Exception('Unknown GameRom', 404);
                     } else {
                         return $rom
                             ->first();
                     }
                 } else {
-                    return new \Exception("Forbidden", 403);
+                    return new Exception("Forbidden", 403);
                 }
             }
         ];
@@ -115,7 +116,7 @@ class GameRom
 
                     return ['id' => $rom['id'], 'saved' => $rom->save()];
                 } else {
-                    return new \Exception("Forbidden", 403);
+                    return new Exception("Forbidden", 403);
                 }
             }
         ];
@@ -142,7 +143,7 @@ class GameRom
                 if ($container->get(Session::class)->isAdmin()) {
                     $rom = \App\Models\GameRom::query()->find($args['rom']['id']);
                     if ($rom == NULL){
-                        return new \Exception('Unknown GameRom', 404);
+                        return new Exception('Unknown GameRom', 404);
                     }
                     /** @var $rom \App\Models\GameRom */
                     $rom->setAttributesFromGraphQL($args['rom'], [
@@ -152,7 +153,7 @@ class GameRom
                     ]);
                     return $rom->save();
                 } else {
-                    return new \Exception('Forbidden', 403);
+                    return new Exception('Forbidden', 403);
                 }
             }
         ];
@@ -171,11 +172,11 @@ class GameRom
                 if ($container->get(Session::class)->isAdmin()) {
                     $rom = \App\Models\GameRom::query()->find($args['id']);
                     if ($rom == NULL){
-                        return new \Exception('Unknown GameRom', 404);
+                        return new Exception('Unknown GameRom', 404);
                     }
                     return \App\Models\GameRom::destroy($rom['id']);
                 } else {
-                    return new \Exception('Forbidden', 403);
+                    return new Exception('Forbidden', 403);
                 }
             }
         ];

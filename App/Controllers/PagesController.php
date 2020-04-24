@@ -34,7 +34,7 @@ class PagesController extends Controller
         if (!$session->isAdmin()) {
             return $response->withJson([
                 'success' => false,
-                'errors' => ['Forbidden']
+                'errors' => [['message' => 'Forbidden route']]
             ], 403);
         }
         return $response->withJson([
@@ -48,7 +48,7 @@ class PagesController extends Controller
         if (!$session->isAdmin()) {
             return $response->withJson([
                 'success' => false,
-                'errors' => ['Forbidden']
+                'errors' => [['message' => 'Forbidden']]
             ], 403);
         }
         $queue = $this->container->get(Client::class);
@@ -71,7 +71,9 @@ class PagesController extends Controller
         if (!$session->isAdmin()) {
             return $response->withJson([
                 'success' => false,
-                'errors' => ['Forbidden']
+                'errors' => [
+                    ['message' => 'Forbidden']
+                ]
             ], 403);
         }
         $container->get(Manager::class);

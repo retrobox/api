@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use Dflydev\FigCookies\FigRequestCookies;
 use Dflydev\FigCookies\FigResponseCookies;
 use Dflydev\FigCookies\SetCookie;
+use Exception;
 use Faker\Provider\Uuid;
 use Firebase\JWT\JWT;
 use Monolog\Logger;
@@ -107,15 +108,15 @@ class AccountController extends Controller
                 return $response->withJson([
                     'success' => false,
                     'errors' => [
-                        'Invalid STAIL.EU code'
+                        ['message' => 'Invalid STAIL.EU code']
                     ]
-                ])->withStatus(400);
+                ], 400);
             }
         } else {
             return $response->withJson([
                 'success' => false,
                 'errors' => $validator->getErrors()
-            ])->withStatus(400);
+            ], 400);
         }
     }
 
@@ -157,14 +158,11 @@ class AccountController extends Controller
         // verify JWT token
         try {
             $decoded = JWT::decode($validator->getValue('token'), $this->container->get('jwt')['key'], ['HS256']);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $response->withStatus(401)->withJson([
                 'success' => false,
                 'errors' => [
-                    [
-                        'message' => 'Invalid desktop login token',
-                        'code' => 'invalid_desktop_login_token'
-                    ]
+                    ['code' => 'invalid_desktop_login_token', 'message' => 'Invalid desktop login token']
                 ]
             ]);
         }

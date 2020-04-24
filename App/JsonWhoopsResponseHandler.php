@@ -43,7 +43,7 @@ class JsonWhoopsResponseHandler extends Handler
                 Formatter::formatExceptionAsDataArray(
                     $this->getInspector(),
                     $this->addTraceToOutput()
-                ),
+                )
             ]
         ];
 

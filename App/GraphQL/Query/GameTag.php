@@ -4,6 +4,7 @@ namespace App\GraphQL\Query;
 
 use App\Auth\Session;
 use App\GraphQL\Types;
+use Exception;
 use Faker\Provider\Uuid;
 use GraphQL\Type\Definition\InputObjectType;
 use GraphQL\Type\Definition\ObjectType;
@@ -37,7 +38,7 @@ class GameTag
                     'defaultValue' => 'desc'
                 ]
             ],
-            'resolve' => function (ContainerInterface $container, $args) {
+            'resolve' => function ($_, $args) {
                 return \App\Models\GameTag::query()
                     ->withCount('games')
                     ->limit($args['limit'])
@@ -59,10 +60,10 @@ class GameTag
                     'type' => Type::string()
                 ]
             ],
-            'resolve' => function (ContainerInterface $container, $args) {
+            'resolve' => function ($_, $args) {
                 $tag = \App\Models\GameTag::query()->find($args['id']);
                 if ($tag == NULL) {
-                    return new \Exception('Unknown GameTag', 404);
+                    return new Exception('Unknown GameTag', 404);
                 } else {
                     return $tag
                         ->with('games')
@@ -108,7 +109,7 @@ class GameTag
 
                     return ['id' => $tag['id'], 'saved' => $tag->save()];
                 } else {
-                    return new \Exception("Forbidden", 403);
+                    return new Exception("Forbidden", 403);
                 }
             }
         ];
@@ -119,7 +120,7 @@ class GameTag
         return [
             'type' => Type::boolean(),
             'args' => [
-                'editor' => [
+                'tag' => [
                     'type' => new InputObjectType([
                         'name' => 'GameTagUpdateInput',
                         'fields' => [
@@ -132,15 +133,18 @@ class GameTag
             ],
             'resolve' => function (ContainerInterface $container, $args) {
                 if ($container->get(Session::class)->isAdmin()) {
-                    $editor = \App\Models\GameEditor::query()->find($args['editor']['id']);
-                    if ($editor == NULL){
-                        return new \Exception('Unknown GameEditor', 404);
+                    $tag = \App\Models\GameTag::query()->find($args['tag']['id']);
+                    if ($tag == NULL){
+                        return new Exception('Unknown GameTag', 404);
                     }
-                    $editor['name'] = $args['editor']['name'];
-                    $editor['description'] = $args['editor']['description'];
-                    return $editor->save();
+                    $tag->setAttributesFromGraphQL($args['tag'], [
+                        'name',
+                        'description',
+                        'icon'
+                    ]);
+                    return $tag->save();
                 } else {
-                    return new \Exception('Forbidden', 403);
+                    return new Exception('Forbidden', 403);
                 }
             }
         ];
@@ -157,13 +161,13 @@ class GameTag
             ],
             'resolve' => function (ContainerInterface $container, $args) {
                 if ($container->get(Session::class)->isAdmin()) {
-                    $editor = \App\Models\GameEditor::query()->find($args['id']);
-                    if ($editor == NULL){
-                        return new \Exception('Unknown GameEditor', 404);
+                    $tag = \App\Models\GameTag::query()->find($args['id']);
+                    if ($tag == NULL){
+                        return new Exception('Unknown GameTag', 404);
                     }
-                    return \App\Models\GameEditor::destroy($editor['id']);
+                    return \App\Models\GameTag::destroy($tag['id']);
                 } else {
-                    return new \Exception('Forbidden', 403);
+                    return new Exception('Forbidden', 403);
                 }
             }
         ];

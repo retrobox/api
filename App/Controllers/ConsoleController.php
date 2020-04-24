@@ -38,7 +38,7 @@ class ConsoleController extends Controller
             return $response->withJson([
                 'success' => false,
                 'errors' => [
-                    'Invalid console_id or console_token'
+                    ['message' => 'Invalid console_id or console_token']
                 ]
             ], 401);
         }

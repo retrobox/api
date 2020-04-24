@@ -8,15 +8,16 @@ use Psr\Http\Message\ResponseInterface;
 use Slim\Router;
 
 class Controller{
+
 	/**
 	 * @var Router
 	 */
-	protected $router;
+	protected Router $router;
 
 	/**
 	 * @var ContainerInterface
 	 */
-	protected $container;
+	protected ContainerInterface $container;
 
 	public function __construct(Router $router, ContainerInterface $container)
 	{

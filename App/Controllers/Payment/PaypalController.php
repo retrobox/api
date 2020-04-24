@@ -8,6 +8,7 @@ use App\Models\ShopOrder;
 use App\Models\User;
 use App\Utils\ConsoleManager;
 use App\Utils\PaymentManager;
+use Exception;
 use Illuminate\Database\Capsule\Manager;
 use Lefuturiste\Jobatator\Client;
 use PayPal\Api\Payer;
@@ -15,12 +16,21 @@ use PayPal\Api\Payment;
 use PayPal\Api\PaymentExecution;
 use PayPal\Api\RedirectUrls;
 use PayPal\Rest\ApiContext;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Http\Response;
 use Validator\Validator;
 
 class PaypalController extends Controller
 {
+    /**
+     * @param ServerRequestInterface $request
+     * @param Response $response
+     * @param ApiContext $apiContext
+     * @param Session $session
+     * @return Response
+     * @throws Exception
+     */
     public function postGetUrl(ServerRequestInterface $request, Response $response, ApiContext $apiContext, Session $session)
     {
         $this->container->get(Manager::class);
@@ -39,9 +49,7 @@ class PaypalController extends Controller
             if (!$paymentManager->isValid()) {
                 return $response->withJson([
                     'success' => false,
-                    'errors' => [
-                        'Invalid inputs'
-                    ]
+                    'errors' => [['message' => 'Invalid inputs']]
                 ], 400);
             }
 
@@ -59,11 +67,11 @@ class PaypalController extends Controller
 
             try {
                 $_payment = $payment->create($apiContext);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 return $response->withJson([
                     'success' => false,
                     'errors' => [[$e->getMessage(), $e->getCode()]]
-                ])->withStatus(500);
+                ], 500);
             }
             /** @var $user User */
             $user = User::query()->find($session->getUser()['id']);
@@ -85,18 +93,24 @@ class PaypalController extends Controller
 
             return $response->withJson([
                 'success' => true,
-                'data' => [
-                    'url' => $redirectTo
-                ]
+                'data' => ['url' => $redirectTo]
             ]);
         } else {
             return $response->withJson([
                 'success' => false,
                 'errors' => $validator->getErrors()
-            ])->withStatus(400);
+            ], 400);
         }
     }
 
+    /**
+     * @param ServerRequestInterface $request
+     * @param Response $response
+     * @param ApiContext $apiContext
+     * @param Client $queue
+     * @return ResponseInterface|Response
+     * @throws Exception
+     */
     public function postExecute(ServerRequestInterface $request, Response $response, ApiContext $apiContext, Client $queue)
     {
         $this->container->get(Manager::class);
@@ -107,13 +121,13 @@ class PaypalController extends Controller
         if ($validator->isValid()) {
             try {
                 $payment = Payment::get($validator->getValue('paymentId'), $apiContext);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 return $response->withJson([
                     'success' => false,
                     'errors' => [
                         "Invalid order"
                     ]
-                ])->withStatus(400);
+                ], 400);
             }
 
             //get the item from the database
@@ -129,7 +143,7 @@ class PaypalController extends Controller
                     'errors' => [
                         "Invalid order"
                     ]
-                ])->withStatus(400);
+                ], 400);
             }
             if ($order['status'] == "payed") {
                 return $response->withJson([
@@ -137,7 +151,7 @@ class PaypalController extends Controller
                     'errors' => [
                         "Order already payed"
                     ]
-                ])->withStatus(400);
+                ], 400);
             }
 
             $paymentManager = new PaymentManager(
@@ -152,11 +166,11 @@ class PaypalController extends Controller
 
             try {
                 $successPayment = $payment->execute($execution, $apiContext);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 return $response->withJson([
                     'success' => false,
                     'errors' => [[$e->getMessage(), $e->getCode()]]
-                ])->withStatus(500);
+                ], 500);
             }
 
             if ($successPayment->getState() == 'approved') {
@@ -179,13 +193,13 @@ class PaypalController extends Controller
                     'errors' => [
                         "Error with your paypal payment: the payment has failed or is not approved"
                     ]
-                ])->withStatus(400);
+                ], 400);
             }
         } else {
             return $response->withJson([
                 'success' => false,
                 'errors' => $validator->getErrors()
-            ])->withStatus(400);
+            ], 400);
         }
     }
 }

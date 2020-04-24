@@ -6,6 +6,7 @@ use App\Colissimo\Client;
 use App\Models\ShopItem;
 use App\Models\ShopOrder;
 use App\Models\User;
+use Exception;
 use PayPal\Api\Amount;
 use PayPal\Api\Details;
 use PayPal\Api\Item;
@@ -19,71 +20,83 @@ class PaymentManager
     /**
      * @var array
      */
-    private $items;
+    private array $items;
 
     /**
      * @var array
      */
-    private $pivotsAttributes;
+    private array $pivotsAttributes;
 
     /**
      * @var float
      */
-    private $subTotalPrice = 0.00;
+    private float $subTotalPrice = 0.00;
 
     /**
      * @var float
      */
-    private $totalShippingPrice = 0.00;
+    private float $totalShippingPrice = 0.00;
 
     /**
      * @var float
      */
-    private $totalPrice = 0.00;
+    private float $totalPrice = 0.00;
 
     /**
      * Description displayed on paypal invoice
      *
      * @var string
      */
-    private $paypalDescription = "retrobox.tech";
+    private string $paypalDescription = "retrobox.tech";
 
-    /**
-     * The shipping prices range
-     *
-     * @var array
-     */
-    private $shippingPrices = [];
+//    /**
+//     * The shipping prices range
+//     *
+//     * @var array
+//     */
+//    private array $shippingPrices = [];
 
     /**
      * The storage prices range
      *
      * @var array
      */
-    private $storagePrices = [];
+    private array $storagePrices = [];
 
     /**
      * @var ContainerInterface
      */
-    private $container;
+    private ContainerInterface $container;
+
     /**
      * @var string
      */
-    private $shippingCountry;
+    private string $shippingCountry;
+
     /**
      * @var string
      */
-    private $shippingMethod;
+    private string $shippingMethod;
+
     /**
      * @var float
      */
-    private $totalWeight;
+    private float $totalWeight = 0;
 
     /**
      * @var bool
      */
-    private $isValid = true;
+    private bool $isValid = true;
 
+    /**
+     * PaymentManager constructor.
+     *
+     * @param array $items
+     * @param string $shippingCountry
+     * @param string $shippingMethod
+     * @param ContainerInterface $container
+     * @throws Exception
+     */
     public function __construct(array $items, string $shippingCountry, string $shippingMethod, ContainerInterface $container)
     {
         $this->container = $container;
@@ -98,7 +111,7 @@ class PaymentManager
      * Return fetched items
      *
      * @return array
-     * @throws \Exception
+     * @throws Exception
      */
     private function fetchItems(): array
     {
@@ -110,7 +123,7 @@ class PaymentManager
                     'shop_item_custom_option_color' => NULL
                 ];
                 if (!isset($item['id'])) {
-                    throw new \Exception('Invalid item', 400);
+                    throw new Exception('Invalid item', 400);
                 }
                 $toAddItem = ShopItem::query()->find($item['id']);
                 if ($toAddItem == NULL) {
@@ -237,6 +250,10 @@ class PaymentManager
             ->setCustom($custom);
     }
 
+    /**
+     * @return array
+     * @throws Exception
+     */
     public function getModels(): array
     {
         $models = [];
@@ -296,6 +313,7 @@ class PaymentManager
      * Will return a ShopOrder entry based of the PaymentManager data
      *
      * @return ShopOrder
+     * @throws Exception
      */
     public function toShopOrder(): ShopOrder
     {

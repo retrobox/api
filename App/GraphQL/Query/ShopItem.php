@@ -5,10 +5,12 @@ namespace App\GraphQL\Query;
 use App\Auth\Session;
 use App\GraphQL\Types;
 use App\Models\ShopCategory;
+use Exception;
 use GraphQL\Type\Definition\InputObjectType;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
 use Illuminate\Support\Str;
+use Psr\Container\ContainerInterface;
 
 class ShopItem
 {
@@ -43,7 +45,7 @@ class ShopItem
                     'defaultValue' => 'fr'
                 ]
             ],
-            'resolve' => function ($rootValue, $args) {
+            'resolve' => function ($_, $args) {
                 return \App\Models\ShopItem::query()
                     ->limit($args['limit'])
                     ->orderBy($args['orderBy'], strtolower($args['orderDir']))
@@ -70,18 +72,40 @@ class ShopItem
                     'type' => Type::string()
                 ]
             ],
-            'resolve' => function ($rootValue, $args) {
+            'resolve' => function ($_, $args) {
                 if (isset($args['id'])) {
                     $item = \App\Models\ShopItem::with(['category', 'images'])->find($args['id']);
                 } elseif (isset($args['slug'])) {
                     $item = \App\Models\ShopItem::query()->where('slug', '=', $args['slug'])->with(['category', 'images'])->first();
                 } else {
-                    $item = \App\Models\ShopItem::find($args['id']);
+                    $item = \App\Models\ShopItem::query()->find($args['id']);
                 }
 
                 return $item;
             }
         ];
+    }
+
+    private static function set(\App\Models\ShopItem $item, $args): \App\Models\ShopItem
+    {
+        $images = array_map(function ($image) {
+            $image['id'] = uniqid();
+            return $image;
+        }, $args['item']['images']);
+        $item->images()->createMany($images);
+        $item['title'] = $args['item']['title'];
+        $item['identifier'] = $args['item']['identifier'];
+        $item['locale'] = $item->category()->first()['locale'];
+        $item['description_short'] = $args['item']['description_short'];
+        $item['description_long'] = $args['item']['description_long'];
+        $item['version'] = $args['item']['version'];
+        $item['show_version'] = $args['item']['show_version'];
+        $item['image'] = $args['item']['image'];
+        $item['price'] = (float)$args['item']['price'];
+        $item['weight'] = (float)$args['item']['weight'];
+        $item['slug'] = Str::slug($args['item']['identifier']);
+
+        return $item;
     }
 
     public static function store()
@@ -123,44 +147,26 @@ class ShopItem
                     ])
                 ]
             ],
-            'resolve' => function ($rootValue, $args) {
-                //admin only
+            'resolve' => function (ContainerInterface $rootValue, $args) {
                 if ($rootValue->get(Session::class)->isAdmin()) {
-                    //verify if the category exist
+                    // verify if the category exist
                     $item = new \App\Models\ShopItem();
-                    $item->id = uniqid();
-                    $category = ShopCategory::find($args['item']['category_id']);
+                    $item['id'] = uniqid();
+                    $category = ShopCategory::query()->find($args['item']['category_id']);
                     if ($category !== NULL) {
                         $item->category()->associate($category);
                     } else {
-                        return new \Exception('Unknown category', 404);
+                        return new Exception('Unknown category', 404);
                     }
-                    $images = array_map(function ($image){
-                        $image['id'] = uniqid();
-                        return $image;
-                    }, $args['item']['images']);
-                    $item->images()->createMany(
-                        $images
-                    );
-                    $item->title = $args['item']['title'];
-                    $item->identifier = $args['item']['identifier'];
-                    $item->locale = $category->locale;
-                    $item->description_short = $args['item']['description_short'];
-                    $item->description_long = $args['item']['description_long'];
-                    $item->version = $args['item']['version'];
-                    $item->show_version = $args['item']['show_version'];
-                    $item->image = $args['item']['image'];
-                    $item->price = (float) $args['item']['price'];
-                    $item->weight = (float) $args['item']['weight'];
-                    $item->slug = Str::slug($args['item']['identifier']);
-                    $item->allow_indexing = $args['item']['allow_indexing'];
+                    $item = self::set($item, $args);
+                    $item['allow_indexing'] = $args['item']['allow_indexing'];
 
                     return [
                         'saved' => $item->save(),
-                        'id' => $item->id
+                        'id' => $item['id']
                     ];
                 } else {
-                    return new \Exception("Forbidden", 403);
+                    return new Exception("Forbidden", 403);
                 }
             }
         ];
@@ -201,47 +207,27 @@ class ShopItem
                     ])
                 ]
             ],
-            'resolve' => function ($rootValue, $args) {
-                //admin only
-                if ($rootValue->get(Session::class)->isAdmin()) {
+            'resolve' => function (ContainerInterface $container, $args) {
+                if ($container->get(Session::class)->isAdmin()) {
                     $item = \App\Models\ShopItem::with('images', 'category')->find($args['item']['id']);
                     if ($item == NULL) {
-                        return new \Exception("Unknown ShopItem", 404);
+                        return new Exception("Unknown ShopItem", 404);
                     } else {
-                        $category = ShopCategory::find($args['item']['category_id']);
+                        $category = ShopCategory::query()->find($args['item']['category_id']);
                         if ($category !== NULL) {
                             $item->category()->dissociate();
                             $item->category()->associate($category);
                         } else {
-                            return new \Exception('Unknown category', 404);
+                            return new Exception('Unknown category', 404);
                         }
-                        //delete all images
-                        //and reinsert it
-                        $item->images()->delete();
-                        $images = array_map(function ($image){
-                            $image['id'] = uniqid();
-                            return $image;
-                        }, $args['item']['images']);
-                        $item->images()->createMany(
-                            $images
-                        );
-                        $item->title = $args['item']['title'];
-                        $item->identifier = $args['item']['identifier'];
-                        $item->locale = $category->locale;
-                        $item->description_short = $args['item']['description_short'];
-                        $item->description_long = $args['item']['description_long'];
-                        $item->version = $args['item']['version'];
-                        $item->show_version = $args['item']['show_version'];
-                        $item->image = $args['item']['image'];
-                        $item->price = (float) $args['item']['price'];
-                        $item->weight = (float) $args['item']['weight'];
-                        $item->slug = Str::slug($args['item']['identifier']);
-                        $item->allow_indexing = $args['item']['allow_indexing'] === NULL ? $item['allow_indexing'] : $args['item']['allow_indexing'];
+                        $item->images()->delete(); // delete all images before sending the item to the set helper
+                        $item = self::set($item, $args);
+                        $item['allow_indexing'] = $args['item']['allow_indexing'] === NULL ? $item['allow_indexing'] : $args['item']['allow_indexing'];
 
                         return $item->save();
                     }
                 } else {
-                    return new \Exception("Forbidden", 403);
+                    return new Exception("Forbidden", 403);
                 }
             }
         ];
@@ -259,17 +245,16 @@ class ShopItem
                     'type' => Type::string()
                 ]
             ],
-            'resolve' => function ($rootValue, $args) {
-                //only admin
-                if ($rootValue->get(Session::class)->isAdmin()) {
-                    $item = \App\Models\ShopItem::find($args['id']);
+            'resolve' => function (ContainerInterface $container, $args) {
+                if ($container->get(Session::class)->isAdmin()) {
+                    $item = \App\Models\ShopItem::query()->find($args['id']);
                     if ($item == NULL) {
-                        return new \Exception("ShopItem not found", 404);
+                        return new Exception("ShopItem not found", 404);
                     } else {
                         return \App\Models\ShopItem::destroy($args['id']);
                     }
                 } else {
-                    return new \Exception("Forbidden", 403);
+                    return new Exception("Forbidden", 403);
                 }
             }
         ];

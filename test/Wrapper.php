@@ -6,19 +6,21 @@ use App\App;
 use App\Utils\ContainerBuilder;
 use App\Utils\DotEnv;
 use Invoker\InvokerInterface;
+use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Slim\Http\Environment;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-class Wrapper extends \PHPUnit\Framework\TestCase
+class Wrapper extends TestCase
 {
     /**
      * @var ContainerInterface|InvokerInterface
      */
     protected static $container;
-    protected static $store = [];
+    protected static array $store = [];
 
     public function beforeTest() {
         putenv("_UNIT_TEST=1");
@@ -29,7 +31,7 @@ class Wrapper extends \PHPUnit\Framework\TestCase
 
     protected function getRequest(string $method, string $uri, string $queryString = ""): Request
     {
-        $env = \Slim\Http\Environment::mock([
+        $env = Environment::mock([
             'REQUEST_METHOD' => $method,
             'REQUEST_URI' => $uri,
             'QUERY_STRING' => $queryString

@@ -8,6 +8,7 @@ use App\Models\ShopOrder;
 use App\Models\User;
 use App\Utils\ConsoleManager;
 use App\Utils\PaymentManager;
+use Exception;
 use Illuminate\Database\Capsule\Manager;
 use Lefuturiste\Jobatator\Client;
 use Psr\Http\Message\ServerRequestInterface;
@@ -29,6 +30,7 @@ class StripeController extends Controller
      * @param Response $response
      * @param Session $session
      * @return Response
+     * @throws Exception
      */
     public function postCreateSession(ServerRequestInterface $request, Response $response, Session $session)
     {
@@ -42,7 +44,7 @@ class StripeController extends Controller
             return $response->withJson([
                 'success' => false,
                 'errors' => $validator->getErrors()
-            ])->withStatus(400);
+            ], 400);
         }
         $paymentManager = new PaymentManager(
             $validator->getValue('items'),
@@ -88,12 +90,12 @@ class StripeController extends Controller
         } catch (ApiErrorException $e) {
             return $response->withJson([
                 'success' => false,
-                'error' => [
+                'errors' => [[
                     'code' => $e->getCode(),
                     'error' => $e->getError()->toArray(),
                     'message' => $e->getMessage(),
                     'body' => $e->getHttpBody()
-                ]
+                ]]
             ], 400);
         }
 
@@ -123,7 +125,7 @@ class StripeController extends Controller
         if (!$request->hasHeader('stripe-signature')) {
             return $response->withJson([
                 'success' => false,
-                'error' => 'Invalid headers, need stripe-signature header to be set'
+                'errors' => [['message' => 'Invalid headers, need stripe-signature header to be set']]
             ], 400);
         }
         try {
@@ -132,23 +134,23 @@ class StripeController extends Controller
                 $request->getHeader('stripe-signature')[0],
                 $this->container->get('stripe')['webhook_secret']
             );
-        } catch(UnexpectedValueException $e) {
+        } catch (UnexpectedValueException $e) {
             $error = 'invalid-payload';
             $errorDetails = $e;
-        } catch(SignatureVerificationException $e) {
+        } catch (SignatureVerificationException $e) {
             $error = 'invalid-signature';
             $errorDetails = $e;
         }
         if ($error !== null) {
             return $response->withJson([
                 'success' => false,
-                'error' => [
+                'errors' => [[
                     'name' => 'Stripe webhook error',
                     'key' => $error,
                     'code' => $errorDetails->getCode(),
                     'message' => $errorDetails->getMessage(),
                     'trace' => $errorDetails->getTraceAsString()
-                ],
+                ]],
             ], 400);
         }
         if ($event->type !== 'checkout.session.completed') {
@@ -164,7 +166,7 @@ class StripeController extends Controller
         $onWayId = $event->data['object']['id'] . '_intent_' . $event->data['object']['payment_intent'];
         $order = ShopOrder::query()
             ->with('items', 'user')
-            ->where('on_way_id','=', $onWayId)
+            ->where('on_way_id', '=', $onWayId)
             ->where('way', '=', 'stripe')
             ->first();
         if ($order == NULL) {
@@ -173,7 +175,7 @@ class StripeController extends Controller
                 'errors' => [
                     "Invalid order"
                 ]
-            ])->withStatus(400);
+            ], 400);
         }
         if ($order['status'] == 'payed') {
             return $response->withJson([
@@ -181,7 +183,7 @@ class StripeController extends Controller
                 'errors' => [
                     "Order already payed"
                 ]
-            ])->withStatus(400);
+            ], 400);
         }
 
         $order['status'] = 'payed';

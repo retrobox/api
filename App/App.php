@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Utils\ContainerBuilder;
+use RKA\Middleware\IpAddress;
 
 class App extends \DI\Bridge\Slim\App
 {
@@ -11,7 +12,7 @@ class App extends \DI\Bridge\Slim\App
      *
      * @var string
      */
-    private static $basePath = '';
+    private static string $basePath = '';
 
     public function __construct()
     {
@@ -55,7 +56,7 @@ class App extends \DI\Bridge\Slim\App
                 ->add(new Middlewares\JWTMiddleware($this->getContainer()));
 
             $this->map(['GET', 'POST', 'OPTIONS'], '/execute', [Controllers\AccountController::class, 'execute'])
-                ->add(new \RKA\Middleware\IpAddress());
+                ->add(new IpAddress());
         });
 
         $this->group('/dashboard', function () {

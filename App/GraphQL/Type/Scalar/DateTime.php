@@ -21,6 +21,11 @@ class DateTime extends CustomScalarType
 		return $value->toDateTimeString();
 	}
 
+    /**
+     * @param mixed $value
+     * @return mixed
+     * @throws Error
+     */
 	public function parseValue($value)
 	{
 		$date = \DateTime::createFromFormat('Y-m-d H:i:s', $value);

@@ -21,6 +21,11 @@ class NonEmpty extends CustomScalarType
 		return $value;
 	}
 
+    /**
+     * @param mixed $value
+     * @return mixed|string
+     * @throws Error
+     */
 	public function parseValue($value)
 	{
 		if (empty($value) || $value = "") {
@@ -29,14 +34,4 @@ class NonEmpty extends CustomScalarType
 			return $value;
 		}
 	}
-
-//	public function parseLiteral(/* GraphQL\Language\AST\ValueNode */
-//		$valueNode)
-//	{
-//		if (empty($valueNode->value) || $valueNode->value === '') {
-//			throw new Error("Cannot represent following value as Non Empty: " . Utils::printSafeJson($valueNode->value));
-//		} else {
-//			return $valueNode;
-//		}
-//	}
 }

@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Utils\MailChimp;
 use DiscordWebhooks\Client;
 use DiscordWebhooks\Embed;
+use Exception;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Http\Response;
 use Validator\Validator;
@@ -24,13 +25,18 @@ class NewsletterController extends Controller
             ], 400);
         }
 
-        $mailChimpResponse = $mailChimp->addSubscriber($this->container->get('mailchimp')['list_id'], $validator->getValue('email'));
+        $mailChimpResponse = $mailChimp->addSubscriber(
+            $this->container->get('mailchimp')['list_id'],
+            $validator->getValue('email')
+        );
 
         if ($mailChimpResponse->getStatusCode() !== 200) {
-                return $response->withJson([
-                    'success' => false,
-                    'errors' => json_decode($mailChimpResponse->getBody()->getContents())
-                ], 400);
+            return $response->withJson([
+                'success' => false,
+                'errors' => [
+                    json_decode($mailChimpResponse->getBody()->getContents())
+                ]
+            ], 400);
         }
 
         return $response->withJson([
@@ -40,7 +46,7 @@ class NewsletterController extends Controller
 
     public function getEvent(Response $response)
     {
-        return $response->withJson(true)->withStatus(200);
+        return $response->withJson(true, 200);
     }
 
     public function postEvent(ServerRequestInterface $request, Response $response)
@@ -59,10 +65,10 @@ class NewsletterController extends Controller
                 $embed->field("Id", $data['data']['id']);
                 try {
                     $discordWebHook->embed($embed)->send();
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     return $response->withJson([
                         'success' => false,
-                        'errors' => ['Error with the discord webhook api']
+                        'errors' => [['message' => 'Error with the discord webhook api']]
                     ], 400);
                 }
                 break;

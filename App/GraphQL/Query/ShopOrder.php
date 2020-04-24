@@ -4,6 +4,7 @@ namespace App\GraphQL\Query;
 
 use App\Auth\Session;
 use App\GraphQL\Types;
+use Exception;
 use GraphQL\Type\Definition\InputObjectType;
 use GraphQL\Type\Definition\Type;
 use Lefuturiste\Jobatator\Client;
@@ -60,7 +61,7 @@ class ShopOrder
                         ->orderBy($args['orderBy'], strtolower($args['orderDir']))
                         ->get();
                 } else {
-                    return new \Exception('Forbidden', 403);
+                    return new Exception('Forbidden', 403);
                 }
             }
         ];
@@ -84,11 +85,11 @@ class ShopOrder
                         ->withCount('items')
                         ->find($args['id']);
                     if ($item === NULL) {
-                        return new \Exception('Unknown shop order', 404);
+                        return new Exception('Unknown shop order', 404);
                     }
                     return $item;
                 } else {
-                    return new \Exception('Forbidden', 403);
+                    return new Exception('Forbidden', 403);
                 }
             }
         ];
@@ -117,7 +118,7 @@ class ShopOrder
                 if ($container->get(Session::class)->isAdmin()) {
                     $order = \App\Models\ShopOrder::query()->find($args['order']['id']);
                     if ($order == NULL) {
-                        return new \Exception("Unknown ShopOrder", 404);
+                        return new Exception("Unknown ShopOrder", 404);
                     } else {
                         if (isset($args['order']['status'])) {
                             if ($order['status'] === 'payed' && $args['order']['status'] == 'shipped') {
@@ -136,7 +137,7 @@ class ShopOrder
                         return $order->save();
                     }
                 } else {
-                    return new \Exception("Forbidden", 403);
+                    return new Exception("Forbidden", 403);
                 }
             }
         ];
@@ -155,11 +156,11 @@ class ShopOrder
                 if ($container->get(Session::class)->isAdmin()) {
                     $order = \App\Models\ShopOrder::query()->find($args['id']);
                     if ($order == NULL) {
-                        return new \Exception('Unknown ShopOrder', 404);
+                        return new Exception('Unknown ShopOrder', 404);
                     }
                     return \App\Models\ShopOrder::destroy($order['id']);
                 } else {
-                    return new \Exception('Forbidden', 403);
+                    return new Exception('Forbidden', 403);
                 }
             }
         ];

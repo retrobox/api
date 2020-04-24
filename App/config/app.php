@@ -1,4 +1,7 @@
 <?php
+
+use App\App;
+
 return [
     'app_name' => getenv('APP_NAME'),
     'app_debug' => (getenv('APP_DEBUG') ? true : false),
@@ -42,5 +45,5 @@ return [
         'password' => getenv('JOBATATOR_PASSWORD'),
         'group' => getenv('JOBATATOR_GROUP')
     ],
-    'upload_path' => \App\App::getBasePath() . '/' . getenv('UPLOAD_PATH')
+    'upload_path' => App::getBasePath() . '/' . getenv('UPLOAD_PATH')
 ];

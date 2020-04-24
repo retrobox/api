@@ -5,6 +5,7 @@ namespace App\GraphQL\Query;
 use App\Auth\Session;
 use App\GraphQL\Types;
 use App\Utils\WebSocketServerClient;
+use Exception;
 use GraphQL\Type\Definition\InputObjectType;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
@@ -53,7 +54,7 @@ class Console
                     if ($session->isAdmin()) {
                         return $query->get();
                     } else {
-                        return new \Exception('Forbidden', 403);
+                        return new Exception('Forbidden', 403);
                     }
                 } else {
                     return $query
@@ -87,7 +88,7 @@ class Console
                 $item = \App\Models\Console::with(['user', 'order'])
                     ->find($args['id']);
                 if ($item === NULL) {
-                    return new \Exception('Unknown console', 404);
+                    return new Exception('Unknown console', 404);
                 }
                 if ($session->isAdmin() || $session->getUserId() == $item['user']['id']) {
                     if (isset($args['with_status']) && $args['with_status'] !== null) {
@@ -111,7 +112,7 @@ class Console
 
                     return $item;
                 } else {
-                    return new \Exception('Forbidden', 403);
+                    return new Exception('Forbidden', 403);
                 }
             }
         ];
@@ -144,9 +145,9 @@ class Console
                     ]))
                 ]
             ],
-            'resolve' => function (ContainerInterface $rootValue, $args) {
+            'resolve' => function (ContainerInterface $container, $args) {
                 //admin only
-                if ($rootValue->get(Session::class)->isAdmin()) {
+                if ($container->get(Session::class)->isAdmin()) {
                     $console = new \App\Models\Console();
                     if (
                         !isset($args['console']['id']) ||
@@ -163,7 +164,7 @@ class Console
                         if ($user != NULL) {
                             $console->user()->associate($user);
                         } else {
-                            return new \Exception('Unknown user', 404);
+                            return new Exception('Unknown user', 404);
                         }
                     }
                     if (isset($args['console']['order_id']) && !empty($args['console']['order_id'])) {
@@ -171,14 +172,14 @@ class Console
                         if ($order != NULL) {
                             $console->order()->associate($order);
                         } else {
-                            return new \Exception('Unknown order', 404);
+                            return new Exception('Unknown order', 404);
                         }
                     }
                     if (isset($args['console']['version']) && !empty($args['console']['version'])) {
                         $console['version'] = $args['console']['version'];
                     } else {
                         // by default we give the console the last version
-                        $console['version'] = last($rootValue->get('console-versions'))['id'];
+                        $console['version'] = last($container->get('console-versions'))['id'];
                     }
                     $console['color'] = $args['console']['color'];
                     $console['storage'] = $args['console']['storage'];
@@ -194,7 +195,7 @@ class Console
                         ];
                     }
                 } else {
-                    return new \Exception("Forbidden", 403);
+                    return new Exception("Forbidden", 403);
                 }
             }
         ];
@@ -227,7 +228,7 @@ class Console
                 $console = \App\Models\Console::with(['user', 'order'])
                     ->find($args['console']['id']);
                 if ($console === NULL) {
-                    return new \Exception('Unknown console', 404);
+                    return new Exception('Unknown console', 404);
                 }
                 if ($session->isAdmin()) {
                     /** @var $console \App\Models\Console */
@@ -242,7 +243,7 @@ class Console
 
                     return $console->save();
                 } else {
-                    return new \Exception('Forbidden', 403);
+                    return new Exception('Forbidden', 403);
                 }
             }
         ];
@@ -265,13 +266,13 @@ class Console
                 $item = \App\Models\Console::query()
                     ->find($args['id']);
                 if ($item === NULL) {
-                    return new \Exception('Unknown console', 404);
+                    return new Exception('Unknown console', 404);
                 }
                 if ($session->isAdmin() || $session->getUserId() == $item['user_id']) {
                     $webSocketClient = $container->get(WebSocketServerClient::class);
                     return $webSocketClient->shutdownConsole($item['id']);
                 } else {
-                    return new \Exception('Forbidden', 403);
+                    return new Exception('Forbidden', 403);
                 }
             }
         ];
@@ -294,13 +295,13 @@ class Console
                 $item = \App\Models\Console::query()
                     ->find($args['id']);
                 if ($item === NULL) {
-                    return new \Exception('Unknown console', 404);
+                    return new Exception('Unknown console', 404);
                 }
                 if ($session->isAdmin() || $session->getUserId() == $item['user_id']) {
                     $webSocketClient = $container->get(WebSocketServerClient::class);
                     return $webSocketClient->rebootConsole($item['id']);
                 } else {
-                    return new \Exception('Forbidden', 403);
+                    return new Exception('Forbidden', 403);
                 }
             }
         ];
@@ -329,7 +330,7 @@ class Console
                 $item = \App\Models\Console::query()
                     ->find($args['id']);
                 if ($item === NULL) {
-                    return new \Exception('Unknown console', 404);
+                    return new Exception('Unknown console', 404);
                 }
                 if ($session->isAdmin() || $session->getUserId() == $item['user_id']) {
                     $item['token'] = self::generateRandom(32);
@@ -340,7 +341,7 @@ class Console
                         'overlay_killed' => $webSocketClient->killOverlay($item['id'])
                     ];
                 } else {
-                    return new \Exception('Forbidden', 403);
+                    return new Exception('Forbidden', 403);
                 }
             }
         ];
@@ -369,13 +370,13 @@ class Console
                 $item = \App\Models\Console::query()
                     ->find($args['id']);
                 if ($item === NULL) {
-                    return new \Exception('Unknown console', 404);
+                    return new Exception('Unknown console', 404);
                 }
                 if ($session->isAdmin() || $session->getUserId() == $item['user_id']) {
                     $webSocketClient = $container->get(WebSocketServerClient::class);
                     return $webSocketClient->openConsoleTerminalSession($item['id'], $args['webSessionId'], $item['user_id']);
                 } else {
-                    return new \Exception('Forbidden', 403);
+                    return new Exception('Forbidden', 403);
                 }
             }
         ];
@@ -395,11 +396,11 @@ class Console
                 if ($container->get(Session::class)->isAdmin()) {
                     $order = \App\Models\Console::query()->find($args['id']);
                     if ($order == NULL){
-                        return new \Exception('Unknown Console', 404);
+                        return new Exception('Unknown Console', 404);
                     }
                     return \App\Models\Console::destroy($order['id']);
                 } else {
-                    return new \Exception('Forbidden', 403);
+                    return new Exception('Forbidden', 403);
                 }
             }
         ];

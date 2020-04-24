@@ -4,6 +4,7 @@ namespace App\GraphQL\Query;
 
 use App\Auth\Session;
 use App\GraphQL\Types;
+use Exception;
 use GraphQL\Type\Definition\InputObjectType;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
@@ -42,13 +43,13 @@ class ShopCategory
                     'defaultValue' => NULL
                 ],
             ],
-            'resolve' => function ($rootValue, $args) {
+            'resolve' => function ($_, $args) {
                 $query = \App\Models\ShopCategory::query()
                     ->withCount('items')
                     ->limit($args['limit'])
                     ->orderBy($args['orderBy'], strtolower($args['orderDir']));
 
-                if ($args['locale'] != NULL){
+                if ($args['locale'] != NULL) {
                     $query
                         ->where('locale', '=', $args['locale']);
                 }
@@ -70,11 +71,13 @@ class ShopCategory
                     'type' => Type::string()
                 ]
             ],
-            'resolve' => function ($rootValue, $args) {
-                $item = \App\Models\ShopCategory::withCount('items')->find($args['id']);
-                if ($item == NULL){
-                    return new \Exception("ShopCategory not found", 404);
-                }else{
+            'resolve' => function ($_, $args) {
+                $item = \App\Models\ShopCategory::query()
+                    ->withCount('items')
+                    ->find($args['id']);
+                if ($item == NULL) {
+                    return new Exception("ShopCategory not found", 404);
+                } else {
                     return $item;
                 }
             }
@@ -105,27 +108,26 @@ class ShopCategory
                     ])
                 ]
             ],
-            'resolve' => function (ContainerInterface $rootValue, $args) {
-                //admin only
-                if ($rootValue->get(Session::class)->isAdmin()){
+            'resolve' => function (ContainerInterface $container, $args) {
+                if ($container->get(Session::class)->isAdmin()) {
                     $item = new \App\Models\ShopCategory();
-                    $item->id = uniqid();
-                    $item->title = $args['category']['title'];
-                    $item->is_customizable = $args['category']['is_customizable'];
-                    $item->locale = $args['category']['locale'];
+                    $item['id'] = uniqid();
+                    $item['title'] = $args['category']['title'];
+                    $item['is_customizable'] = $args['category']['is_customizable'];
+                    $item['locale'] = $args['category']['locale'];
                     //take by default the order in the bottom
                     // TODO: Take by default the last order (so we will have to fetch all the orders value to see the highest and compute from that)
-                    $item->order = 0;
-                    if ($item->save()){
+                    $item['order'] = 0;
+                    if ($item->save()) {
                         return [
                             'saved' => true,
-                            'id' => $item->id
+                            'id' => $item['id']
                         ];
-                    }else{
+                    } else {
                         return NULL;
                     }
-                }else{
-                    return new \Exception("Forbidden", 403);
+                } else {
+                    return new Exception("Forbidden", 403);
                 }
             }
         ];
@@ -151,35 +153,34 @@ class ShopCategory
                     ])
                 ]
             ],
-            'resolve' => function ($rootValue, $args) {
-                //admin only
-                if ($rootValue->get(Session::class)->isAdmin()){
+            'resolve' => function (ContainerInterface $container, $args) {
+                if ($container->get(Session::class)->isAdmin()) {
                     $item = \App\Models\ShopCategory::with('items')->find($args['category']['id']);
-                    if ($item == NULL){
-                        return new \Exception("ShopCategory not found", 404);
-                    }else{
-                        if(isset($args['category']['title'])
-                            && !empty($args['category']['title'])){
-                            $item->title = $args['category']['title'];
+                    if ($item == NULL) {
+                        return new Exception("ShopCategory not found", 404);
+                    } else {
+                        if (isset($args['category']['title'])
+                            && !empty($args['category']['title'])) {
+                            $item['title'] = $args['category']['title'];
                         }
-                        if(isset($args['category']['is_customizable'])
-                            && !empty($args['category']['is_customizable'])){
-                            $item->is_customizable = $args['category']['is_customizable'];
+                        if (isset($args['category']['is_customizable'])
+                            && !empty($args['category']['is_customizable'])) {
+                            $item['is_customizable'] = $args['category']['is_customizable'];
                         }
-                        if(isset($args['category']['is_customizable'])
-                            && !empty($args['category']['is_customizable'])){
-                            $item->is_customizable = $args['category']['is_customizable'];
+                        if (isset($args['category']['is_customizable'])
+                            && !empty($args['category']['is_customizable'])) {
+                            $item['is_customizable'] = $args['category']['is_customizable'];
                         }
-                        if(isset($args['category']['locale'])){
-                            $item->locale = $args['category']['locale'];
+                        if (isset($args['category']['locale'])) {
+                            $item['locale'] = $args['category']['locale'];
                         }
-                        if(isset($args['category']['order'])){
-                            $item->order = $args['category']['order'];
+                        if (isset($args['category']['order'])) {
+                            $item['order'] = $args['category']['order'];
                         }
                         return $item->save();
                     }
-                }else{
-                    return new \Exception("Forbidden", 403);
+                } else {
+                    return new Exception("Forbidden", 403);
                 }
             }
         ];
@@ -197,18 +198,17 @@ class ShopCategory
                     'type' => Type::string()
                 ]
             ],
-            'resolve' => function ($rootValue, $args) {
-                //only admin
-                if ($rootValue->get(Session::class)->isAdmin()){
-                    $item = \App\Models\ShopCategory::find($args['id']);
+            'resolve' => function (ContainerInterface $container, $args) {
+                if ($container->get(Session::class)->isAdmin()) {
+                    $item = \App\Models\ShopCategory::query()->find($args['id']);
                     // TODO: Re Order the categories to do something that make sense
-                    if ($item == NULL){
-                        return new \Exception("ShopCategory not found", 404);
-                    }else{
+                    if ($item == NULL) {
+                        return new Exception("ShopCategory not found", 404);
+                    } else {
                         return \App\Models\ShopCategory::destroy($args['id']);
                     }
-                }else{
-                    return new \Exception("Forbidden", 403);
+                } else {
+                    return new Exception("Forbidden", 403);
                 }
             }
         ];
@@ -232,23 +232,22 @@ class ShopCategory
                     ]))
                 ]
             ],
-            'resolve' => function ($rootValue, $args) {
-                //only admin
-                if ($rootValue->get(Session::class)->isAdmin()){
-                    foreach ($args['categories'] as $category){
-                        $item = \App\Models\ShopCategory::find($category['id']);
-                        if ($item == NULL){
-                            return new \Exception("ShopCategory not found", 404);
-                        }else{
-                            $item->order = $category['order'];
-                            if (!$item->save()){
+            'resolve' => function (ContainerInterface $container, $args) {
+                if ($container->get(Session::class)->isAdmin()) {
+                    foreach ($args['categories'] as $category) {
+                        $item = \App\Models\ShopCategory::query()->find($category['id']);
+                        if ($item == NULL) {
+                            return new Exception("ShopCategory not found", 404);
+                        } else {
+                            $item['order'] = $category['order'];
+                            if (!$item->save()) {
                                 return false;
                             }
                         }
                     }
                     return true;
-                }else{
-                    return new \Exception("Forbidden", 403);
+                } else {
+                    return new Exception("Forbidden", 403);
                 }
             }
         ];

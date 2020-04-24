@@ -8,7 +8,7 @@ use GraphQL\Type\Definition\Type;
 
 class GameRom extends ObjectType
 {
-	public function __construct($depth = false)
+	public function __construct()
 	{
         $config = [
             'name' => 'GameRom',

@@ -3,17 +3,14 @@
 namespace App\Utils;
 
 use GuzzleHttp\Client;
-use GuzzleHttp\Psr7\Response;
+use Psr\Http\Message\ResponseInterface;
 
 class MailChimp
 {
-    private $apiKey;
-    private $zone;
-    /**
-     * @var Client
-     */
-    private $client;
-    private $endpoint;
+    private string $apiKey;
+    private string $zone;
+    private Client $client;
+    private string $endpoint;
 
     public function __construct($apiKey)
     {
@@ -23,7 +20,12 @@ class MailChimp
         $this->client = new Client(['http_errors' => false]);
     }
 
-    public function addSubscriber($listId, $email): Response
+    /**
+     * @param $listId
+     * @param $email
+     * @return ResponseInterface
+     */
+    public function addSubscriber($listId, $email): ResponseInterface
     {
         return $this->client->request(
             'POST',

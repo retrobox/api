@@ -1,6 +1,7 @@
 <?php
 
 use App\NotFoundHandler;
+use App\NotAllowedHandler;
 use App\Utils\MailChimp;
 use App\Utils\WebSocketServerClient;
 use DI\Container;
@@ -17,6 +18,7 @@ return [
     'settings.displayErrorDetails' => true,
     'settings.debug' => true,
     'notFoundHandler' => new NotFoundHandler(),
+    'notAllowedHandler' => new NotAllowedHandler(),
 
     Logger::class => function (ContainerInterface $container) {
         $log = new Monolog\Logger($container->get('app_name'));

@@ -33,7 +33,6 @@ return [
     ],
     "account" => [
         "redirection_url_cookie" => "login_redirection_url",
-        "jwt_cookie" => "user_token",
-        "domain" => getenv("SOURCE_DOMAIN")
+        "jwt_cookie" => "user_token"
     ]
 ];

@@ -20,7 +20,7 @@ return [
     ],
     'services' => [
         'web_endpoint' => getenv('WEB_ENDPOINT'),
-        'docs_endpoint' => getenv('DOCS_ENDPOINT'),
+        'admin_endpoint' => getenv('ADMIN_ENDPOINT'),
         'websocket_server_endpoint' => getenv('WEBSOCKET_SERVER_ENDPOINT'),
         'data_endpoint' => getenv('DATA_ENDPOINT'),
         'card_images_endpoint' => 'https://static.retrobox.tech/os' // static.retrobox.tech/os/{version}.img

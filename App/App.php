@@ -55,7 +55,7 @@ class App extends \DI\Bridge\Slim\App
             $this->map(['GET', 'OPTIONS'], '/info', [Controllers\AccountController::class, 'getInfo'])
                 ->add(new Middlewares\JWTMiddleware($this->getContainer()));
 
-            $this->map(['GET', 'POST', 'OPTIONS'], '/execute', [Controllers\AccountController::class, 'execute'])
+            $this->map(['POST', 'OPTIONS'], '/execute', [Controllers\AccountController::class, 'execute'])
                 ->add(new IpAddress());
         });
 

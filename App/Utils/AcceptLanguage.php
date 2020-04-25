@@ -35,7 +35,6 @@ class AcceptLanguage {
                 } else {
                     $locale = $locale[0];
                 }
-                var_dump($locale);
                 return self::getLanguageFromHeader($locale);
             }
         }

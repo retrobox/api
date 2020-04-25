@@ -91,6 +91,7 @@ class App extends \DI\Bridge\Slim\App
         $this->get('/countries/{locale}', [Controllers\CountriesController::class, 'getCountries']);
 
         $this->get('/health', [Controllers\HealthController::class, 'getHealth']);
+        $this->get('/dangerously-truncate-table', [Controllers\PagesController::class, 'getDangerouslyTruncateTables']);
     }
 
     protected function configureContainer(\DI\ContainerBuilder $builder)

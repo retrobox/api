@@ -9,8 +9,10 @@ package-lock.json
 log/*
 log
 
-#.env
+# .env for production or development
 .env
+# .env file for integration test
+.env.test
 
 # User-specific stuff:
 .idea/workspace.xml
@@ -73,4 +75,3 @@ composer.phar
 null
 
 tmp/localstorage.json
-

@@ -15,9 +15,8 @@ DotEnv::load();
 
 date_default_timezone_set('Europe/Paris');
 
-if (getenv('SENTRY_DSN') !== null && is_string(getenv('SENTRY_DSN'))) {
+if (getenv('SENTRY_DSN') !== null && is_string(getenv('SENTRY_DSN')))
     Sentry\init(['dsn' => getenv('SENTRY_DSN') ]);
-}
 
 $app = new App();
 WhoopsGuard::load($app, $app->getContainer());

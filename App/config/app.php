@@ -4,7 +4,8 @@ use App\App;
 
 return [
     'app_name' => getenv('APP_NAME'),
-    'app_debug' => (getenv('APP_DEBUG') ? true : false),
+    'app_debug' => boolval(getenv('APP_DEBUG')),
+    'app_test' => boolval(getenv('APP_TEST')),
     'env_name' => getenv('APP_ENV_NAME'),
     'log' => [
         'level' => getenv('LOG_LEVEL'),

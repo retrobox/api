@@ -115,91 +115,87 @@ class PaypalController extends Controller
     {
         $this->container->get(Manager::class);
 
-        $validator = new Validator($request->getQueryParams());
-        $validator->required('token', 'paymentId', 'PayerID');
-        $validator->notEmpty('token', 'paymentId', 'PayerID');
-        if ($validator->isValid()) {
-            try {
-                $payment = Payment::get($validator->getValue('paymentId'), $apiContext);
-            } catch (Exception $e) {
-                return $response->withJson([
-                    'success' => false,
-                    'errors' => [
-                        "Invalid order"
-                    ]
-                ], 400);
-            }
-
-            //get the item from the database
-            $order = ShopOrder::query()
-                ->with('items', 'user')
-                ->where('on_way_id', '=', $payment->getId())
-                ->where('way', '=', 'paypal')
-                ->first();
-
-            if ($order == NULL) {
-                return $response->withJson([
-                    'success' => false,
-                    'errors' => [
-                        "Invalid order"
-                    ]
-                ], 400);
-            }
-            if ($order['status'] == "payed") {
-                return $response->withJson([
-                    'success' => false,
-                    'errors' => [
-                        "Order already payed"
-                    ]
-                ], 400);
-            }
-
-            $paymentManager = new PaymentManager(
-                $order->items->toArray(),
-                $order->shipping_country,
-                $order->shipping_method,
-                $this->container
-            );
-            $execution = (new PaymentExecution())
-                ->setPayerId($validator->getValue('PayerID'))
-                ->addTransaction($paymentManager->toPaypalTransaction());
-
-            try {
-                $successPayment = $payment->execute($execution, $apiContext);
-            } catch (Exception $e) {
-                return $response->withJson([
-                    'success' => false,
-                    'errors' => [[$e->getMessage(), $e->getCode()]]
-                ], 500);
-            }
-
-            if ($successPayment->getState() == 'approved') {
-                // we have a successful payment
-                // change the state in db
-                $order->status = 'payed';
-                $order->save();
-
-                // emit "order.payed" event
-                $queue->publish('order.payed', ['id' => $order['id']]);
-
-                /** @var $order ShopOrder */
-                ConsoleManager::createConsolesFromOrder($order);
-
-                // redirect to checkout success page
-                return $this->redirect($response, $this->container->get('services')['web_endpoint'] . '/shop/checkout/success');
-            } else {
-                return $response->withJson([
-                    'success' => false,
-                    'errors' => [
-                        "Error with your paypal payment: the payment has failed or is not approved"
-                    ]
-                ], 400);
-            }
-        } else {
+        $validator = new Validator($request->getParsedBody());
+        $validator->required('token', 'payment_id', 'payer_id');
+        $validator->notEmpty('token', 'payment_id', 'payer_id');
+        if (!$validator->isValid())
             return $response->withJson([
                 'success' => false,
                 'errors' => $validator->getErrors()
             ], 400);
+        try {
+            $payment = Payment::get($validator->getValue('payment_id'), $apiContext);
+        } catch (Exception $e) {
+            return $response->withJson([
+                'success' => false,
+                'errors' => [
+                    ['message' => 'Invalid order']
+                ]
+            ], 400);
         }
+
+        //get the item from the database
+        $order = ShopOrder::query()
+            ->with('items', 'user')
+            ->where('on_way_id', '=', $payment->getId())
+            ->where('way', '=', 'paypal')
+            ->first();
+
+        if ($order == NULL)
+            return $response->withJson([
+                'success' => false,
+                'errors' => [
+                    ['message' => 'Invalid order']
+                ]
+            ], 400);
+
+        if ($order['status'] == "payed")
+            return $response->withJson([
+                'success' => false,
+                'errors' => [
+                    ['message' => 'Order already payed']
+                ]
+            ], 400);
+
+        $paymentManager = new PaymentManager(
+            $order->items->toArray(),
+            $order->shipping_country,
+            $order->shipping_method,
+            $this->container
+        );
+        $execution = (new PaymentExecution())
+            ->setPayerId($validator->getValue('payer_id'))
+            ->addTransaction($paymentManager->toPaypalTransaction());
+
+        try {
+            $successPayment = $payment->execute($execution, $apiContext);
+        } catch (Exception $e) {
+            return $response->withJson([
+                'success' => false,
+                'errors' => [[$e->getMessage(), $e->getCode()]]
+            ], 500);
+        }
+
+        if ($successPayment->getState() !== 'approved')
+            return $response->withJson([
+                'success' => false,
+                'errors' => [
+                    ['message' => 'Error with your paypal payment: the payment has failed or is not approved']
+                ]
+            ], 400);
+
+        // we have a successful payment so we change the state in db
+        $order->status = 'payed';
+        $order->save();
+
+        // emit "order.payed" event
+        $queue->publish('order.payed', ['id' => $order['id']]);
+
+        /** @var $order ShopOrder */
+        ConsoleManager::createConsolesFromOrder($order);
+
+        return $response->withJson([
+            'success' => true
+        ]);
     }
 }

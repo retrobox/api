@@ -43,7 +43,8 @@ class App extends \DI\Bridge\Slim\App
         // PAYPAL
         $this->map(['POST','OPTIONS'], '/paypal/get-url', [Controllers\Payment\PaypalController::class, 'postGetUrl'])
             ->add(new Middlewares\JWTMiddleware($this->getContainer()));
-        $this->get('/paypal/execute', [Controllers\Payment\PaypalController::class, 'postExecute']);
+        //$this->get('/paypal/execute', [Controllers\Payment\PaypalController::class, 'postExecute']);
+        $this->map(['POST','OPTIONS'], '/paypal/execute', [Controllers\Payment\PaypalController::class, 'postExecute']);
 
         $this->group('/account', function (){
             $this->get('/login', [Controllers\AccountController::class, 'getLogin']);

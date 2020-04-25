@@ -25,7 +25,7 @@ return [
     "paypal" => [
         "public" => getenv('PAYPAL_PUBLIC'),
         "private" => getenv('PAYPAL_PRIVATE'),
-        "return_redirect_url" => getenv('API_ENDPOINT') . "/paypal/execute",
+        "return_redirect_url" => getenv('WEB_ENDPOINT') . "/shop/checkout/paypal-execute",
         "cancel_redirect_url" => getenv('WEB_ENDPOINT') . "/shop/checkout/payment"
     ],
     "jwt" => [

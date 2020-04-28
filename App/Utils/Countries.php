@@ -36,9 +36,10 @@ class Countries
     {
         $path = $this->getCountriesDirectory() . '/en.json';
         $json = json_decode(file_get_contents($path), true);
-        $countries = array_filter($json['countries'], function ($country) use ($code) {
-            return $country['code'] === mb_strtoupper($code);
-        });
+        $countries = array_filter(
+            $json['countries'],
+            fn ($country) => $country['code'] === mb_strtoupper($code)
+        );
         $countries = array_values($countries);
         return isset($countries[0]);
     }

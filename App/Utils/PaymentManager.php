@@ -304,9 +304,7 @@ class PaymentManager
         $notPayedOrders = $user->shopOrders()
             ->where('status', '=', 'not-payed')
             ->get();
-        ShopOrder::destroy(array_map(function ($order) {
-            return $order['id'];
-        }, $notPayedOrders->toArray()));
+        ShopOrder::destroy(array_map(fn ($order) => $order['id'], $notPayedOrders->toArray()));
     }
 
     /**

@@ -224,9 +224,7 @@ class Game
                         return new Exception('Unknown game', 404);
                     }
                     $mediaIds = array_map(
-                        function ($media) {
-                            return $media['id'];
-                        },
+                        fn ($media) => $media['id'],
                         $game->medias()->get()->toArray()
                     );
                     \App\Models\GameMedia::destroy($mediaIds);

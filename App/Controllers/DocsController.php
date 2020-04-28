@@ -10,9 +10,10 @@ class DocsController extends Controller
     {
         $docEndpoint = $this->container->get('services')['docs_endpoint'];
         $config = json_decode(file_get_contents($docEndpoint . '/config.json'), true);
-        $localeConfig = array_filter($config['locales'], function ($item) use ($locale){
-            return $item['slug'] === $locale;
-        });
+        $localeConfig = array_filter(
+            $config['locales'],
+            fn ($item) => $item['slug'] === $locale
+        );
         if (count($localeConfig) === 0) {
             return $response->withJson(['success' => false, 'errors' => ['Invalid locale slug']], 400);
         }
@@ -24,9 +25,10 @@ class DocsController extends Controller
             $previousItem = NULL;
             $indexOf = NULL;
         } else {
-            $pageConfig = array_filter($localeConfig['tree'], function ($item) use ($slug) {
-                return $item['slug'] === $slug;
-            });
+            $pageConfig = array_filter(
+                $localeConfig['tree'],
+                fn ($item) => $item['slug'] === $slug
+            );
             if (count($pageConfig) === 0) {
                 return $response->withJson(['success' => false, 'errors' => ['Invalid locale slug']], 400);
             }

@@ -222,7 +222,7 @@ class ShopItem
                         }
                         $item->images()->delete(); // delete all images before sending the item to the set helper
                         $item = self::set($item, $args);
-                        $item['allow_indexing'] = $args['item']['allow_indexing'] === NULL ? $item['allow_indexing'] : $args['item']['allow_indexing'];
+                        $item['allow_indexing'] ??= $args['item']['allow_indexing'];
 
                         return $item->save();
                     }

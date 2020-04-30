@@ -30,6 +30,7 @@ jobs:
           JOBATATOR_USERNAME: ${{ secrets.JOBATATOR_USERNAME }}
           JOBATATOR_PASSWORD: ${{ secrets.JOBATATOR_PASSWORD }}
           JOBATATOR_GROUP: ${{ secrets.JOBATATOR_GROUP }}
+          FORCE_COLOR: 2
 
       - name: Login into docker hub
         run: docker login -u '${{ secrets.DOCKER_USERNAME }}' -p '${{ secrets.DOCKER_PASSWORD }}'

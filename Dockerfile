@@ -1,4 +1,4 @@
-FROM lefuturiste/php-fpm
+FROM lefuturiste/php-fpm:7.4
 LABEL maintainer="contact@thingmill.fr"
 ADD . /app
 # env
@@ -10,3 +10,4 @@ ENV LOG_DISCORD_WH https://discordapp.com/api/webhooks/468096349292986368/oM2DKF
 ENV LOG_PATH ../log
 ENV LOG_LEVEL INFO
 ENV WEB_ENDPOINT https://retrobox.tech
+RUN composer install

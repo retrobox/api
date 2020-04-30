@@ -1,0 +1,69 @@
+version: '3'
+services:
+  redis:
+    image: redis
+    restart: always
+
+  api:
+    image: 'retrobox/api:latest'
+    depends_on:
+      - redis
+    links:
+      - redis
+    ports:
+      - "0.0.0.0:8742:80"
+    environment:
+      - APP_NAME=retrobox.api
+      - APP_ENV_NAME=docker-unit-test
+      - APP_DEBUG=0
+      - APP_TEST=1
+
+      - LOG_PATH=../log
+      - LOG_LEVEL=INFO
+      - LOG_DISCORD=0
+
+      - MYSQL_HOST=${DB_HOST}
+      - MYSQL_PORT=3306
+      - MYSQL_DATABASE=${DB_DATABASE}
+      - MYSQL_USERNAME=${DB_USERNAME}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+
+      - JOBATATOR_HOST=${JOBATATOR_HOST}
+      - JOBATATOR_PORT=${JOBATATOR_PORT}
+      - JOBATATOR_USERNAME=${JOBATATOR_USERNAME}
+      - JOBATATOR_PASSWORD=${JOBATATOR_PASSWORD}
+      - JOBATATOR_GROUP=${JOBATATOR_GROUP}
+
+      - PAYPAL_PUBLIC=0
+      - PAYPAL_PRIVATE=0
+
+      - STRIPE_IS_TEST=1
+      - STRIPE_PUBLIC=pk_test_
+      - STRIPE_PRIVATE=sk_test_
+      - STRIPE_WEBHOOK_SECRET=0
+
+      - STAILEU_PUBLIC=0
+      - STAILEU_PRIVATE=0
+      - STAILEU_REDIRECT=0
+
+      - REDIS_URI=redis
+      - REDIS_PREFIX=retrobox__
+
+      - SOURCE_DOMAIN=localhost
+      - JWT_KEY=masterkey
+
+      - WEB_ENDPOINT=0
+      - API_ENDPOINT=http://api
+      - DEFAULT_ADMIN_USER_ID=0
+      - MASTER_API_KEY=masterkey
+
+  api-test:
+    image: 'retrobox/api-test:latest'
+    restart: 'no'
+    depends_on:
+      - api
+    links:
+      - api
+    environment:
+      - API_ENDPOINT=http://api
+      - API_MASTER_KEY=masterkey

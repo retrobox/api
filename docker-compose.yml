@@ -67,3 +67,4 @@ services:
     environment:
       - API_ENDPOINT=http://api
       - API_MASTER_KEY=masterkey
+      - FORCE_COLOR=2

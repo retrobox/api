@@ -68,9 +68,10 @@ class AccountController extends Controller
         $user['last_email'] = $email;
         $user['last_username'] = $username;
         $user['last_locale'] = AcceptLanguage::getLanguageFromRequest($request);
-        if ($STAILEUAccounts->getUser()->id == $this->container->get('default_admin_user_id')) {
+        if ($user['last_locale'] === '')
+            $user['last_locale'] = null;
+        if ($STAILEUAccounts->getUser()->id == $this->container->get('default_admin_user_id'))
             $user['is_admin'] = true;
-        }
         $user->save();
         // generate a token and save it into cookie
         $userInfos = [

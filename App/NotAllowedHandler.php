@@ -17,6 +17,6 @@ class NotAllowedHandler extends NotFound
             'errors' => [
                 ['message' => 'Method not allowed']
             ]
-        ], 403);
+        ], 405);
 	}
 }

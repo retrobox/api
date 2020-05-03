@@ -3,6 +3,7 @@ namespace App\GraphQL;
 use App\GraphQL\Type\Console;
 use App\GraphQL\Type\ConsoleImage;
 use App\GraphQL\Type\ConsoleVersion;
+use App\GraphQL\Type\Country;
 use App\GraphQL\Type\Game;
 use App\GraphQL\Type\GameEditor;
 use App\GraphQL\Type\GameMedia;
@@ -57,6 +58,7 @@ class Types
     private static $console;
     private static $consoleVersion;
     private static $consoleImage;
+    private static $country;
 
     /**
 	 * @return DateTime
@@ -85,6 +87,14 @@ class Types
     public static function consoleImage()
     {
         return self::$consoleImage ?: (self::$consoleImage = new ConsoleImage());
+    }
+
+    /**
+     * @return Country
+     */
+    public static function country()
+    {
+        return self::$country ?: (self::$country = new Country());
     }
 
     /**

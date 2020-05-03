@@ -62,7 +62,10 @@ class Query extends ObjectType
                 'openConsoleTerminalSession' => \App\GraphQL\Query\Console::openConsoleTerminalSession(),
 
                 //consoleImages
-                'getManyConsoleImages' => \App\GraphQL\Query\ConsoleImage::getMany()
+                'getManyConsoleImages' => \App\GraphQL\Query\ConsoleImage::getMany(),
+
+                //country
+                'getCountries' => \App\GraphQL\Query\Countries::getMany()
             ]
         ];
 

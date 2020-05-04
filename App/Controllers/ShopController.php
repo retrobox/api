@@ -55,7 +55,7 @@ class ShopController extends Controller
                         'errors' => [
                             ['message' => 'Unknown shop item']
                         ]
-                    ], m);
+                    ], 404);
                 }
             } else {
                 return $response->withJson([
@@ -119,7 +119,7 @@ class ShopController extends Controller
                 'errors' => [
                     ['message' => 'Invalid country code']
                 ]
-            ]);
+            ], 400);
         }
         $colissimoPrice = $this->container->get(Client::class)->getPrice('fr', $country, $weight);
 

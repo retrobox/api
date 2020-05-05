@@ -184,15 +184,15 @@ class PaypalController extends Controller
                 ]
             ], 400);
 
+        /** @var $order ShopOrder */
+        ConsoleManager::createConsolesFromOrder($this->container, $order);
+
         // we have a successful payment so we change the state in db
         $order->status = 'payed';
         $order->save();
 
         // emit "order.payed" event
         $queue->publish('order.payed', ['id' => $order['id']]);
-
-        /** @var $order ShopOrder */
-        ConsoleManager::createConsolesFromOrder($order);
 
         return $response->withJson([
             'success' => true

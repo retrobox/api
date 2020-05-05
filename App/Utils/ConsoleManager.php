@@ -5,16 +5,18 @@ namespace App\Utils;
 use App\Models\Console;
 use App\Models\ShopItem;
 use App\Models\ShopOrder;
+use Psr\Container\ContainerInterface;
 
 class ConsoleManager
 {
     /**
      * From a shop order will create the consoles
      *
+     * @param ContainerInterface $container
      * @param ShopOrder $shopOrder
      * @return array
      */
-    public static function createConsolesFromOrder($shopOrder)
+    public static function createConsolesFromOrder(ContainerInterface $container, $shopOrder)
     {
         $result = ['consoles_ids' => [], 'items' => []];
         foreach ($shopOrder['items'] as $item) {
@@ -32,10 +34,25 @@ class ConsoleManager
                 $console['storage'] = $item['pivot']['shop_item_custom_option_storage'];
                 $console['color'] = $item['pivot']['shop_item_custom_option_color'];
                 $console['token'] = \App\GraphQL\Query\Console::generateRandom(32);
+                $console['version'] = ConsoleManager::getLatestConsoleVersion($container)['id'];
                 $console->save();
                 $consolesId['consoles_ids'][] = $console['id'];
             }
         }
         return $result;
+    }
+
+    /**
+     * Will return the last console version object from 'console-versions.php' container file
+     *
+     * @param ContainerInterface $container
+     * @return array
+     */
+    public static function getLatestConsoleVersion(ContainerInterface $container): array
+    {
+        return array_values(array_filter(
+            $container->get('console-versions'),
+            fn($v) => isset($v['latest']) && $v['latest']
+        ))[0];
     }
 }

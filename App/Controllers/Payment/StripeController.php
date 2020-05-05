@@ -186,13 +186,13 @@ class StripeController extends Controller
             ], 400);
         }
 
+        /** @var $order ShopOrder */
+        ConsoleManager::createConsolesFromOrder($this->container, $order);
+
         $order['status'] = 'payed';
         $order->save();
 
         $queue->publish('order.payed', ['id' => $order['id']]);
-
-        /** @var $order ShopOrder */
-        ConsoleManager::createConsolesFromOrder($order);
 
         return $response->withJson([
             'success' => true,

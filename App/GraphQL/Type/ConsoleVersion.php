@@ -16,10 +16,6 @@ class ConsoleVersion extends ObjectType
                 'id' => [
                     'type' => Type::string(),
                     'description' => 'A class version string format'
-                ],
-                'image_url' => [
-                    'type' => Type::string(),
-                    'description' => 'The url to download the image of this console version to flash the sd card with'
                 ]
             ]
         ];

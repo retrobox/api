@@ -33,6 +33,10 @@ class ConsoleImage extends ObjectType
                     'type' => Type::string(),
                     'description' => 'Can serve as a changelog field for this version of the image'
                 ],
+                'path' => [
+                    'type' => Type::string(),
+                    'description' => 'The path at where the image is located on "https://os.retrobox.tech", begin with a slash and end with .img.zip'
+                ],
                 'size' => [
                     'type' => Type::int(),
                     'description' => 'The size of the zip file'

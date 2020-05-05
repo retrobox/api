@@ -78,7 +78,7 @@ class ConsoleImage
                 if (count($filter) !== 1)
                     return new Exception("Unknown console version", 404);
 
-                $image->generateVersion();
+                $image->generateExtraFields();
                 if (\App\Models\ConsoleImage::query()
                     ->where('version', '=', $image['version'])
                     ->count() !== 0)
@@ -105,7 +105,7 @@ class ConsoleImage
                         'name' => 'ConsoleImageUpdateInput',
                         'fields' => [
                             'id' => ['type' => Type::nonNull(Type::id())],
-                            'software_version' => ['type' => Type::nonNull(Type::string())],
+                            'software_version' => ['type' => Type::string()],
                             'description' => ['type' => Type::string()]
                         ]
                     ]))
@@ -122,7 +122,7 @@ class ConsoleImage
                     return new Exception("Unknown console image", 404);
 
                 $image->setAttributesFromGraphQL($args['image'], ['software_version', 'description']);
-                $image->generateVersion();
+                $image->generateExtraFields();
 
                 if (\App\Models\ConsoleImage::query()
                         ->where('version', '=', $image['version'])

@@ -10,8 +10,9 @@ class ConsoleImage extends Model
 
     public $incrementing = false;
 
-    public function generateVersion(): void
+    public function generateExtraFields(): void
     {
         $this['version'] = 'h' . $this['console_version'] . '-s' . $this['software_version'];
+        $this['path'] = '/' . $this['version'] . '.img.zip';
     }
 }

@@ -411,16 +411,9 @@ class Console
             'type' => Type::listOf(Types::consoleVersion()),
             'description' => 'Get all the console versions',
             'resolve' => function (ContainerInterface $container) {
-                return self::getConsoleWithImageUrlRaw($container);
+                return $container->get('console-versions');
             }
         ];
-    }
-
-    private static function getConsoleWithImageUrlRaw(ContainerInterface $container) {
-        return array_map(function ($version) use ($container) {
-            $version['image_url'] = $container->get('services')['card_images_endpoint'] . '/' . $version['id'] . '.img';
-            return $version;
-        }, $container->get('console-versions'));
     }
 
     public static function generateRandom(int $length): string

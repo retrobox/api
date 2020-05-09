@@ -35,7 +35,7 @@ class Chronopost
     public function getPrice(string $toCountry, int $toPostalCode, int $weight, bool $relay = false): int
     {
         // corsica's cities postal code begin with 20 so between 20000 and 21000
-        if ($toCountry == 'FR' && !($toPostalCode > 20000 && $toPostalCode < 21000))
+        if ($toCountry == 'FR' && !($toPostalCode >= 20000 && $toPostalCode < 21000))
             $key = 'chronopost_fr';
         else if (in_array($toCountry, $this->config['EU_ISO']))
             $key = 'chronopost_eu';

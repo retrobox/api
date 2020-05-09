@@ -4,7 +4,6 @@ namespace App\Models;
 
 class GameTag extends Model
 {
-
 	protected $table = 'game_tags';
 
 	protected $keyType = 'string';

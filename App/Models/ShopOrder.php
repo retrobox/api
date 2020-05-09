@@ -2,11 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-
 class ShopOrder extends Model
 {
-
     protected $table = 'shop_orders';
 
     protected $keyType = 'string';

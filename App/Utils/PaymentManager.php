@@ -2,7 +2,6 @@
 
 namespace App\Utils;
 
-use App\Colissimo\Client;
 use App\Models\ShopItem;
 use App\Models\ShopOrder;
 use App\Models\User;
@@ -16,7 +15,6 @@ use Psr\Container\ContainerInterface;
 
 class PaymentManager
 {
-
     /**
      * @var array
      */
@@ -61,7 +59,7 @@ class PaymentManager
      *
      * @var array
      */
-    private array $storagePrices = [];
+    private array $storagePrices;
 
     /**
      * @var ContainerInterface
@@ -69,9 +67,9 @@ class PaymentManager
     private ContainerInterface $container;
 
     /**
-     * @var string
+     * @var array
      */
-    private string $shippingCountry;
+    private array $shippingAddress;
 
     /**
      * @var string
@@ -79,9 +77,11 @@ class PaymentManager
     private string $shippingMethod;
 
     /**
-     * @var float
+     * The total weight of the order in S.I grams
+     *
+     * @var int
      */
-    private float $totalWeight = 0;
+    private int $totalWeight = 0;
 
     /**
      * @var bool
@@ -92,17 +92,22 @@ class PaymentManager
      * PaymentManager constructor.
      *
      * @param array $items
-     * @param string $shippingCountry
+     * @param array $shippingAddress The user address object
      * @param string $shippingMethod
      * @param ContainerInterface $container
      * @throws Exception
      */
-    public function __construct(array $items, string $shippingCountry, string $shippingMethod, ContainerInterface $container)
+    public function __construct(
+        array $items,
+        array $shippingAddress,
+        string $shippingMethod,
+        ContainerInterface $container
+    )
     {
         $this->container = $container;
         $this->storagePrices = $container->get('shop')['storage_prices'];
         $this->items = $items;
-        $this->shippingCountry = $shippingCountry;
+        $this->shippingAddress = $shippingAddress;
         $this->shippingMethod = $shippingMethod;
         $this->items = $this->fetchItems();
     }
@@ -151,7 +156,7 @@ class PaymentManager
                 $toAddItem['sub_total_price'] = $toAddItem['price']
                     + $this->getOptionPrice($toAddItem);
                 $this->subTotalPrice += $toAddItem['sub_total_price'];
-                $this->totalWeight += (float)$toAddItem['weight'];
+                $this->totalWeight += $toAddItem['weight'];
 
                 $this->pivotsAttributes[] = $pivotsAttributes;
                 $items[] = $toAddItem;
@@ -173,28 +178,39 @@ class PaymentManager
         return 0.00;
     }
 
+    /**
+     * Return the shipping price for this order NOT IN CENTS
+     *
+     * @param float $weight
+     * @return float NOT IN CENTS
+     */
     private function getShippingPrice(float $weight): float
     {
-        $client = $this->container->get(Client::class);
+        $colissimo = $this->container->get(Colissimo::class);
+        $chronopost = $this->container->get(Chronopost::class);
         $countriesHelper = $this->container->get(Countries::class);
-        if (!$countriesHelper->isCountryCodeValid($this->shippingCountry)) {
+        if (!$countriesHelper->isCountryCodeValid($this->shippingAddress['country'])) {
             // invalid shipping country
             $this->isValid = false;
             return 0;
         }
         switch ($this->shippingMethod) {
             case 'colissimo':
-                return $client->getPrice('fr', $this->shippingCountry, $weight);
+                $price = $colissimo->getPrice($this->shippingAddress['country'], $weight);
                 break;
             case 'chronopost':
-                return 0;
+                $price = $chronopost->getPrice(
+                    $this->shippingAddress['country'],
+                    $this->shippingAddress['postal_code'],
+                    $weight
+                );
                 break;
             default:
                 // invalid shipping method
                 $this->isValid = false;
                 return 0;
-                break;
         }
+        return round($price / 100, 2);
     }
 
     public function getTotalShippingPrice(): float
@@ -283,7 +299,7 @@ class PaymentManager
         }
         $items[] = [
             'name' => 'Shipping',
-            'description' => ucfirst($this->shippingMethod) . ' ' . $this->shippingCountry,
+            'description' => ucfirst($this->shippingMethod) . ' ' . $this->shippingAddress['country'],
             'images' => ['https://static.retrobox.tech/img/shipping/' . $this->shippingMethod . '.png'],
             'amount' => $this->getTotalShippingPrice() * 100,
             'currency' => 'eur',
@@ -304,7 +320,7 @@ class PaymentManager
         $notPayedOrders = $user->shopOrders()
             ->where('status', '=', 'not-payed')
             ->get();
-        ShopOrder::destroy(array_map(fn ($order) => $order['id'], $notPayedOrders->toArray()));
+        ShopOrder::destroy(array_map(fn($order) => $order['id'], $notPayedOrders->toArray()));
     }
 
     /**

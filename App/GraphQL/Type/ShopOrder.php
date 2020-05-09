@@ -37,6 +37,9 @@ class ShopOrder extends ObjectType
                 'shipping_method' => [
                     'type' => Type::string()
                 ],
+                'shipping_address' => [
+                    'type' => Types::shippingAddress()
+                ],
                 'shipping_id' => [
                     'type' => Type::string()
                 ],

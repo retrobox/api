@@ -36,12 +36,14 @@ class PaypalController extends Controller
         $this->container->get(Manager::class);
 
         $validator = new Validator($request->getParsedBody());
-        $validator->required('items', 'shipping_method', 'shipping_country', 'order_note');
-        $validator->notEmpty('items', 'shipping_method', 'shipping_country');
+        $validator->required('items', 'shipping_method', 'order_note');
+        $validator->notEmpty('items', 'shipping_method');
         if ($validator->isValid()) {
+            /** @var $user User */
+            $user = User::query()->find($session->getUser()['id']);
             $paymentManager = new PaymentManager(
                 $validator->getValue('items'),
-                $validator->getValue('shipping_country'),
+                $user->getAddressObject(),
                 $validator->getValue('shipping_method'),
                 $this->container
             );
@@ -73,8 +75,6 @@ class PaypalController extends Controller
                     'errors' => [[$e->getMessage(), $e->getCode()]]
                 ], 500);
             }
-            /** @var $user User */
-            $user = User::query()->find($session->getUser()['id']);
 
             // before creating a new order, we will delete all the non payed order of the user
             PaymentManager::destroyNotPayedOrder($user);
@@ -82,7 +82,7 @@ class PaypalController extends Controller
             // save the payment in a database
             $order = $paymentManager->toShopOrder();
             $order->user()->associate($user);
-            $order['shipping_country'] = $validator->getValue('shipping_country');
+            $order['shipping_address'] = json_encode($user->getAddressObject());
             $order['shipping_method'] = $validator->getValue('shipping_method');
             $order['on_way_id'] = $_payment->getId();
             $order['way'] = 'paypal';
@@ -134,7 +134,8 @@ class PaypalController extends Controller
             ], 400);
         }
 
-        //get the item from the database
+        // get the item from the database
+        /* @var $order ShopOrder */
         $order = ShopOrder::query()
             ->with('items', 'user')
             ->where('on_way_id', '=', $payment->getId())
@@ -157,10 +158,12 @@ class PaypalController extends Controller
                 ]
             ], 400);
 
+        /* @var $user User */
+        $user = $order->user()->first();
         $paymentManager = new PaymentManager(
-            $order->items->toArray(),
-            $order->shipping_country,
-            $order->shipping_method,
+            $order['items']->toArray(),
+            $user->getAddressObject(),
+            $order['shipping_method'],
             $this->container
         );
         $execution = (new PaymentExecution())
@@ -184,11 +187,10 @@ class PaypalController extends Controller
                 ]
             ], 400);
 
-        /** @var $order ShopOrder */
         ConsoleManager::createConsolesFromOrder($this->container, $order);
 
         // we have a successful payment so we change the state in db
-        $order->status = 'payed';
+        $order['status'] = 'payed';
         $order->save();
 
         // emit "order.payed" event

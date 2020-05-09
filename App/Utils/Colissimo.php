@@ -1,39 +1,38 @@
 <?php
 
-namespace App\Colissimo;
+namespace App\Utils;
 
-class Client
+use GuzzleHttp\Client;
+
+class Colissimo
 {
-
     /**
-     * @var \GuzzleHttp\Client
+     * @var Client
      */
-    private \GuzzleHttp\Client $client;
+    private Client $client;
 
     public function __construct()
     {
-        $this->client = new \GuzzleHttp\Client([]);
+        $this->client = new Client([]);
     }
 
     /**
      * Get the price of a shipment using Colissimo shipping service
      *
-     * @param string $from The ISO code of the departure country
      * @param string $to The ISO code of the destination country
      * @param int $weight The weight of the packet in SI grams
-     *
-     * @return float
+     * @return int PRICE IN CENTS
      */
-    public function getPrice(string $from, string $to, int $weight): float
+    public function getPrice(string $to, int $weight): int
     {
         $res = $this->client->post('https://www.laposte.fr/colissimo-en-ligne/getprice', [
             'form_params' => [
-                'fromIsoCode' => mb_strtolower($from),
+                'fromIsoCode' => 'fr',
                 'toIsoCode' => mb_strtolower($to),
                 'weight' => $weight / 1000
             ]
         ]);
         $json = json_decode($res->getBody()->getContents(), true);
-        return (float) $json['value'];
+        return (int) ($json['value'] * 100);
     }
 }

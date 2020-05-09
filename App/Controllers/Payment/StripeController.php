@@ -36,8 +36,8 @@ class StripeController extends Controller
     {
         $this->container->get(Manager::class);
         $validator = new Validator($request->getParsedBody());
-        $validator->required('items', 'shipping_method', 'shipping_country', 'order_note');
-        $validator->notEmpty('items', 'shipping_method', 'shipping_country');
+        $validator->required('items', 'shipping_method', 'order_note');
+        $validator->notEmpty('items', 'shipping_method');
 
         Stripe::setApiKey($this->container->get('stripe')['private']);
         if (!$validator->isValid()) {
@@ -46,9 +46,11 @@ class StripeController extends Controller
                 'errors' => $validator->getErrors()
             ], 400);
         }
+        /** @var $user User */
+        $user = User::query()->find($session->getUserId());
         $paymentManager = new PaymentManager(
             $validator->getValue('items'),
-            $validator->getValue('shipping_country'),
+            $user->getAddressObject(),
             $validator->getValue('shipping_method'),
             $this->container
         );
@@ -60,13 +62,10 @@ class StripeController extends Controller
                 ]
             ], 400);
         }
-        /** @var $user User */
-        $user = User::query()->find($session->getUserId());
-
         PaymentManager::destroyNotPayedOrder($user);
         // create order entry from payment manager
         $order = $paymentManager->toShopOrder();
-        $order['shipping_country'] = $validator->getValue('shipping_country');
+        $order['shipping_address'] = json_encode($user->getAddressObject());
         $order['shipping_method'] = $validator->getValue('shipping_method');
         $order['note'] = $validator->getValue('order_note');
         $order['way'] = 'stripe';

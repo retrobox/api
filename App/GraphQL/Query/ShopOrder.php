@@ -48,14 +48,14 @@ class ShopOrder
                     ->with(['user', 'items'])
                     ->where('status', '!=', 'not-payed');
                 if (!$args['all']) {
-                    return $query
+                    $orders = $query
                         ->withCount('items')
                         ->where('user_id', '=', $container->get(Session::class)->getUserId())
                         ->limit($args['limit'])
                         ->orderBy($args['orderBy'], strtolower($args['orderDir']))
                         ->get();
                 } else if ($container->get(Session::class)->isAdmin() && $args['all']) {
-                    return $query
+                    $orders = $query
                         ->withCount('items')
                         ->limit($args['limit'])
                         ->orderBy($args['orderBy'], strtolower($args['orderDir']))
@@ -63,6 +63,10 @@ class ShopOrder
                 } else {
                     return new Exception('Forbidden', 403);
                 }
+                return $orders->map(function ($item) {
+                    $item['shipping_address'] = json_decode($item['shipping_address'], true);
+                    return $item;
+                });
             }
         ];
     }
@@ -87,6 +91,7 @@ class ShopOrder
                     if ($item === NULL) {
                         return new Exception('Unknown shop order', 404);
                     }
+                    $item['shipping_address'] = json_decode($item['shipping_address'], true);
                     return $item;
                 } else {
                     return new Exception('Forbidden', 403);

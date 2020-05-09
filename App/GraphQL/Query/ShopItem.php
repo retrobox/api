@@ -102,7 +102,7 @@ class ShopItem
         $item['show_version'] = $args['item']['show_version'];
         $item['image'] = $args['item']['image'];
         $item['price'] = (float)$args['item']['price'];
-        $item['weight'] = (float)$args['item']['weight'];
+        $item['weight'] = intval($args['item']['weight']);
         $item['slug'] = Str::slug($args['item']['identifier']);
 
         return $item;
@@ -131,7 +131,7 @@ class ShopItem
                             'description_long' => ['type' => Type::nonNull(Type::string())],
                             'show_version' => ['type' => Type::nonNull(Type::boolean())],
                             'price' => ['type' => Type::nonNull(Types::float())],
-                            'weight' => ['type' => Type::nonNull(Types::float())],
+                            'weight' => ['type' => Type::nonNull(Type::int())],
                             'image' => ['type' => Type::nonNull(Types::url())],
                             'version' => ['type' => Type::string()],
                             'allow_indexing' => ['type' => Type::boolean(), 'default' => false],
@@ -191,7 +191,7 @@ class ShopItem
                             'show_version' => ['type' => Type::nonNull(Type::boolean())],
                             'price' => ['type' => Type::nonNull(Types::float())],
                             'identifier' => ['type' => Type::nonNull(Type::string())],
-                            'weight' => ['type' => Type::nonNull(Types::float())],
+                            'weight' => ['type' => Type::nonNull(Type::int())],
                             'image' => ['type' => Type::nonNull(Type::string())],
                             'version' => ['type' => Type::string()],
                             'allow_indexing' => ['type' => Type::boolean(), 'default' => null],

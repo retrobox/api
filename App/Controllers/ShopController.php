@@ -2,8 +2,9 @@
 
 namespace App\Controllers;
 
-use App\Colissimo\Client;
+use App\Utils\Colissimo;
 use App\Utils\CacheManager;
+use App\Utils\Chronopost;
 use App\Utils\Countries;
 use Illuminate\Database\Capsule\Manager;
 use Psr\Container\ContainerInterface;
@@ -90,6 +91,7 @@ class ShopController extends Controller
      * query params:
      * - weight, integer in SI grams
      * - country, string in ISO 3166-1 code
+     * - postal_code, integer, the french city postal code
      *
      * @param ServerRequestInterface $request
      * @param Response $response
@@ -98,36 +100,43 @@ class ShopController extends Controller
     public function getShippingPrices(ServerRequestInterface $request, Response $response)
     {
         $validator = new Validator($request->getQueryParams());
-        $validator->required('weight', 'country');
-        $validator->notEmpty('weight', 'country');
-        //$validator->integer('weight');
+        $validator->required('weight', 'country', 'postal_code');
+        $validator->notEmpty('weight', 'country', 'postal_code');
+        $validator->integer('postal_code', 'weight');
         // Here we have an issue with the lefuturiste/validator library, because the value of weight can be sometime a float
         // the validator doesn't provide a float verification method, so we are kind of suck here...
         // we will use tmp a float type forcing to do the job
-        if (!$validator->isValid()) {
+        if (!$validator->isValid())
             return $response->withJson([
                 'success' => false,
                 'errors' => $validator->getErrors(true)
             ], 400);
-        }
-        $weight = (float) $validator->getValue('weight');
+        $weight = intval($validator->getValue('weight'));
         $country = $validator->getValue('country');
         $countriesHelper = $this->container->get(Countries::class);
-        if (!$countriesHelper->isCountryCodeValid($country)) {
+        if (!$countriesHelper->isCountryCodeValid($country))
             return $response->withJson([
                 'success' => false,
                 'errors' => [
                     ['message' => 'Invalid country code']
                 ]
             ], 400);
-        }
-        $colissimoPrice = $this->container->get(Client::class)->getPrice('fr', $country, $weight);
+        // TODO: add validation of the postal code
+        // if the weight is zero we abort and return error!
+        // the weight must also be non negative
+        $postalCode = intval($validator->getValue('postal_code'));
+        $colissimo = $this->container->get(Colissimo::class);
+        $chronopost = $this->container->get(Chronopost::class);
+        $colissimoPrice = $colissimo->getPrice($country, $weight);
+        $chronopostPrice = $chronopost->getPrice($country, $postalCode, $weight);
+        $chronopostPriceWithRelay = $chronopost->getPrice($country, $postalCode, $weight, true);
 
         return $response->withJson([
             'success' => true,
             'data' => [
                 'colissimo' => $colissimoPrice,
-                'chronopost' => 1.00
+                'chronopost' => $chronopostPrice,
+                'chronopost_with_relay' => $chronopostPriceWithRelay
             ]
         ]);
     }

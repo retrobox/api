@@ -15,6 +15,7 @@ use App\GraphQL\Type\Scalar\DateTime;
 use App\GraphQL\Type\Scalar\FloatType;
 use App\GraphQL\Type\Scalar\NonEmpty;
 use App\GraphQL\Type\Scalar\Url;
+use App\GraphQL\Type\ShippingAddress;
 use App\GraphQL\Type\ShopCategory;
 use App\GraphQL\Type\ShopImage;
 use App\GraphQL\Type\ShopItem;
@@ -59,6 +60,7 @@ class Types
     private static $consoleVersion;
     private static $consoleImage;
     private static $country;
+    private static $shippingAddress;
 
     /**
 	 * @return DateTime
@@ -239,6 +241,11 @@ class Types
         return self::$consoleVersion ?: (self::$consoleVersion = new ConsoleVersion());
     }
 
+    public static function shippingAddress()
+    {
+        return self::$shippingAddress ?: (self::$shippingAddress = new ShippingAddress());
+    }
+
     public static function url()
     {
         return self::$url ?: (self::$url = new Url());
@@ -248,5 +255,4 @@ class Types
     {
         return self::$float ?: (self::$float = new FloatType());
     }
-
 }

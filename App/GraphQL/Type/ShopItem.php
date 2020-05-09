@@ -56,8 +56,8 @@ class ShopItem extends ObjectType
                     'type' => Type::string()
                 ],
                 'weight' => [
-                    'description' => 'Weight of the item in g SI',
-                    'type' => Type::float()
+                    'description' => 'Weight of the item in S.I grams',
+                    'type' => Type::int()
                 ],
                 'images' => [
                     'description' => 'Images belongs to this shop item',

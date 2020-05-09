@@ -65,7 +65,7 @@ class ShopSeeder extends AbstractSeed
                 'description_long' => $md,
                 'image' => "https://static.retrobox.tech/img/about/RETROBOX1.png",
                 'price' => $fakerEN->randomFloat(2, 50, 70),
-                'weight' => $fakerEN->randomFloat(2, 50, 70),
+                'weight' => rand(100, 1500), // a weight between 0.1 kg and 1.5 kg
                 'version' => "version: " . $fakerEN->sentence(1),
                 'show_version' => rand(0, 1),
                 'shop_category_id' => $shopCategoryId,

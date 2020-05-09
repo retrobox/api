@@ -6,6 +6,7 @@ use App\Utils\Colissimo;
 use App\Utils\CacheManager;
 use App\Utils\Chronopost;
 use App\Utils\Countries;
+use App\Utils\LaPoste;
 use Illuminate\Database\Capsule\Manager;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -140,4 +141,31 @@ class ShopController extends Controller
             ]
         ]);
     }
+
+    public function getQueryAddress(ServerRequestInterface $request, Response $response, ContainerInterface $container)
+    {
+        $validator = new Validator($request->getQueryParams());
+        $validator->required('query');
+        $validator->notEmpty('query');
+        if (!$validator->isValid())
+            return $response->withJson([
+                'success' => false,
+                'errors' => $validator->getErrors(true)
+            ], 400);
+
+        $result = $container->get(LaPoste::class)->searchAddress($validator->getValue('query'));
+        if (empty($result))
+            return $response->withJson([
+                'success' => false,
+                'errors' => [
+                    ['code' => 'unknown-address', 'message' => 'This address seems to be incorrect']
+                ]
+            ], 404);
+
+        return $response->withJson([
+            'success' => true,
+            'data' => $result
+        ]);
+    }
+
 }

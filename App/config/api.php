@@ -34,5 +34,8 @@ return [
     "account" => [
         "redirection_url_cookie" => "login_redirection_url",
         "jwt_cookie" => "user_token"
+    ],
+    "la_poste" => [
+        "key" => getenv('LA_POSTE_KEY')
     ]
 ];

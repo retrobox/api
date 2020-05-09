@@ -2,6 +2,7 @@
 
 use App\NotFoundHandler;
 use App\NotAllowedHandler;
+use App\Utils\LaPoste;
 use App\Utils\MailChimp;
 use App\Utils\WebSocketServerClient;
 use DI\Container;
@@ -100,5 +101,9 @@ return [
         );
         $client->createConnexion();
         return $client;
+    },
+
+    LaPoste::class => function (ContainerInterface $container) {
+        return new LaPoste($container->get('la_poste')['key']);
     }
 ];

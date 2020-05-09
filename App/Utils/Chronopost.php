@@ -10,7 +10,7 @@ class Chronopost
 
     public function __construct()
     {
-        $path = App::getBasePath() . '/public/chronopost.json';
+        $path = App::getBasePath() . '/public/chronopost_prices.json';
         $this->config = json_decode(file_get_contents($path), true);
     }
 

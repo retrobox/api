@@ -1,0 +1,60 @@
+{
+    "comment": "from and to fiels are the weight in grams and prices is in euro",
+    "comment": "Update to 2020, all prices is with TTC (based on +20%) ; Warning only in France metropolitaine (can't work with Corsica and DOM-TOM)",
+    "legend": "ww: worldwide ; z*: zone ; relay: france to pick-up; eu: europe",
+    "EU_ISO": ["DE", "BE", "LU", "NL", "AT", "DK", "ES", "FI", "GR", "IE", "IT", "PT", "GB", "SE", "BG", "HR", "ES", "HU", "LV", "LT", "PT", "CZ", "RO", "SK", "SI", "LI", "NO", "CH"],
+    "comment": "France to Europe - Classic 48h (Based on Z3D/Z2R prices)",
+    "chronopost_eu_48h": [
+        {"from": 0, "to": 1000, "price": 19.8},
+        {"from": 1001, "to": 2000, "price": 23},
+        {"from": 2001, "to": 3000, "price": 26.3},
+        {"from": 3001, "to": 4000, "price": 29.5},
+        {"from": 4001, "to": 5000, "price": 32.8},
+        {"from": 5001, "to": 6000, "price": 36},
+        {"from": 6001, "to": 7000, "price": 39.3},
+        {"from": 7001, "to": 8000, "price": 42.5},
+        {"from": 8001, "to": 9000, "price": 45.75},
+        {"from": 9001, "to": 10000, "price": 49},
+        {"from": 10001, "to": 11000, "price": 52.2}
+    ],
+    "chronopost_relay_eu_72h": [
+        {"from": 0, "to": 1000, "price": 15},
+        {"from": 1001, "to": 2000, "price": 17.8},
+        {"from": 2001, "to": 3000, "price": 20.6},
+        {"from": 3001, "to": 4000, "price": 23.3},
+        {"from": 4001, "to": 5000, "price": 26.1},
+        {"from": 5001, "to": 6000, "price": 29},
+        {"from": 6001, "to": 7000, "price": 31.8},
+        {"from": 7001, "to": 8000, "price": 34.7},
+        {"from": 8001, "to": 9000, "price": 37.6},
+        {"from": 9001, "to": 10000, "price": 40.5},
+        {"from": 10001, "to": 11000, "price": 43.4}
+    ],
+    "comment": "France to France - 13h (no dom-tom and corsica)",
+    "chronopost_fr_13h": [
+        {"from": 0, "to": 1000, "price": 15},
+        {"from": 1001, "to": 2000, "price": 15.6},
+        {"from": 2001, "to": 3000, "price": 16.2},
+        {"from": 3001, "to": 4000, "price": 16.8},
+        {"from": 4001, "to": 5000, "price": 17.4},
+        {"from": 5001, "to": 6000, "price": 18},
+        {"from": 6001, "to": 7000, "price": 18.6},
+        {"from": 7001, "to": 8000, "price": 19.2},
+        {"from": 8001, "to": 9000, "price": 19.8},
+        {"from": 9001, "to": 10000, "price": 20.4},
+        {"from": 10001, "to": 11000, "price": 21.3}
+    ],
+  "chronopost_relay_fr_13h": [
+        {"from": 0, "to": 1000, "price": 10.2},
+        {"from": 1001, "to": 2000, "price": 10.8},
+        {"from": 2001, "to": 3000, "price": 11.4},
+        {"from": 3001, "to": 4000, "price": 12},
+        {"from": 4001, "to": 5000, "price": 12.6},
+        {"from": 5001, "to": 6000, "price": 13.2},
+        {"from": 6001, "to": 7000, "price": 13.8},
+        {"from": 7001, "to": 8000, "price": 14.4},
+        {"from": 8001, "to": 9000, "price": 15},
+        {"from": 9001, "to": 10000, "price": 15.6},
+        {"from": 10001, "to": 11000, "price": 16.5}
+    ]
+}

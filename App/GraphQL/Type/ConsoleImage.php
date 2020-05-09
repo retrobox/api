@@ -37,9 +37,21 @@ class ConsoleImage extends ObjectType
                     'type' => Type::string(),
                     'description' => 'The path at where the image is located on "https://os.retrobox.tech", begin with a slash and end with .img.zip'
                 ],
+                'url' => [
+                    'type' => Type::string(),
+                    'description' => 'Full download url'
+                ],
                 'size' => [
                     'type' => Type::int(),
-                    'description' => 'The size of the zip file'
+                    'description' => 'The size of the zip file in megabytes'
+                ],
+                'hash' => [
+                    'type' => Type::string(),
+                    'description' => 'A SHA-256 hash or checksum of the zip file'
+                ],
+                'is_available' => [
+                    'type' => Type::boolean(),
+                    'description' => 'If the image is marked as available then the image can be used on the desktop app'
                 ],
                 'created_at' => [
                     'type' => Types::dateTime()

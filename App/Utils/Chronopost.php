@@ -36,9 +36,9 @@ class Chronopost
     {
         // corsica's cities postal code begin with 20 so between 20000 and 21000
         if ($toCountry == 'FR' && !($toPostalCode > 20000 && $toPostalCode < 21000))
-            $key = 'chronopost_fr_13h';
+            $key = 'chronopost_fr';
         else if (in_array($toCountry, $this->config['EU_ISO']))
-            $key = 'chronopost_eu_48h';
+            $key = 'chronopost_eu';
         else
             return 0;
         if ($relay)

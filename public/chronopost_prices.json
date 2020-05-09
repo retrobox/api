@@ -4,7 +4,7 @@
     "legend": "ww: worldwide ; z*: zone ; relay: france to pick-up; eu: europe",
     "EU_ISO": ["DE", "BE", "LU", "NL", "AT", "DK", "ES", "FI", "GR", "IE", "IT", "PT", "GB", "SE", "BG", "HR", "ES", "HU", "LV", "LT", "PT", "CZ", "RO", "SK", "SI", "LI", "NO", "CH"],
     "comment": "France to Europe - Classic 48h (Based on Z3D/Z2R prices)",
-    "chronopost_eu_48h": [
+    "chronopost_eu": [
         {"from": 0, "to": 1000, "price": 19.8},
         {"from": 1001, "to": 2000, "price": 23},
         {"from": 2001, "to": 3000, "price": 26.3},
@@ -17,7 +17,7 @@
         {"from": 9001, "to": 10000, "price": 49},
         {"from": 10001, "to": 11000, "price": 52.2}
     ],
-    "chronopost_relay_eu_72h": [
+    "chronopost_eu_relay": [
         {"from": 0, "to": 1000, "price": 15},
         {"from": 1001, "to": 2000, "price": 17.8},
         {"from": 2001, "to": 3000, "price": 20.6},
@@ -31,7 +31,7 @@
         {"from": 10001, "to": 11000, "price": 43.4}
     ],
     "comment": "France to France - 13h (no dom-tom and corsica)",
-    "chronopost_fr_13h": [
+    "chronopost_fr": [
         {"from": 0, "to": 1000, "price": 15},
         {"from": 1001, "to": 2000, "price": 15.6},
         {"from": 2001, "to": 3000, "price": 16.2},
@@ -44,7 +44,7 @@
         {"from": 9001, "to": 10000, "price": 20.4},
         {"from": 10001, "to": 11000, "price": 21.3}
     ],
-  "chronopost_relay_fr_13h": [
+  "chronopost_fr_relay": [
         {"from": 0, "to": 1000, "price": 10.2},
         {"from": 1001, "to": 2000, "price": 10.8},
         {"from": 2001, "to": 3000, "price": 11.4},

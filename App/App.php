@@ -67,7 +67,8 @@ class App extends \DI\Bridge\Slim\App
         })->add(new Middlewares\JWTMiddleware($this->getContainer()));
 
         $this->group('/shop', function () {
-            $this->get('/address', [Controllers\ShopController::class, 'getQueryAddress']);
+            $this->get('/address', [Controllers\ShopController::class, 'getQueryAddress'])
+                ->add(new Middlewares\JWTMiddleware($this->getContainer()));
             $this->get('/storage-prices', [Controllers\ShopController::class, 'getStoragePrices']);
             $this->get('/shipping-prices', [Controllers\ShopController::class, 'getShippingPrices']);
             $this->get('/{locale}/categories', [Controllers\ShopController::class, 'getCategories']);

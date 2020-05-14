@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Auth\Session;
 use App\Utils\Colissimo;
 use App\Utils\CacheManager;
 use App\Utils\Chronopost;
@@ -142,8 +143,14 @@ class ShopController extends Controller
         ]);
     }
 
-    public function getQueryAddress(ServerRequestInterface $request, Response $response, ContainerInterface $container)
+    public function getQueryAddress(ServerRequestInterface $request, Response $response, ContainerInterface $container, Session $session)
     {
+        if (!$session->isAdmin()) {
+            return $response->withJson([
+                'success' => false,
+                'errors' => [['message' => 'Forbidden route']]
+            ], 403);
+        }
         $validator = new Validator($request->getQueryParams());
         $validator->required('query');
         $validator->notEmpty('query');

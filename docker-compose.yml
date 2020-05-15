@@ -42,20 +42,25 @@ services:
       - STRIPE_PRIVATE=sk_test_
       - STRIPE_WEBHOOK_SECRET=0
 
-      - STAILEU_PUBLIC=0
-      - STAILEU_PRIVATE=0
-      - STAILEU_REDIRECT=0
+      - STAILEU_PUBLIC=${STAILEU_PUBLIC}
+      - STAILEU_PRIVATE=${STAILEU_PRIVATE}
+      - STAILEU_REDIRECT=https://retrobox.tech/login/execute
 
       - REDIS_URI=redis
       - REDIS_PREFIX=retrobox__
 
       - SOURCE_DOMAIN=localhost
       - JWT_KEY=masterkey
-
-      - WEB_ENDPOINT=0
+      - WEB_ENDPOINT=https://retrobox.tech
       - API_ENDPOINT=http://api
       - DEFAULT_ADMIN_USER_ID=0
-      - MASTER_API_KEY=masterkey
+      - MASTER_API_KEY=${MASTER_KEY}
+
+      - SENTRY_ENABLE=0
+      - LA_POSTE_KEY=${LA_POSTE_KEY}
+
+      - MAILCHIMP_API_KEY=${MAILCHIMP_API_KEY}
+      - MAILCHIMP_LIST_ID=${MAILCHIMP_LIST_ID}
 
   api-test:
     image: 'retrobox/api-test:latest'
@@ -65,6 +70,14 @@ services:
     links:
       - api
     environment:
+      - CLI_ARGS=-D;test/ui-testing.feature
       - API_ENDPOINT=http://api
-      - API_MASTER_KEY=masterkey
       - FORCE_COLOR=2
+      - LOGIN_USER_ID=${STAILEU_USER_LOGIN}
+      - LOGIN_PASSWORD=${STAILEU_USER_PASSWORD}
+      - API_MASTER_KEY=${MASTER_KEY}
+      - STAIL_EU_API=https://api.stail.eu/
+      - MAILCHIMP_API_KEY=${MAILCHIMP_API_KEY}
+      - CHROME_PATH=/usr/bin/chromium
+      - PAYPAL_LOGIN=spamfree-buyer@matthieubessat.fr
+      - PAYPAL_PASSWORD=123456789

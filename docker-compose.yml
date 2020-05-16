@@ -74,7 +74,7 @@ services:
       - FORCE_COLOR=1
       - LOGIN_USER_ID=${STAILEU_USER_LOGIN}
       - LOGIN_PASSWORD=${STAILEU_USER_PASSWORD}
-      - API_MASTER_KEY=${MASTER_KEY}
+      - API_MASTER_KEY=${MASTER_API_KEY}
       - STAIL_EU_API=https://api.stail.eu/
       - MAILCHIMP_API_KEY=${MAILCHIMP_API_KEY}
       - CHROME_PATH=/usr/bin/chromium

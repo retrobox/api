@@ -18,7 +18,7 @@ jobs:
       JOBATATOR_PORT: ${{ secrets.JOBATATOR_PORT }}
       JOBATATOR_USERNAME: ${{ secrets.JOBATATOR_USERNAME }}
       JOBATATOR_PASSWORD: ${{ secrets.JOBATATOR_PASSWORD }}
-      JOBATATOR_GROUP: ${{ secret.JOBATATOR_GROUP }}
+      JOBATATOR_GROUP: ${{ secrets.JOBATATOR_GROUP }}ù
       MASTER_API_KEY: ${{ secrets.MASTER_API_KEY }}
       MAILCHIMP_API_KEY: ${{ secrets.MAILCHIMP_API_KEY }}
       MAILCHIMP_LIST_ID: ${{ secrets.MAILCHIMP_LIST_ID }}

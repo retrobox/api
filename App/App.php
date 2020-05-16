@@ -26,7 +26,7 @@ class App extends \DI\Bridge\Slim\App
         $this->get('/newsletter/event', [Controllers\NewsletterController::class, 'getEvent']);
         $this->post('/newsletter/event', [Controllers\NewsletterController::class, 'postEvent']);
 
-        $this->map(['POST','OPTIONS'], '/graphql', [Controllers\GraphQlController::class, 'newRequest'])
+        $this->map(['POST', 'OPTIONS'], '/graphql', [Controllers\GraphQlController::class, 'newRequest'])
             ->add(new Middlewares\JWTMiddleware($this->getContainer()));
 
         //Routes deprecated
@@ -36,17 +36,17 @@ class App extends \DI\Bridge\Slim\App
         $this->get('/paysafecard/failure', [Controllers\Payment\PaysafeCardController::class, 'getFailure']);*/
 
         // STRIPE
-        $this->map(['POST','OPTIONS'], '/stripe/create', [Controllers\Payment\StripeController::class, 'postCreateSession'])
+        $this->map(['POST', 'OPTIONS'], '/stripe/create', [Controllers\Payment\StripeController::class, 'postCreateSession'])
             ->add(new Middlewares\JWTMiddleware($this->getContainer()));
-        $this->map(['POST','OPTIONS'], '/stripe/execute', [Controllers\Payment\StripeController::class, 'postExecute']);
+        $this->map(['POST', 'OPTIONS'], '/stripe/execute', [Controllers\Payment\StripeController::class, 'postExecute']);
 
         // PAYPAL
-        $this->map(['POST','OPTIONS'], '/paypal/get-url', [Controllers\Payment\PaypalController::class, 'postGetUrl'])
+        $this->map(['POST', 'OPTIONS'], '/paypal/get-url', [Controllers\Payment\PaypalController::class, 'postGetUrl'])
             ->add(new Middlewares\JWTMiddleware($this->getContainer()));
         //$this->get('/paypal/execute', [Controllers\Payment\PaypalController::class, 'postExecute']);
-        $this->map(['POST','OPTIONS'], '/paypal/execute', [Controllers\Payment\PaypalController::class, 'postExecute']);
+        $this->map(['POST', 'OPTIONS'], '/paypal/execute', [Controllers\Payment\PaypalController::class, 'postExecute']);
 
-        $this->group('/account', function (){
+        $this->group('/account', function () {
             $this->get('/login', [Controllers\AccountController::class, 'getLogin']);
             $this->get('/register', [Controllers\AccountController::class, 'getLogin']);
             $this->get('/login-desktop', [Controllers\AccountController::class, 'getLoginDesktop']);
@@ -79,7 +79,7 @@ class App extends \DI\Bridge\Slim\App
 
         $this->get('/downloads', [Controllers\DownloadController::class, 'getDownloads']);
 
-        $this->group('/docs', function (){
+        $this->group('/docs', function () {
             $this->get('/{locale}/{slug}', [Controllers\DocsController::class, 'getPage']);
         });
 
@@ -93,7 +93,7 @@ class App extends \DI\Bridge\Slim\App
         $this->get('/countries/{locale}', [Controllers\CountriesController::class, 'getCountries']);
 
         $this->get('/health', [Controllers\HealthController::class, 'getHealth']);
-        $this->get('/dangerously-truncate-table', [Controllers\PagesController::class, 'getDangerouslyTruncateTables']);
+        $this->get('/dangerously-truncate-table', [Controllers\IntegrationTestController::class, 'getDangerouslyTruncateTables']);
     }
 
     protected function configureContainer(\DI\ContainerBuilder $builder)

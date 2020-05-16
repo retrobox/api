@@ -27,6 +27,7 @@ jobs:
       STAILEU_PRIVATE: ${{ secrets.STAILEU_PRIVATE }}
       STAILEU_USER_LOGIN: ${{ secrets.STAILEU_USER_LOGIN }}
       STAILEU_USER_PASSWORD: ${{ secrets.STAILEU_USER_PASSWORD }}
+      JWT_KEY: ${{ secrets.JWT_KEY }}
       FORCE_COLOR: 1
     steps:
       - uses: actions/checkout@v2

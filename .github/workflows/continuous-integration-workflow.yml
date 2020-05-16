@@ -8,6 +8,25 @@ jobs:
   build:
     name: Continuous integration
     runs-on: ubuntu-latest
+    env:
+      DB_HOST: ${{ secrets.DB_HOST }}
+      DB_PORT: ${{ secrets.DB_PORT }}
+      DB_DATABASE: ${{ secrets.DB_DATABASE }}
+      DB_USERNAME: ${{ secrets.DB_USERNAME }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      JOBATATOR_HOST: ${{ secrets.JOBATATOR_HOST }}
+      JOBATATOR_PORT: ${{ secrets.JOBATATOR_PORT }}
+      JOBATATOR_USERNAME: ${{ secrets.JOBATATOR_USERNAME }}
+      JOBATATOR_PASSWORD: ${{ secrets.JOBATATOR_PASSWORD }}
+      MASTER_API_KEY: ${{ secrets.MASTER_API_KEY }}
+      MAILCHIMP_API_KEY: ${{ secrets.MAILCHIMP_API_KEY }}
+      MAILCHIMP_LIST_ID: ${{ secrets.MAILCHIMP_LIST_ID }}
+      LA_POSTE_KEY: ${{ secrets.LA_POSTE_KEY }}
+      STAILEU_PUBLIC: ${{ secrets.STAILEU_PUBLIC }}
+      STAILEU_PRIVATE: ${{ secrets.STAILEU_PRIVATE }}
+      STAILEU_USER_LOGIN: ${{ secrets.STAILEU_USER_LOGIN }}
+      STAILEU_USER_PASSWORD: ${{ secrets.STAILEU_USER_PASSWORD }}
+      FORCE_COLOR: 1
     steps:
       - uses: actions/checkout@v2
 
@@ -19,18 +38,6 @@ jobs:
 
       - name: Run docker-composer
         run: docker-compose up --abort-on-container-exit
-        env:
-          DB_HOST: ${{ secrets.DB_HOST }}
-          DB_PORT: ${{ secrets.DB_PORT }}
-          DB_DATABASE: ${{ secrets.DB_DATABASE }}
-          DB_USERNAME: ${{ secrets.DB_USERNAME }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          JOBATATOR_HOST: ${{ secrets.JOBATATOR_HOST }}
-          JOBATATOR_PORT: ${{ secrets.JOBATATOR_PORT }}
-          JOBATATOR_USERNAME: ${{ secrets.JOBATATOR_USERNAME }}
-          JOBATATOR_PASSWORD: ${{ secrets.JOBATATOR_PASSWORD }}
-          JOBATATOR_GROUP: ${{ secrets.JOBATATOR_GROUP }}
-          FORCE_COLOR: 2
 
       - name: Login into docker hub
         run: docker login -u '${{ secrets.DOCKER_USERNAME }}' -p '${{ secrets.DOCKER_PASSWORD }}'

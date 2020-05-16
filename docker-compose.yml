@@ -4,12 +4,20 @@ services:
     image: redis
     restart: always
 
+  websocket-server:
+    image: 'retrobox/websocket-server:latest'
+    environment:
+      - API_ENDPOINT=http://127.0.0.1:8742
+      - JWT_KEY=${JWT_KEY}
+
   api:
     image: 'retrobox/api:latest'
     depends_on:
       - redis
+      - websocket-server
     links:
       - redis
+      - websocket-server
     ports:
       - "0.0.0.0:8742:80"
     environment:
@@ -46,13 +54,14 @@ services:
       - STAILEU_PRIVATE=${STAILEU_PRIVATE}
       - STAILEU_REDIRECT=https://retrobox.tech/login/execute
 
-      - REDIS_URI=redis
+      - REDIS_URI=tcp://redis:6379
       - REDIS_PREFIX=retrobox__
 
       - SOURCE_DOMAIN=localhost
-      - JWT_KEY=masterkey
+      - JWT_KEY=${JWT_KEY}
       - WEB_ENDPOINT=https://retrobox.tech
       - API_ENDPOINT=http://api
+      - WEBSOCKET_SERVER_ENDPOINT=http://websocket-server:80
       - DEFAULT_ADMIN_USER_ID=0
       - MASTER_API_KEY=${MASTER_API_KEY}
 
@@ -70,6 +79,7 @@ services:
     links:
       - api
     environment:
+      - CLI_ARGS=-D;
       - API_ENDPOINT=http://api
       - FORCE_COLOR=1
       - LOGIN_USER_ID=${STAILEU_USER_LOGIN}

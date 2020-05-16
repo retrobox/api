@@ -54,7 +54,7 @@ services:
       - WEB_ENDPOINT=https://retrobox.tech
       - API_ENDPOINT=http://api
       - DEFAULT_ADMIN_USER_ID=0
-      - MASTER_API_KEY=${MASTER_KEY}
+      - MASTER_API_KEY=${MASTER_API_KEY}
 
       - SENTRY_ENABLE=0
       - LA_POSTE_KEY=${LA_POSTE_KEY}
@@ -70,9 +70,8 @@ services:
     links:
       - api
     environment:
-      - CLI_ARGS=-D;test/ui-testing.feature
       - API_ENDPOINT=http://api
-      - FORCE_COLOR=2
+      - FORCE_COLOR=1
       - LOGIN_USER_ID=${STAILEU_USER_LOGIN}
       - LOGIN_PASSWORD=${STAILEU_USER_PASSWORD}
       - API_MASTER_KEY=${MASTER_KEY}

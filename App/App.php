@@ -94,6 +94,8 @@ class App extends \DI\Bridge\Slim\App
 
         $this->get('/health', [Controllers\HealthController::class, 'getHealth']);
         $this->get('/dangerously-truncate-table', [Controllers\IntegrationTestController::class, 'getDangerouslyTruncateTables']);
+        $this->get('/jwt', [Controllers\IntegrationTestController::class, 'getUserToken'])
+            ->add(new Middlewares\JWTMiddleware($this->getContainer()));
     }
 
     protected function configureContainer(\DI\ContainerBuilder $builder)

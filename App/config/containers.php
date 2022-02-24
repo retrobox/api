@@ -16,10 +16,9 @@ use SebastianWalker\Paysafecard\Client;
 use SebastianWalker\Paysafecard\Urls;
 
 return [
-    'settings.displayErrorDetails' => true,
     'settings.debug' => true,
-    'notFoundHandler' => new NotFoundHandler(),
-    'notAllowedHandler' => new NotAllowedHandler(),
+    // 'notFoundHandler' => new NotFoundHandler(),
+    // 'notAllowedHandler' => new NotAllowedHandler(),
 
     Logger::class => function (ContainerInterface $container) {
         $log = new Monolog\Logger($container->get('app_name'));
@@ -76,10 +75,13 @@ return [
     },
 
     \Predis\Client::class => function (ContainerInterface $container) {
+        $hasPassword = !empty($container->get('redis')['password']);
+        $params = [];
+        if ($hasPassword) {
+            $params = ['password' => $container->get('redis')['password']];
+        }
         return new \Predis\Client($container->get('redis')['uri'], [
-            'parameters' => [
-                //'password' => $container->get('redis')['password']
-            ],
+            'parameters' => $params,
             'prefix' => $container->get('redis')['prefix']
         ]);
     },

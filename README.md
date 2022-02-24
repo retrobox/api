@@ -2,11 +2,11 @@
 
 ![Github Actions](https://github.com/retrobox/api/workflows/Continuous%20integration/badge.svg)  
 
-## Requirement
+## Requirements
 
-- Php 7.4 or higher
-- Mysql 5 or higher server
-- [Jobatator](https://github.com/lefuturiste/keyvaluer) to manage queue/jobs
+- Php 8.0 or higher
+- MySQL 5 or higher
+- [Jobatator](https://github.com/lefuturiste/jobatator) to manage queue/jobs
 - Redis or a Redis compatible server like [KeyValuer](https://github.com/lefuturiste/keyvaluer)
 
 ## Install
@@ -23,6 +23,19 @@ Recommended environment variables values:
 - In development: `SENTRY_ENABLE=0` because you don't want to float sentry and `APP_DEBUG=1` to get the nice pretty whoops guard web interface to debug.
 - In production: 'SENTRY_ENABLE=1' to get log to sentry and `APP_DEBUG=0` to hide details of exception, but still if APP_DEBUG is false you will get some kind of details in JSON when the server fail
 
+## Working with the database
+
+This project use phinx as a database migration/seed manager.
+
+Migrate the database up to the latest version: `vendor/bin/phinx migrate`
+
+Run a seed/fixture: `vendor/bin/phinx seed:run -s GameSeeder`
+
+## Working with stripe
+
+To get a webhook event if you are in local, you want to use [Stripe CLI](https://stripe.com/docs/stripe-cli)
+
+Use: `stripe listen --forward-to localhost:8000/stripe/execute --events checkout.session.completed`
 
 ## Description route API
 

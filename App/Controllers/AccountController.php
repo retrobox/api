@@ -11,15 +11,16 @@ use Exception;
 use Faker\Provider\Uuid;
 use Firebase\JWT\JWT;
 use Monolog\Logger;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Slim\Http\Response;
 use STAILEUAccounts\Client;
 use Validator\Validator;
 
 class AccountController extends Controller
 {
-    public function getLogin(Response $response, Client $STAILEUAccounts)
+    public function getLogin($_, ResponseInterface $response)
     {
+        $STAILEUAccounts = $this->container->get(Client::class);
         $url = $STAILEUAccounts->getAuthorizeUrl(
             $this->container->get('staileu')['redirect'],
             [Client::SCOPE_READ_PROFILE, Client::SCOPE_READ_EMAIL]
@@ -30,9 +31,11 @@ class AccountController extends Controller
         ]);
     }
 
-    public function execute(ServerRequestInterface $request, Response $response, Client $STAILEUAccounts, Session $session)
+    public function execute(ServerRequestInterface $request, ResponseInterface $response)
     {
         $this->loadDatabase();
+        $STAILEUAccounts = $this->container->get(Client::class);
+
         $validator = new Validator($request->getParsedBody());
         $validator->required('code');
         $validator->notEmpty('code');
@@ -87,7 +90,7 @@ class AccountController extends Controller
         $message .= " is_admin: {$userInfos['is_admin']}";
         $message .= " avatar: {$userInfos['avatar']}";
         $this->container->get(Logger::class)->info($message);
-        $token = $session->create($userInfos);
+        $token = $this->session()->create($userInfos);
 
         return $response->withJson([
             'success' => true,
@@ -98,15 +101,15 @@ class AccountController extends Controller
         ]);
     }
 
-    public function getInfo(Response $response, Session $session)
+    public function getInfo($_, ResponseInterface $response)
     {
         return $response->withJson([
             "success" => true,
-            "data" => $session->getData()
+            "data" => $this->session()->getData()
         ]);
     }
 
-    public function getLoginDesktop(Response $response)
+    public function getLoginDesktop($_, ResponseInterface $response)
     {
         $loginDesktopToken = Uuid::uuid();
         $jwt = JWT::encode([
@@ -114,6 +117,7 @@ class AccountController extends Controller
             'iat' => Carbon::now()->timestamp,
             'login_desktop_token' => $loginDesktopToken
         ], $this->container->get('jwt')['key']);
+
         return $response->withJson([
             'success' => true,
             'data' => [
@@ -122,7 +126,7 @@ class AccountController extends Controller
         ]);
     }
 
-    public function postLoginDesktop(ServerRequestInterface $request, Response $response, Session $session)
+    public function postLoginDesktop(ServerRequestInterface $request, ResponseInterface $response)
     {
         $validator = new Validator($request->getParsedBody());
         $validator->required('token');
@@ -148,8 +152,8 @@ class AccountController extends Controller
         $decoded = json_decode(json_encode($decoded), true);
         $payload = [
             'login_desktop_token' => $decoded['login_desktop_token'],
-            'user_token' => $session->getToken(),
-            'user' => $session->getUser()
+            'user_token' => $this->session()->getToken(),
+            'user' => $this->session()->getUser()
         ];
         $this->container->get(WebSocketServerClient::class)->notifyDesktopLogin($payload);
 

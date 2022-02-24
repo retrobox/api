@@ -2,11 +2,11 @@
 
 namespace App\Controllers;
 
-use Slim\Http\Response;
+use Psr\Http\Message\ResponseInterface;
 
 class DocsController extends Controller
 {
-    public function getPage($locale, $slug, Response $response)
+    public function getPage($locale, $slug, ResponseInterface $response)
     {
         $docEndpoint = $this->container->get('services')['docs_endpoint'];
         $config = json_decode(file_get_contents($docEndpoint . '/config.json'), true);

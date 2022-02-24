@@ -2,11 +2,11 @@
 return  [
 	'mysql' => [
 		'driver' => 'mysql',
-		'host' => getenv('MYSQL_HOST'),
-		'username' => getenv('MYSQL_USERNAME'),
-		'password' => getenv('MYSQL_PASSWORD'),
-		'database' => getenv('MYSQL_DATABASE'),
-		// 'port' => getenv('MYSQL_PORT'),
+		'host' => $_ENV['MYSQL_HOST'],
+		'username' => $_ENV['MYSQL_USERNAME'],
+		'password' => $_ENV['MYSQL_PASSWORD'],
+		'database' => $_ENV['MYSQL_DATABASE'],
+		// 'port' => $_ENV['MYSQL_PORT'],
 		'charset'   => 'utf8',
 		'collation' => 'utf8_unicode_ci',
 		'prefix'    => '',

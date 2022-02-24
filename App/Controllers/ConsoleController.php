@@ -3,8 +3,8 @@
 namespace App\Controllers;
 
 use App\Models\Console;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Slim\Http\Response;
 use Validator\Validator;
 
 class ConsoleController extends Controller
@@ -13,12 +13,8 @@ class ConsoleController extends Controller
      * Verify if the id and token is correct,
      * generally called by the Web Socket server
      * service to accept or reject a console overlay.
-     *
-     * @param ServerRequestInterface $request
-     * @param Response $response
-     * @return Response
      */
-    public function verifyConsole(ServerRequestInterface $request, Response $response)
+    public function verifyConsole(ServerRequestInterface $request, ResponseInterface $response)
     {
         $validator = new Validator($request->getParsedBody());
         $validator->required('console_id', 'console_token');

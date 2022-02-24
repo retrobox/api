@@ -5,12 +5,12 @@ namespace App\Controllers;
 use App\App;
 use GraphQL\GraphQL;
 use Illuminate\Database\Capsule\Manager;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Slim\Http\Response;
 
 class GraphQlController extends Controller
 {
-	public function newRequest(ServerRequestInterface $request, Response $response)
+	public function newRequest(ServerRequestInterface $request, ResponseInterface $response)
 	{
 	    $this->container->get(Manager::class);
 		$schema = require App::getBasePath() . '/App/GraphQL/schema.php';

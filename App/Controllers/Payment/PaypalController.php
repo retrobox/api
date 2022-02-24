@@ -2,7 +2,6 @@
 
 namespace App\Controllers\Payment;
 
-use App\Auth\Session;
 use App\Controllers\Controller;
 use App\Models\ShopOrder;
 use App\Models\User;
@@ -10,7 +9,6 @@ use App\Utils\ConsoleManager;
 use App\Utils\PaymentManager;
 use Exception;
 use Illuminate\Database\Capsule\Manager;
-use Lefuturiste\Jobatator\Client;
 use PayPal\Api\Payer;
 use PayPal\Api\Payment;
 use PayPal\Api\PaymentExecution;
@@ -18,29 +16,21 @@ use PayPal\Api\RedirectUrls;
 use PayPal\Rest\ApiContext;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Slim\Http\Response;
 use Validator\Validator;
 
 class PaypalController extends Controller
 {
-    /**
-     * @param ServerRequestInterface $request
-     * @param Response $response
-     * @param ApiContext $apiContext
-     * @param Session $session
-     * @return Response
-     * @throws Exception
-     */
-    public function postGetUrl(ServerRequestInterface $request, Response $response, ApiContext $apiContext, Session $session)
+    public function postGetUrl(ServerRequestInterface $request, ResponseInterface $response)
     {
         $this->container->get(Manager::class);
+        $apiContext = $this->container->get(ApiContext::class);
 
         $validator = new Validator($request->getParsedBody());
         $validator->required('items', 'shipping_method', 'order_note');
         $validator->notEmpty('items', 'shipping_method');
         if ($validator->isValid()) {
             /** @var $user User */
-            $user = User::query()->find($session->getUser()['id']);
+            $user = User::query()->find($this->session()->getUser()['id']);
             $paymentManager = new PaymentManager(
                 $validator->getValue('items'),
                 $user->getAddressObject(),
@@ -103,17 +93,10 @@ class PaypalController extends Controller
         }
     }
 
-    /**
-     * @param ServerRequestInterface $request
-     * @param Response $response
-     * @param ApiContext $apiContext
-     * @param Client $queue
-     * @return ResponseInterface|Response
-     * @throws Exception
-     */
-    public function postExecute(ServerRequestInterface $request, Response $response, ApiContext $apiContext, Client $queue)
+    public function postExecute(ServerRequestInterface $request, ResponseInterface $response)
     {
         $this->container->get(Manager::class);
+        $apiContext = $this->container->get(ApiContext::class);
 
         $validator = new Validator($request->getParsedBody());
         $validator->required('token', 'payment_id', 'payer_id');
@@ -194,7 +177,7 @@ class PaypalController extends Controller
         $order->save();
 
         // emit "order.payed" event
-        $queue->publish('order.payed', ['id' => $order['id']]);
+        $this->jobatator()->publish('order.payed', ['id' => $order['id']]);
 
         return $response->withJson([
             'success' => true

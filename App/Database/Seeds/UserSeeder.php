@@ -24,7 +24,7 @@ class UserSeeder extends AbstractSeed
                 'created_at' => $instant,
                 'updated_at' => $instant
             ], [
-                'id' => 'admin-user-A',
+                'id' => 'admin-user-a',
                 'last_username' => 'Admin user A',
                 'last_email' => 'admin-user-a@example.com',
                 'is_admin' => true,

@@ -23,40 +23,46 @@
   "license": "MIT",
   "require": {
     "ext-json": "*",
-    "slim/slim": "^3.8",
+    "slim/slim": "4.*",
     "hassankhan/config": "^0.10.0",
     "guzzlehttp/guzzle": "^6.3",
     "jimmiw/php-time-ago": "^2.0",
-    "vlucas/phpdotenv": "^2.4",
+    "vlucas/phpdotenv": "^5.4",
     "simplon/mysql": "^2.2",
     "monolog/monolog": "^1.23",
     "symfony/translation": "^3.3",
     "lefuturiste/slim-whoops": "^0.6.2",
     "lefuturiste/monolog-discord-handler": "^0.1.2",
     "tracy/tracy": "^2.4",
-    "php-di/php-di": "^5.4",
-    "lefuturiste/slim-bridge": "^1.0.5",
+    "php-di/php-di": "^6.3.0",
     "doctrine/cache": "^1.7",
-    "webonyx/graphql-php": "~0.12.6",
-    "illuminate/database": "~5.1",
+    "webonyx/graphql-php": "~14.11",
+    "illuminate/database": "~8.83",
     "robmorgan/phinx": "0.11.4",
-    "fzaninotto/faker": "^1.7",
+    "fakerphp/faker": "^1.14",
     "sebastianwalker/paysafecard-php-api": "^1.0",
     "lefuturiste/validator": "^1.0",
     "respect/validation": "^1.1",
     "dflydev/fig-cookies": "^1.0",
     "firebase/php-jwt": "^5.0",
     "stripe/stripe-php": "^7.14",
-    "akrabat/ip-address-middleware": "^1.0",
+    "akrabat/ip-address-middleware": "^2.0",
     "paypal/rest-api-sdk-php": "^1.13",
     "staileu/php-sdk": "^0.0.3",
     "nopjmp/discord-webhooks": "^0.3.1",
     "predis/predis": "^1.1",
-    "sentry/sdk": "2.0.3",
-    "lefuturiste/jobatator-php": "^0.5"
+    "sentry/sdk": "3.1.0",
+    "lefuturiste/jobatator-php": "^0.7",
+    "slim/psr7": "^1.5",
+    "slim/http": "^1.2"
   },
   "require-dev": {
-    "phpunit/phpunit": "^7.3",
-    "zalas/phpunit-injector": "^1.2"
+    "phpunit/phpunit": "^9.5.4",
+    "zalas/phpunit-injector": "^2.1.0"
+  },
+  "config": {
+    "allow-plugins": {
+      "kylekatarnls/update-helper": true
+    }
   }
 }

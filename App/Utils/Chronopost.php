@@ -18,7 +18,7 @@ class Chronopost
     {
         foreach ($values as $value)
             if ($weight >= $value['from'] && $weight <= $value['to'])
-                return $value['price'] * 100;
+                return round($value['price'] * 100);
         return 0;
     }
 

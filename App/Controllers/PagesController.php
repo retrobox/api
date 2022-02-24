@@ -8,12 +8,11 @@ use App\Utils\CacheManager;
 use App\Utils\WebSocketServerClient;
 use Illuminate\Database\Capsule\Manager;
 use Lefuturiste\Jobatator\Client;
-use Psr\Container\ContainerInterface;
-use Slim\Http\Response;
+use Psr\Http\Message\ResponseInterface;
 
 class PagesController extends Controller
 {
-    public function getHome(Response $response)
+    public function getHome($_, ResponseInterface $response)
     {
         return $response->withJson([
             'success' => true,
@@ -25,14 +24,14 @@ class PagesController extends Controller
         ]);
     }
 
-    public function getPing(Response $response)
+    public function getPing($_, ResponseInterface $response)
     {
-        return $response->withJson(['success' => true]);
+        return $this->json($response);
     }
 
-    public function getWebSocketConnexions(Response $response, Session $session)
+    public function getWebSocketConnexions($_, ResponseInterface $response)
     {
-        if (!$session->isAdmin()) {
+        if (!$this->session()->isAdmin()) {
             return $response->withJson([
                 'success' => false,
                 'errors' => [['message' => 'Forbidden route']]
@@ -44,7 +43,7 @@ class PagesController extends Controller
         ]);
     }
 
-    public function testSendEmailEvent(Response $response, Session $session)
+    public function testSendEmailEvent($_, ResponseInterface $response, Session $session)
     {
         if (!$session->isAdmin()) {
             return $response->withJson([
@@ -61,15 +60,10 @@ class PagesController extends Controller
 
     /**
      * This route will generate all the cache of the shop
-     *
-     * @param Response $response
-     * @param Session $session
-     * @param ContainerInterface $container
-     * @return Response
      */
-    public function generateShopCache(Response $response, Session $session, ContainerInterface $container)
+    public function generateShopCache($_, ResponseInterface $response)
     {
-        if (!$session->isAdmin()) {
+        if (!$this->session()->isAdmin()) {
             return $response->withJson([
                 'success' => false,
                 'errors' => [
@@ -77,15 +71,15 @@ class PagesController extends Controller
                 ]
             ], 403);
         }
-        $container->get(Manager::class);
+        $this->container->get(Manager::class);
         $categories = [];
-        foreach ($container->get('locales') as $locale) {
-            $categories[] = CacheManager::generateShopCategories($container, $locale);
+        foreach ($this->container->get('locales') as $locale) {
+            $categories[] = CacheManager::generateShopCategories($this->container, $locale);
         }
         $items = ShopItem::all()->toArray();
         $itemsCached = [];
         foreach ($items as $item) {
-            $itemsCached[] = CacheManager::generateShopItem($container, $item['locale'], $item['slug']);
+            $itemsCached[] = CacheManager::generateShopItem($this->container, $item['locale'], $item['slug']);
         }
         return $response->withJson([
             'success' => true,

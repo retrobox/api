@@ -6,14 +6,16 @@ use App\Utils\MailChimp;
 use DiscordWebhooks\Client;
 use DiscordWebhooks\Embed;
 use Exception;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Slim\Http\Response;
 use Validator\Validator;
 
 class NewsletterController extends Controller
 {
-    public function postSubscribe(ServerRequestInterface $request, Response $response, MailChimp $mailChimp)
+
+    public function postSubscribe(ServerRequestInterface $request, ResponseInterface $response)
     {
+        $mailChimp = $this->container->get(MailChimp::class);
         $validator = new Validator($request->getParsedBody());
         $validator->required('email');
         $validator->notEmpty('email');
@@ -44,12 +46,12 @@ class NewsletterController extends Controller
         ]);
     }
 
-    public function getEvent(Response $response)
+    public function getEvent($_, ResponseInterface $response)
     {
         return $response->withJson(true, 200);
     }
 
-    public function postEvent(ServerRequestInterface $request, Response $response)
+    public function postEvent(ServerRequestInterface $request, ResponseInterface $response)
     {
         $data = json_decode(json_encode($request->getParsedBody()), true);
         $discordWebHook = new Client($this->container->get('mailchimp')['discord_webhook']);

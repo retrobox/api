@@ -6,22 +6,14 @@ use App\Utils\WebSocketServerClient;
 use Exception;
 use Illuminate\Database\Capsule\Manager;
 use Lefuturiste\Jobatator\Client;
-use Slim\Http\Response;
+use Psr\Http\Message\ResponseInterface;
 
 class HealthController extends Controller
 {
-    public function getHealth(Response $response)
+    public function getHealth($_, ResponseInterface $response)
     {
+        // 1. Verify MySQL
         $issues = [];
-        $queue = null;
-        try {
-            $queue = $this->container->get(Client::class);
-        } catch (Exception $exception) {
-            $issues[] = [
-                'code' => $exception->getCode(),
-                'message' => $exception->getMessage()
-            ];
-        }
         $mysqlConnexion = null;
         try {
             $mysqlConnexion = $this->container->get(Manager::class)->getConnection();
@@ -33,6 +25,8 @@ class HealthController extends Controller
                 'message' => $exception->getMessage()
             ];
         }
+
+        // 2. Verify Redis
         $redisResponse = null;
         $redisClient = null;
         try {
@@ -45,11 +39,23 @@ class HealthController extends Controller
             ];
         }
 
+        // 3. Verify Web Socket
         $webSocketClient = null;
         $webSocketOnline = false;
         try {
             $webSocketClient = $this->container->get(WebSocketServerClient::class);
             $webSocketOnline = $webSocketClient->serverIsOnline();
+        } catch (Exception $exception) {
+            $issues[] = [
+                'code' => $exception->getCode(),
+                'message' => $exception->getMessage()
+            ];
+        }
+
+        // 4. Verify Jobatator
+        $queue = null;
+        try {
+            $queue = $this->container->get(Client::class);
         } catch (Exception $exception) {
             $issues[] = [
                 'code' => $exception->getCode(),

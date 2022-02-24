@@ -10,21 +10,30 @@ use App\Utils\Countries;
 use App\Utils\LaPoste;
 use Illuminate\Database\Capsule\Manager;
 use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Slim\Http\Response;
 use Validator\Validator;
+use Predis\Client as RedisClient;
 
 class ShopController extends Controller
 {
-    public function getCategories($locale, Response $response, ContainerInterface $container)
+    public function __construct(
+        private RedisClient $redis,
+        ContainerInterface $container
+    )
     {
-        $redis = $container->get(\Predis\Client::class);
-        if ($redis->exists("shop_categories_" . $locale)) {
-            $categories = json_decode($redis->get("shop_categories_" . $locale), true);
+        parent::__construct($container);
+    }
+
+    public function getCategories($_, ResponseInterface $response, array $args)
+    {
+        $locale = $args['locale'];
+        if ($this->redis->exists("shop_categories_" . $locale)) {
+            $categories = json_decode($this->redis->get("shop_categories_" . $locale), true);
         } else {
             $this->container->get(Manager::class);
             if (array_search($locale, $this->container->get('locales')) !== false) {
-                $categories = CacheManager::generateShopCategories($container, $locale);
+                $categories = CacheManager::generateShopCategories($this->container, $locale);
             } else {
                 return $response->withJson([
                     'success' => false,
@@ -42,16 +51,17 @@ class ShopController extends Controller
         ]);
     }
 
-    public function getItem($locale, $slug, Response $response, ContainerInterface $container)
+    public function getItem($_, ResponseInterface $response, array $args)
     {
-        $redis = $container->get(\Predis\Client::class);
+        $locale = $args['locale'];
+        $slug = $args['slug'];
         $key = 'shop_item_' . $locale . '_' . $slug;
-        if ($redis->exists($key)) {
-            $render = json_decode($redis->get($key), true);
+        if ($this->redis->exists($key)) {
+            $render = json_decode($this->redis->get($key), true);
         } else {
             $this->container->get(Manager::class);
             if (array_search($locale, $this->container->get('locales')) !== false) {
-                $render = CacheManager::generateShopItem($container, $locale, $slug);
+                $render = CacheManager::generateShopItem($this->container, $locale, $slug);
                 if ($render === []) {
                     return $response->withJson([
                         'success' => false,
@@ -77,7 +87,7 @@ class ShopController extends Controller
         ]);
     }
 
-    public function getStoragePrices(Response $response)
+    public function getStoragePrices($_, ResponseInterface $response)
     {
         return $response->withJson([
             'success' => true,
@@ -94,12 +104,8 @@ class ShopController extends Controller
      * - weight, integer in SI grams
      * - country, string in ISO 3166-1 code
      * - postal_code, integer, the french city postal code
-     *
-     * @param ServerRequestInterface $request
-     * @param Response $response
-     * @return Response
      */
-    public function getShippingPrices(ServerRequestInterface $request, Response $response)
+    public function getShippingPrices(ServerRequestInterface $request, ResponseInterface $response)
     {
         $validator = new Validator($request->getQueryParams());
         $validator->required('weight', 'country', 'postal_code');
@@ -108,11 +114,12 @@ class ShopController extends Controller
         // Here we have an issue with the lefuturiste/validator library, because the value of weight can be sometime a float
         // the validator doesn't provide a float verification method, so we are kind of suck here...
         // we will use tmp a float type forcing to do the job
-        if (!$validator->isValid())
+        if (!$validator->isValid()) {
             return $response->withJson([
                 'success' => false,
-                'errors' => $validator->getErrors(true)
+                'errors'  => $validator->getErrors(true)
             ], 400);
+        }
         $weight = intval($validator->getValue('weight'));
         $country = $validator->getValue('country');
         $countriesHelper = $this->container->get(Countries::class);
@@ -143,9 +150,9 @@ class ShopController extends Controller
         ]);
     }
 
-    public function getQueryAddress(ServerRequestInterface $request, Response $response, ContainerInterface $container, Session $session)
+    public function getQueryAddress(ServerRequestInterface $request, ResponseInterface $response)
     {
-        if (!$session->isAdmin()) {
+        if (!$this->session()->isAdmin()) {
             return $response->withJson([
                 'success' => false,
                 'errors' => [['message' => 'Forbidden route']]
@@ -160,7 +167,7 @@ class ShopController extends Controller
                 'errors' => $validator->getErrors(true)
             ], 400);
 
-        $result = $container->get(LaPoste::class)->searchAddress($validator->getValue('query'));
+        $result = $this->container->get(LaPoste::class)->searchAddress($validator->getValue('query'));
         if (empty($result))
             return $response->withJson([
                 'success' => false,

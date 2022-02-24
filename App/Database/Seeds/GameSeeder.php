@@ -16,9 +16,9 @@ class GameSeeder extends AbstractSeed
 	public function run()
 	{
 		$this->table('games')->truncate();
-		$this->table('editors')->truncate();
-		$this->table('medias')->truncate();
-		$this->table('platforms')->truncate();
+		$this->table('game_editors')->truncate();
+		$this->table('game_medias')->truncate();
+		$this->table('game_platforms')->truncate();
 		$this->table('genres')->truncate();
 		$this->table('game_genre')->truncate();
 		$faker = Faker\Factory::create('FR_fr');

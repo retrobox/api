@@ -3,14 +3,21 @@
 namespace App\Controllers;
 
 use GuzzleHttp\Client;
-use Slim\Http\Response;
+use Psr\Http\Message\ResponseInterface;
+use Predis\Client as RedisClient;
 
 class DownloadController
 {
-    public function getDownloads(Response $response, \Predis\Client $redis)
+    public function __construct(
+        private RedisClient $redis
+    )
     {
-        if ($redis->exists("desktop_last_release")) {
-            $lastRelease = json_decode($redis->get("desktop_last_release"), true);
+    }
+
+    public function getDownloads($_, ResponseInterface $response)
+    {
+        if ($this->redis->exists("desktop_last_release")) {
+            $lastRelease = json_decode($this->redis->get("desktop_last_release"), true);
         } else {
             $client = new Client();
             $ghApiResponse = $client->get("https://api.github.com/repos/retrobox/desktop/releases/latest");
@@ -45,7 +52,7 @@ class DownloadController
                 "published_at" => $lastRelease['published_at'],
                 "versions" => $versions
             ];
-            $redis->set("desktop_last_release", json_encode($lastRelease));
+            $this->redis->set("desktop_last_release", json_encode($lastRelease));
         }
         return $response->withJson([
             'success' => true,

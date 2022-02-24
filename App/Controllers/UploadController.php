@@ -2,21 +2,20 @@
 
 namespace App\Controllers;
 
-use App\Auth\Session;
 use App\Models\User;
 use Faker\Provider\Uuid;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UploadedFileInterface;
-use Slim\Http\Request;
-use Slim\Http\Response;
 
 class UploadController extends Controller
 {
-    public function postUpload(Request $request, Response $response, Session $session)
+    public function postUpload(ServerRequestInterface $request, ResponseInterface $response)
     {
         // validate user permission, user must own at least one console
         $this->loadDatabase();
         /** @var $user User */
-        $user = User::query()->find($session->getUserId());
+        $user = User::query()->find($this->session()->getUserId());
         if ($user === NULL) {
             return $response->withJson([
                 'success' => false,

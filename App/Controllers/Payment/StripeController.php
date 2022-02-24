@@ -2,17 +2,15 @@
 
 namespace App\Controllers\Payment;
 
-use App\Auth\Session;
 use App\Controllers\Controller;
 use App\Models\ShopOrder;
 use App\Models\User;
 use App\Utils\ConsoleManager;
 use App\Utils\PaymentManager;
-use Exception;
 use Illuminate\Database\Capsule\Manager;
-use Lefuturiste\Jobatator\Client;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ResponseInterface as MessageResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Slim\Http\Response;
 use Stripe\Exception\ApiErrorException;
 use Stripe\Exception\SignatureVerificationException;
 use Stripe\Stripe;
@@ -25,14 +23,8 @@ class StripeController extends Controller
 
     /**
      * Create a stripe checkout session
-     *
-     * @param ServerRequestInterface $request
-     * @param Response $response
-     * @param Session $session
-     * @return Response
-     * @throws Exception
      */
-    public function postCreateSession(ServerRequestInterface $request, Response $response, Session $session)
+    public function postCreateSession(ServerRequestInterface $request, ResponseInterface $response)
     {
         $this->container->get(Manager::class);
         $validator = new Validator($request->getParsedBody());
@@ -46,8 +38,8 @@ class StripeController extends Controller
                 'errors' => $validator->getErrors()
             ], 400);
         }
-        /** @var $user User */
-        $user = User::query()->find($session->getUserId());
+        /** @var User $user */
+        $user = User::query()->find($this->session()->getUserId());
         $paymentManager = new PaymentManager(
             $validator->getValue('items'),
             $user->getAddressObject(),
@@ -79,12 +71,16 @@ class StripeController extends Controller
                     'success_url' => $this->container->get('stripe')['return_redirect_url'],
                     'cancel_url' => $this->container->get('stripe')['cancel_redirect_url'],
                     'metadata' => [
-                        'user_id' => $session->getUserId(),
+                        'user_id' => $this->session()->getUserId(),
                         'order_id' => $order['id'],
                         'total_price' => $order['total_price']
                     ]
                 ],
-                isset($session->getUser()['email']) ? ['customer_email' => $session->getUser()['email']] : []
+                (
+                    isset($this->session()->getUser()['email']) ?
+                        ['customer_email' => $this->session()->getUser()['email']]
+                    : []
+                )
             ));
         } catch (ApiErrorException $e) {
             return $response->withJson([
@@ -114,9 +110,10 @@ class StripeController extends Controller
         ]);
     }
 
-    public function postExecute(ServerRequestInterface $request, Response $response, Client $queue)
+    public function postExecute(ServerRequestInterface $request, MessageResponseInterface $response)
     {
         $this->container->get(Manager::class);
+
         Stripe::setApiKey($this->container->get('stripe')['private']);
         $error = null;
         $errorDetails = null;
@@ -191,7 +188,7 @@ class StripeController extends Controller
         $order['status'] = 'payed';
         $order->save();
 
-        $queue->publish('order.payed', ['id' => $order['id']]);
+        $this->jobatator()->publish('order.payed', ['id' => $order['id']]);
 
         return $response->withJson([
             'success' => true,

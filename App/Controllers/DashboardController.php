@@ -4,11 +4,11 @@ namespace App\Controllers;
 
 use App\Auth\Session;
 use App\Models\User;
-use Slim\Http\Response;
+use Psr\Http\Message\ResponseInterface;
 
 class DashboardController extends Controller
 {
-    public function getDashboard(Response $response, Session $session){
+    public function getDashboard($_, ResponseInterface $response, Session $session){
         $this->loadDatabase();
 
         /** @var $user User */
@@ -33,7 +33,7 @@ class DashboardController extends Controller
         ]);
     }
 
-    public function getDelete(Response $response) {
+    public function getDelete($_, ResponseInterface $response) {
         // send a webhook to ask for a user deletion
         // to do that manually
 

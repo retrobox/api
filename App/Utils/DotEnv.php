@@ -16,8 +16,8 @@ class DotEnv
         if (file_exists($base . '/.env.test') && $isTest)
             $file = '.env.test';
         if ($file !== null) {
-            $dotEnv = new \Dotenv\Dotenv($base, $file);
-            $dotEnv->load();
+            $dotenv = \Dotenv\Dotenv::createImmutable($base, $file);
+            $dotenv->load();
         }
     }
 }

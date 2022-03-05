@@ -19,14 +19,11 @@ class AcceptLanguage {
             return '';
         } else if (strlen($rawLocale) == 2){
             preg_match_all('/[a-zA-Z]{2}/m', $rawLocale, $matches, PREG_SET_ORDER, 0);
-            return isset($matches[0][0]) ? $matches[0][0] : '';
-        } else if (strlen($rawLocale) >= 4 && strlen($rawLocale) <= 5 && strpos($rawLocale, '-') !== '') {
+            return $matches[0][0] ?? '';
+        } else if (strlen($rawLocale) >= 4 && strlen($rawLocale) <= 5) {
             $matches = explode('-', $rawLocale);
-            return isset($matches[0]) ? $matches[0] : '';
+            return $matches[0] ?? '';
         } else {
-            if (strpos($rawLocale, ',') === '') {
-                return '';
-            }
             $locale = explode(',', $rawLocale);
             if (!isset($locale[0])) {
                 return '';

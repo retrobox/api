@@ -16,7 +16,7 @@ class ConsoleManager
      * @param ShopOrder $shopOrder
      * @return array
      */
-    public static function createConsolesFromOrder(ContainerInterface $container, $shopOrder)
+    public static function createConsolesFromOrder(ContainerInterface $container, ShopOrder $shopOrder)
     {
         $result = ['consoles_ids' => [], 'items' => []];
         foreach ($shopOrder['items'] as $item) {

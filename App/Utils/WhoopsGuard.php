@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection PhpDocMissingThrowsInspection */
 
 namespace App\Utils;
 
@@ -17,7 +17,7 @@ class WhoopsGuard
      * @param App $app
      * @param ContainerInterface $container
      */
-    public static function load(App $app, ContainerInterface $container)
+    public static function load(App $app, ContainerInterface $container): void
     {
         $whoopsGuard = new \Zeuxisoo\Whoops\Provider\Slim\WhoopsGuard();
         $whoopsGuard->setApp($app);

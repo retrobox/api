@@ -1,4 +1,6 @@
 <?php
+/** @noinspection PhpUnhandledExceptionInspection */
+/** @noinspection PhpDocMissingThrowsInspection */
 
 namespace App\Utils;
 

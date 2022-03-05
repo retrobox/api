@@ -1,4 +1,5 @@
 <?php
+/** @noinspection PhpUnhandledExceptionInspection */
 
 namespace App\Utils;
 
@@ -31,11 +32,7 @@ class ContainerBuilder
 
     public static function getContainerFromBuilder(\DI\ContainerBuilder $containerBuilder): ContainerInterface
     {
-        try {
-            return $containerBuilder->build();
-        } catch (Exception $e) {
-            return NULL;
-        }
+        return $containerBuilder->build();
     }
 
     public static function direct(): ContainerInterface

@@ -4,9 +4,9 @@ namespace App\Utils;
 
 class Countries
 {
-    public function getCountriesDirectory()
+    public function getCountriesDirectory(): string
     {
-        return dirname(dirname(__DIR__)) . '/countries';
+        return dirname(__DIR__, 2) . '/countries';
     }
 
     /**
@@ -16,7 +16,7 @@ class Countries
      * @param string $locale
      * @return array|null
      */
-    public function getLocalizedCountries(string $locale)
+    public function getLocalizedCountries(string $locale): ?array
     {
         $locale = mb_strtolower($locale);
         $path = $this->getCountriesDirectory() . '/' . $locale . '.json';

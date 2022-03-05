@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection PhpDocMissingThrowsInspection */
 
 namespace App\Utils;
 
@@ -95,7 +95,6 @@ class PaymentManager
      * @param array $shippingAddress The user address object
      * @param string $shippingMethod
      * @param ContainerInterface $container
-     * @throws Exception
      */
     public function __construct(
         array $items,
@@ -238,7 +237,7 @@ class PaymentManager
         return $this->pivotsAttributes;
     }
 
-    public function toPaypalTransaction($custom = NULL): Transaction
+    public function toPaypalTransaction(?string $custom = null): Transaction
     {
         $list = new ItemList();
         foreach ($this->getParsedItems() as $item) {

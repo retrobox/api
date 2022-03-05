@@ -1,5 +1,8 @@
 <?php
 
+/** @noinspection PhpUnhandledExceptionInspection */
+/** @noinspection PhpDocMissingThrowsInspection */
+
 namespace App\Utils;
 
 use GuzzleHttp\Client;
@@ -12,7 +15,7 @@ class MailChimp
     private Client $client;
     private string $endpoint;
 
-    public function __construct($apiKey)
+    public function __construct(string $apiKey)
     {
         $this->apiKey = $apiKey;
         $this->zone = substr($apiKey, -4);
@@ -21,11 +24,11 @@ class MailChimp
     }
 
     /**
-     * @param $listId
-     * @param $email
+     * @param string $listId
+     * @param string $email
      * @return ResponseInterface
      */
-    public function addSubscriber($listId, $email): ResponseInterface
+    public function addSubscriber(string $listId, string $email): ResponseInterface
     {
         return $this->client->request(
             'POST',

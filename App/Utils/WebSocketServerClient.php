@@ -43,7 +43,7 @@ class WebSocketServerClient
         ]);
     }
 
-    public function getConnexions()
+    public function getConnexions(): array
     {
         $res = $this->client->get($this->baseUrl . '/connections');
         return json_decode($res->getBody()->getContents(), true)['data'];
@@ -53,9 +53,8 @@ class WebSocketServerClient
      * Return the status of a given console, assuming that the console id actually exist in the database
      *
      * @param string $consoleId
-     * @return mixed
      */
-    public function getConsoleStatus(string $consoleId)
+    public function getConsoleStatus(string $consoleId): array
     {
         $res = $this->client->get($this->baseUrl . '/console/' . $consoleId, [
             'http_errors' => false

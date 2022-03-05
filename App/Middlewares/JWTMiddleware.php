@@ -26,7 +26,7 @@ class JWTMiddleware
     public function __invoke(ServerRequestInterface $request, RequestHandlerInterface $handler)
     {
         $response = (new DecoratedResponseFactory(new ResponseFactory(), new StreamFactory()))->createResponse();
-
+        
         if (!$request->hasHeader('Authorization')) {
             return $response->withStatus(401)->withJson([
                 'success' => false,

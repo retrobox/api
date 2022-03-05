@@ -17,8 +17,6 @@ use SebastianWalker\Paysafecard\Urls;
 
 return [
     'settings.debug' => true,
-    // 'notFoundHandler' => new NotFoundHandler(),
-    // 'notAllowedHandler' => new NotAllowedHandler(),
 
     Logger::class => function (ContainerInterface $container) {
         $log = new Monolog\Logger($container->get('app_name'));
